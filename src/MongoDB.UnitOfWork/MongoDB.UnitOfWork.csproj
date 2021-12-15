@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MongoDB.Repository\MongoDB.Repository.csproj" />
+    <ProjectReference Include="..\MongoDB.UnitOfWork.Abstractions\MongoDB.UnitOfWork.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

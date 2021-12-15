@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MongoDB.Generators\MongoDB.Generators.csproj" />
+    <ProjectReference Include="..\..\src\MongoDB.UnitOfWork\MongoDB.UnitOfWork.csproj" />
+    <ProjectReference Include="..\MongoDB.Models\MongoDB.Models.csproj" />
+  </ItemGroup>
+
+</Project>
