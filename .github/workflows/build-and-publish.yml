@@ -1,0 +1,24 @@
+name: build-and-publish
+
+env:
+  PROJECT: MongoDB
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  NUGET_SOURCE: ${{ secrets.NUGET_SOURCE }}
+
+on:
+  push:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET 6.0
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore
+        run: dotnet restore
+      - name: Build projects
+        run: dotnet build -c Release
+      - name: Push packages
+        run: dotnet nuget push "**/$PROJECT*.nupkg" -k $NUGET_API_KEY -s $NUGET_SOURCE --skip-duplicate
