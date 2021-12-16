@@ -8,7 +8,7 @@ If you like or are using this project to learn or start your solution, please gi
 
 ## Status
 
-[![build-and-publish Workflow Status](https://github.com/ffernandolima/mongo-db-data-access/actions/workflows/build-and-publish.yml/badge.svg?branch=main](https://github.com/ffernandolima/mongo-db-data-access/actions/workflows/build-and-publish.yml/branch=main)
+[![build-and-publish Workflow Status](https://github.com/ffernandolima/mongo-db-data-access/actions/workflows/build-and-publish.yml/badge.svg?branch=main)](https://github.com/ffernandolima/mongo-db-data-access/actions/workflows/build-and-publish.yml/branch=main)
 
  | Package | NuGet |
  | ------- | ------- |
