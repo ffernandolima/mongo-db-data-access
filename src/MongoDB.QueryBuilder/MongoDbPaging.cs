@@ -1,6 +1,4 @@
-﻿using MongoDB.QueryBuilder.Abstractions;
-
-namespace MongoDB.QueryBuilder
+﻿namespace MongoDB.QueryBuilder
 {
     public class MongoDbPaging : IMongoDbPaging
     {

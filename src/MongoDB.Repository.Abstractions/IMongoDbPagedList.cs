@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MongoDB.Repository.Abstractions
+namespace MongoDB.Repository
 {
     public interface IMongoDbPagedList<T>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace MongoDB.QueryBuilder.Abstractions
+namespace MongoDB.QueryBuilder
 {
     public interface IMongoDbSorting<T> : IMongoDbSorting
     {

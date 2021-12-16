@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Data;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using MongoDB.Infrastructure.Extensions;
 using MongoDB.Models;
 using MongoDB.Tests.Infrastructure;
-using MongoDB.UnitOfWork.Abstractions;
+using MongoDB.UnitOfWork;
 using MongoDB.UnitOfWork.Abstractions.Extensions;
 using System.Threading.Tasks;
 using Xunit;

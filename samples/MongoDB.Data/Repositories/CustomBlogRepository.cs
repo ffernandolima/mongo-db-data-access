@@ -1,6 +1,6 @@
 ﻿using MongoDB.Data.Repositories.Interfaces;
 using MongoDB.Driver;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using MongoDB.Models;
 using MongoDB.Repository;
 using System.Collections.Generic;

@@ -1,10 +1,10 @@
 ﻿using MongoDB.Driver;
-using MongoDB.QueryBuilder.Abstractions;
+using MongoDB.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace MongoDB.Repository.Abstractions
+namespace MongoDB.Repository
 {
     public interface ISyncMongoDbRepository : IMongoDbRepository, IDisposable
     { }

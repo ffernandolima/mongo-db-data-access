@@ -19,13 +19,13 @@ namespace MongoDB.Generators
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntIdGeneratorBase"/> class.
+        /// Initializes a new instance of the <see cref="MongoDB.Generators.IntIdGeneratorBase{T}"/> class.
         /// </summary>
         /// <param name="idCollectionName">Identifier collection name.</param>
         protected IntIdGeneratorBase(string idCollectionName) => _idCollectionName = idCollectionName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntIdGeneratorBase"/> class.
+        /// Initializes a new instance of the <see cref="MongoDB.Generators.IntIdGeneratorBase{T}"/> class.
         /// </summary>
         protected IntIdGeneratorBase()
             : this("Ids")
@@ -58,7 +58,7 @@ namespace MongoDB.Generators
         /// <summary>
         /// Generates an Id for a document.
         /// </summary>
-        /// <param name="container">The container of the document (it will be an IMongoCollection<T> when called from the C# driver).</param>
+        /// <param name="container">The container of the document (it will be an <see cref="MongoDB.Driver.IMongoCollection{T}"/> when called from the C# driver).</param>
         /// <param name="document">The document.</param>
         /// <returns>An Id.</returns>
         public object GenerateId(object container, object document)

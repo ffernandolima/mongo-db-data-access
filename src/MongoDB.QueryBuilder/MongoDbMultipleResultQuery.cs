@@ -1,6 +1,4 @@
-﻿using MongoDB.QueryBuilder.Abstractions;
-
-namespace MongoDB.QueryBuilder
+﻿namespace MongoDB.QueryBuilder
 {
     public class MongoDbMultipleResultQuery<T> : MongoDbQuery<T>, IMongoDbMultipleResultQuery<T> where T : class
     {

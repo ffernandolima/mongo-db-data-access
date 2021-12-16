@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MongoDB.Repository.Abstractions
+namespace MongoDB.Repository
 {
     public interface IMongoDbRepository : IDisposable
     { }

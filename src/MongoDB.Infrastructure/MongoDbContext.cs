@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using MongoDB.Infrastructure.Abstractions;
 using MongoDB.Infrastructure.Internal;
 using System;
 using System.Collections.Generic;

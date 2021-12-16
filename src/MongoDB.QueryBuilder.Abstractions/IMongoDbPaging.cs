@@ -1,5 +1,5 @@
 ﻿
-namespace MongoDB.QueryBuilder.Abstractions
+namespace MongoDB.QueryBuilder
 {
     public interface IMongoDbPaging
     {

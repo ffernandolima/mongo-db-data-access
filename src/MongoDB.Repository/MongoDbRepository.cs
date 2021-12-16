@@ -1,9 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using MongoDB.QueryBuilder;
-using MongoDB.QueryBuilder.Abstractions;
-using MongoDB.Repository.Abstractions;
 using MongoDB.Repository.Extensions;
 using MongoDB.Repository.Internal;
 using System;

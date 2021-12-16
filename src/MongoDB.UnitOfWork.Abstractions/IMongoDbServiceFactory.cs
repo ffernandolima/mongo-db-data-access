@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MongoDB.UnitOfWork.Abstractions
+namespace MongoDB.UnitOfWork
 {
     public interface IMongoDbServiceFactory : IDisposable
     {

@@ -1,5 +1,4 @@
-﻿using MongoDB.QueryBuilder.Abstractions;
-using System;
+﻿using System;
 using System.Linq.Expressions;
 
 namespace MongoDB.QueryBuilder.Internal

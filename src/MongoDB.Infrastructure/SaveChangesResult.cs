@@ -1,5 +1,4 @@
-﻿using MongoDB.Infrastructure.Abstractions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MongoDB.Infrastructure
 {

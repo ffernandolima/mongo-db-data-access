@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MongoDB.UnitOfWork.Abstractions;
 using System;
 
 namespace MongoDB.UnitOfWork

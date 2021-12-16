@@ -1,7 +1,7 @@
-﻿using MongoDB.Infrastructure.Abstractions;
-using MongoDB.Repository.Abstractions;
+﻿using MongoDB.Infrastructure;
+using MongoDB.Repository;
 
-namespace MongoDB.UnitOfWork.Abstractions
+namespace MongoDB.UnitOfWork
 {
     public interface IMongoDbRepositoryFactory
     {

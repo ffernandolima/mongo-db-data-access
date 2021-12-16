@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MongoDB.Repository.Abstractions;
 using MongoDB.Repository.Internal;
 using System;
 

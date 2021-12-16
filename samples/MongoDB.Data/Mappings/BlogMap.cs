@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using MongoDB.Generators;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using MongoDB.Models;
 
 namespace MongoDB.Data.Mappings

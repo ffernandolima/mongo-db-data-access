@@ -1,8 +1,6 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using MongoDB.Repository;
-using MongoDB.Repository.Abstractions;
-using MongoDB.UnitOfWork.Abstractions;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;

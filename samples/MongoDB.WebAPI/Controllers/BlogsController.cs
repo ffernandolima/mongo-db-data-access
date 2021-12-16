@@ -2,7 +2,7 @@
 using MongoDB.Data.Repositories.Interfaces;
 using MongoDB.Models;
 using MongoDB.Repository.Extensions;
-using MongoDB.UnitOfWork.Abstractions;
+using MongoDB.UnitOfWork;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;

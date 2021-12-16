@@ -1,9 +1,9 @@
-﻿using MongoDB.Infrastructure.Abstractions;
+﻿using MongoDB.Infrastructure;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.UnitOfWork.Abstractions
+namespace MongoDB.UnitOfWork
 {
     public interface IAsyncMongoDbUnitOfWork : IMongoDbRepositoryFactory, IDisposable
     {

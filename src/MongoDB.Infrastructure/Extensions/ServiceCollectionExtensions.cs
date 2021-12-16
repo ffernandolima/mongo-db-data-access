@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
-using MongoDB.Infrastructure.Abstractions;
 using System;
 
 namespace MongoDB.Infrastructure.Extensions

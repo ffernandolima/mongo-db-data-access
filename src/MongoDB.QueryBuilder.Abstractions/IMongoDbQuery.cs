@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace MongoDB.QueryBuilder.Abstractions
+namespace MongoDB.QueryBuilder
 {
     public interface IMongoDbQuery
     { }

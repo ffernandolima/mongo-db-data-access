@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.Infrastructure.Abstractions
+namespace MongoDB.Infrastructure
 {
     public interface IAsyncMongoDbContext : IDisposable
     {

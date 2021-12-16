@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Infrastructure.Abstractions;
+using MongoDB.Infrastructure;
 using System;
 
-namespace MongoDB.UnitOfWork.Abstractions
+namespace MongoDB.UnitOfWork
 {
     public interface ISyncMongoDbUnitOfWork : IMongoDbRepositoryFactory, IDisposable
     {

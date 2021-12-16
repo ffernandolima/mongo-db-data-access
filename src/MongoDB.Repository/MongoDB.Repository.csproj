@@ -2,6 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>MongoDB.Repository</AssemblyName>
+    <PackageId>MongoDB.Data.Repository</PackageId>
+    <Authors>Lima Technology Services;Fernando Luiz de Lima</Authors>
+    <Copyright>Copyright © Lima Technology Services;Fernando Luiz de Lima</Copyright>
+    <Description>Provides the Repository pattern for MongoDB.Driver.</Description>
+    <PackageProjectUrl>https://github.com/ffernandolima/mongo-db-data-access</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ffernandolima/mongo-db-data-access</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>MongoDB;Mongo DB;mongo-db;Data;Repository</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Version>1.0.0</Version>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

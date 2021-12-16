@@ -1,12 +1,12 @@
 ﻿using MongoDB.Driver;
-using MongoDB.QueryBuilder.Abstractions;
+using MongoDB.QueryBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.Repository.Abstractions
+namespace MongoDB.Repository
 {
     public interface IAsyncMongoDbRepository : IMongoDbRepository, IDisposable
     { }

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using System;
 
-namespace MongoDB.Infrastructure.Abstractions
+namespace MongoDB.Infrastructure
 {
     public interface ISyncMongoDbContext : IDisposable
     {

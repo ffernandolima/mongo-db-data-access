@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MongoDB.Infrastructure;
-using MongoDB.Infrastructure.Abstractions;
 using MongoDB.Infrastructure.Extensions;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.Tests.Stubs;

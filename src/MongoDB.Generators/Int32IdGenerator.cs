@@ -16,7 +16,7 @@ namespace MongoDB.Generators
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Int32IdGenerator"/> class.
+        /// Initializes a new instance of the <see cref="MongoDB.Generators.Int32IdGenerator{T}"/> class.
         /// </summary>
         /// <param name="idCollectionName">Identifier collection name.</param>
         public Int32IdGenerator(string idCollectionName)
@@ -24,7 +24,7 @@ namespace MongoDB.Generators
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Int32IdGenerator"/> class.
+        /// Initializes a new instance of the <see cref="MongoDB.Generators.Int32IdGenerator{T}"/> class.
         /// </summary>
         public Int32IdGenerator()
             : base("IdInt32")

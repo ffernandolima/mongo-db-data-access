@@ -1,5 +1,5 @@
 ﻿using MongoDB.Models;
-using MongoDB.Repository.Abstractions;
+using MongoDB.Repository;
 using System.Collections.Generic;
 
 namespace MongoDB.Data.Repositories.Interfaces

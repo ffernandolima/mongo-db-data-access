@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MongoDB.Infrastructure.Abstractions
+namespace MongoDB.Infrastructure
 {
     public interface ISaveChangesResult
     {
