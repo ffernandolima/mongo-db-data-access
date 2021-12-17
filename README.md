@@ -226,7 +226,7 @@ public void AddBlog()
 {
     var repository = _unitOfWork.Repository<Blog>();
 
-    var blog = repository.InsertOne(Seeder.SeedBlog(51));
+    repository.InsertOne(Seeder.SeedBlog(51));
 
     _unitOfWork.SaveChanges();
 }
@@ -235,7 +235,7 @@ public void UpdateBlog()
 {
     var repository = _unitOfWork.Repository<Blog>();
 
-    var blog = repository.ReplaceOne(model);
+    repository.ReplaceOne(x => x.Id == id, model);
 
     _unitOfWork.SaveChanges();
 }
