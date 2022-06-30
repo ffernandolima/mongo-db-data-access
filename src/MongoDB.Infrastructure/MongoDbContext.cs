@@ -44,6 +44,8 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentException(nameof(databaseName));
             }
 
+            clientSettings.AddDiagnostics();
+
             _commands = new List<object>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
@@ -61,8 +63,10 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentException(nameof(databaseName));
             }
 
+            var clientSettings = MongoClientSettings.FromUrl(url).AddDiagnostics();
+
             _commands = new List<object>();
-            _client = new MongoClient(url);
+            _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
         }
 
@@ -78,26 +82,11 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentException(nameof(databaseName));
             }
 
+            var clientSettings = MongoClientSettings.FromConnectionString(connectionString).AddDiagnostics();
+
             _commands = new List<object>();
-            _client = new MongoClient(connectionString);
+            _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
-        }
-
-        public MongoDbContext(IMongoClient client, IMongoDatabase database)
-        {
-            if (client == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-
-            if (client is not MongoClient clientImpl)
-            {
-                throw new InvalidCastException($"{nameof(client)} should be of type '{nameof(MongoClient)}'.");
-            }
-
-            _commands = new List<object>();
-            _client = clientImpl;
-            Database = database ?? throw new ArgumentNullException(nameof(database));
         }
 
         public MongoDbContext(IConfiguration configuration)
@@ -115,6 +104,8 @@ namespace MongoDB.Infrastructure
             {
                 throw new ArgumentNullException(nameof(clientSettings));
             }
+
+            clientSettings.AddDiagnostics();
 
             _client = new MongoClient(clientSettings);
 
