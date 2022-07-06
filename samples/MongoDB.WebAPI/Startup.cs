@@ -91,7 +91,7 @@ namespace MongoDB.WebAPI
                 var assemblyName = entryAssembly?.GetName();
                 var appName = assemblyName?.Name;
 
-                var filePath = Path.Combine(appPath, $"{appName ?? "EntityFrameworkCore.WebAPI"}.xml");
+                var filePath = Path.Combine(appPath, $"{appName ?? "MongoDB.WebAPI"}.xml");
 
                 options.IncludeXmlComments(filePath);
             });
