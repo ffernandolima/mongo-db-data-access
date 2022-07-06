@@ -157,28 +157,6 @@ namespace MongoDB.Infrastructure.Extensions
             return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { connectionString, databaseName, databaseSettings }, serviceLifetime);
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, IMongoClient client, IMongoDatabase database, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-           where TService : class, IMongoDbContext
-           where TImplementation : class, TService
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
-            }
-
-            if (client == null)
-            {
-                throw new ArgumentNullException(nameof(client));
-            }
-
-            if (database == null)
-            {
-                throw new ArgumentNullException(nameof(database));
-            }
-
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { client, database }, serviceLifetime);
-        }
-
         public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, IConfiguration configuration, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
           where TService : class, IMongoDbContext
           where TImplementation : class, TService
