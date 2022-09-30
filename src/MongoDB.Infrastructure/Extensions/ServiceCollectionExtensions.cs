@@ -8,7 +8,7 @@ namespace MongoDB.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, Func<IServiceProvider, TImplementation> implementationFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
@@ -22,10 +22,10 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentNullException(nameof(implementationFactory), $"{nameof(implementationFactory)} cannot be null.");
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, implementationFactory, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, implementationFactory);
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, MongoClientSettings clientSettings, string databaseName, MongoDatabaseSettings databaseSettings = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, MongoClientSettings clientSettings, string databaseName, MongoDatabaseSettings databaseSettings = null)
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
@@ -44,10 +44,10 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentException(nameof(databaseName));
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { clientSettings, databaseName, databaseSettings }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { clientSettings, databaseName, databaseSettings });
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, Action<MongoClientSettings> configureClientSettings, string databaseName, Action<MongoDatabaseSettings> configureDatabaseSettings = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, Action<MongoClientSettings> configureClientSettings, string databaseName, Action<MongoDatabaseSettings> configureDatabaseSettings = null)
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
@@ -79,10 +79,10 @@ namespace MongoDB.Infrastructure.Extensions
                 configureDatabaseSettings.Invoke(databaseSettings);
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { clientSettings, databaseName, databaseSettings }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { clientSettings, databaseName, databaseSettings });
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, MongoUrl url, string databaseName, MongoDatabaseSettings databaseSettings = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, MongoUrl url, string databaseName, MongoDatabaseSettings databaseSettings = null)
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
@@ -101,10 +101,10 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentException(nameof(databaseName));
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { url, databaseName, databaseSettings }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { url, databaseName, databaseSettings });
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, string connectionString, string databaseName, MongoDatabaseSettings databaseSettings = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, string connectionString, string databaseName, MongoDatabaseSettings databaseSettings = null)
            where TService : class, IMongoDbContext
            where TImplementation : class, TService
         {
@@ -123,10 +123,10 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentException(nameof(databaseName));
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { connectionString, databaseName, databaseSettings }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { connectionString, databaseName, databaseSettings });
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, string connectionString, string databaseName, Action<MongoDatabaseSettings> configureDatabaseSettings = null, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, string connectionString, string databaseName, Action<MongoDatabaseSettings> configureDatabaseSettings = null)
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
@@ -154,10 +154,10 @@ namespace MongoDB.Infrastructure.Extensions
                 configureDatabaseSettings.Invoke(databaseSettings);
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { connectionString, databaseName, databaseSettings }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { connectionString, databaseName, databaseSettings });
         }
 
-        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, IConfiguration configuration, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IServiceCollection AddMongoDbContext<TService, TImplementation>(this IServiceCollection services, IConfiguration configuration)
           where TService : class, IMongoDbContext
           where TImplementation : class, TService
         {
@@ -171,45 +171,22 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { configuration }, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, new object[] { configuration });
         }
 
-        private static IServiceCollection AddMongoDbContextInternal<TService, TImplementation>(IServiceCollection services, object[] parameters, ServiceLifetime serviceLifetime)
+        private static IServiceCollection AddMongoDbContextInternal<TService, TImplementation>(IServiceCollection services, object[] parameters)
             where TService : class
             where TImplementation : class, TService
         {
-            TImplementation ImplementationFactory(IServiceProvider provider) => ActivatorUtilities.CreateInstance<TImplementation>(provider, parameters);
-
-            return AddMongoDbContextInternal<TService, TImplementation>(services, ImplementationFactory, serviceLifetime);
+            return AddMongoDbContextInternal<TService, TImplementation>(services, provider => ActivatorUtilities.CreateInstance<TImplementation>(provider, parameters));
         }
 
-        private static IServiceCollection AddMongoDbContextInternal<TService, TImplementation>(IServiceCollection services, Func<IServiceProvider, TImplementation> implementationFactory, ServiceLifetime serviceLifetime)
+        private static IServiceCollection AddMongoDbContextInternal<TService, TImplementation>(IServiceCollection services, Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
             where TImplementation : class, TService
         {
-            switch (serviceLifetime)
-            {
-                case ServiceLifetime.Singleton:
-                    {
-                        services.TryAddSingleton<TService>(provider => implementationFactory(provider));
-                        services.TryAddSingleton(provider => implementationFactory(provider));
-                    }
-                    break;
-                case ServiceLifetime.Scoped:
-                    {
-                        services.TryAddScoped<TService>(provider => implementationFactory(provider));
-                        services.TryAddScoped(provider => implementationFactory(provider));
-                    }
-                    break;
-                case ServiceLifetime.Transient:
-                    {
-                        services.TryAddTransient<TService>(provider => implementationFactory(provider));
-                        services.TryAddTransient(provider => implementationFactory(provider));
-                    }
-                    break;
-                default:
-                    break;
-            }
+            services.TryAddSingleton<TService>(provider => implementationFactory(provider));
+            services.TryAddSingleton(provider => implementationFactory(provider));
 
             return services;
         }

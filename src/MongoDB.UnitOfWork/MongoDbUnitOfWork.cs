@@ -120,8 +120,6 @@ namespace MongoDB.UnitOfWork
             {
                 if (disposing)
                 {
-                    Context.Dispose();
-
                     foreach (var repository in _repositories.Values)
                     {
                         repository.Dispose();

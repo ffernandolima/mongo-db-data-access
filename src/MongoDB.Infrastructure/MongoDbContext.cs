@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure
 {
-    public class MongoDbContext : IMongoDbContext, IDisposable
+    public class MongoDbContext : IMongoDbContext
     {
         #region Private Fields
 
@@ -210,7 +210,7 @@ namespace MongoDB.Infrastructure
 
         public void StartTransaction(ClientSessionOptions sessionOptions = null, TransactionOptions transactionOptions = null)
         {
-            _ = StartSession(sessionOptions);
+            Session = StartSession(sessionOptions);
 
             Session.StartTransaction(transactionOptions);
         }
@@ -411,31 +411,5 @@ namespace MongoDB.Infrastructure
         }
 
         #endregion Private Methods
-
-        #region IDisposable Members
-
-        private bool _disposed;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    DiscardChanges();
-                    DisposeSession();
-                }
-            }
-
-            _disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion IDisposable Members
     }
 }

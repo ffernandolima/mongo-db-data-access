@@ -3,7 +3,7 @@ using System;
 
 namespace MongoDB.Infrastructure
 {
-    public interface ISyncMongoDbContext : IDisposable
+    public interface ISyncMongoDbContext
     {
         ISaveChangesResult SaveChanges();
         bool HasChanges();

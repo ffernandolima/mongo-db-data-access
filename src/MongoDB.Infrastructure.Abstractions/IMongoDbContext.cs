@@ -1,9 +1,8 @@
 ﻿using MongoDB.Driver;
-using System;
 
 namespace MongoDB.Infrastructure
 {
-    public interface IMongoDbContext : ISyncMongoDbContext, IAsyncMongoDbContext, IDisposable
+    public interface IMongoDbContext : ISyncMongoDbContext, IAsyncMongoDbContext
     {
         IMongoClient Client { get; }
         IMongoDatabase Database { get; }
