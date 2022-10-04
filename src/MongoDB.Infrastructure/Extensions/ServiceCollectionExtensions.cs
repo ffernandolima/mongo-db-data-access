@@ -12,12 +12,12 @@ namespace MongoDB.Infrastructure.Extensions
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
 
-            if (implementationFactory == null)
+            if (implementationFactory is null)
             {
                 throw new ArgumentNullException(nameof(implementationFactory), $"{nameof(implementationFactory)} cannot be null.");
             }
@@ -29,12 +29,12 @@ namespace MongoDB.Infrastructure.Extensions
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
 
-            if (clientSettings == null)
+            if (clientSettings is null)
             {
                 throw new ArgumentNullException(nameof(clientSettings));
             }
@@ -51,12 +51,12 @@ namespace MongoDB.Infrastructure.Extensions
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
 
-            if (configureClientSettings == null)
+            if (configureClientSettings is null)
             {
                 throw new ArgumentNullException(nameof(configureClientSettings));
             }
@@ -72,7 +72,7 @@ namespace MongoDB.Infrastructure.Extensions
 
             MongoDatabaseSettings databaseSettings = null;
 
-            if (configureDatabaseSettings != null)
+            if (configureDatabaseSettings is not null)
             {
                 databaseSettings = new MongoDatabaseSettings();
 
@@ -86,12 +86,12 @@ namespace MongoDB.Infrastructure.Extensions
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
 
-            if (url == null)
+            if (url is null)
             {
                 throw new ArgumentNullException(nameof(url));
             }
@@ -108,7 +108,7 @@ namespace MongoDB.Infrastructure.Extensions
            where TService : class, IMongoDbContext
            where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
@@ -130,7 +130,7 @@ namespace MongoDB.Infrastructure.Extensions
             where TService : class, IMongoDbContext
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
@@ -147,7 +147,7 @@ namespace MongoDB.Infrastructure.Extensions
 
             MongoDatabaseSettings databaseSettings = null;
 
-            if (configureDatabaseSettings != null)
+            if (configureDatabaseSettings is not null)
             {
                 databaseSettings = new MongoDatabaseSettings();
 
@@ -161,12 +161,12 @@ namespace MongoDB.Infrastructure.Extensions
           where TService : class, IMongoDbContext
           where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
 
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }

@@ -9,7 +9,7 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
     {
         public static IServiceCollection AddMongoDbUnitOfWork(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
@@ -47,7 +47,7 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
         public static IServiceCollection AddMongoDbUnitOfWork<T>(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where T : class, IMongoDbContext
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }

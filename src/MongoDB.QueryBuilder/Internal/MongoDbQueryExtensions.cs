@@ -23,12 +23,12 @@ namespace MongoDB.QueryBuilder.Internal
                 };
             }
 
-            if (destinationQuery != null)
+            if (destinationQuery is not null)
             {
                 destinationQuery.Predicate = sourceQuery.Predicate;
                 destinationQuery.Sortings = sourceQuery.Sortings;
 
-                if (selector != null)
+                if (selector is not null)
                 {
                     destinationQuery.Selector = selector;
                 }

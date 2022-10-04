@@ -23,7 +23,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T> AndFilter(Expression<Func<T, bool>> predicate)
         {
-            if (predicate != null)
+            if (predicate is not null)
             {
                 Predicate = Predicate.And(predicate);
             }
@@ -33,7 +33,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T> OrFilter(Expression<Func<T, bool>> predicate)
         {
-            if (predicate != null)
+            if (predicate is not null)
             {
                 Predicate = Predicate.Or(predicate);
             }
@@ -43,7 +43,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T> OrderBy(Expression<Func<T, object>> keySelector)
         {
-            if (keySelector != null)
+            if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
@@ -79,7 +79,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T> OrderByDescending(Expression<Func<T, object>> keySelector)
         {
-            if (keySelector != null)
+            if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
@@ -115,7 +115,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T> Select(Expression<Func<T, T>> selector)
         {
-            if (selector != null)
+            if (selector is not null)
             {
                 Selector = selector;
             }
@@ -145,7 +145,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T, TResult> AndFilter(Expression<Func<T, bool>> predicate)
         {
-            if (predicate != null)
+            if (predicate is not null)
             {
                 Predicate = Predicate.And(predicate);
             }
@@ -155,7 +155,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T, TResult> OrFilter(Expression<Func<T, bool>> predicate)
         {
-            if (predicate != null)
+            if (predicate is not null)
             {
                 Predicate = Predicate.Or(predicate);
             }
@@ -165,7 +165,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T, TResult> OrderBy(Expression<Func<T, object>> keySelector)
         {
-            if (keySelector != null)
+            if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
@@ -201,7 +201,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T, TResult> OrderByDescending(Expression<Func<T, object>> keySelector)
         {
-            if (keySelector != null)
+            if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
@@ -237,7 +237,7 @@ namespace MongoDB.QueryBuilder
 
         public IMongoDbQuery<T, TResult> Select(Expression<Func<T, TResult>> selector)
         {
-            if (selector != null)
+            if (selector is not null)
             {
                 Selector = selector;
             }

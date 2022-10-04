@@ -8,12 +8,12 @@ namespace MongoDB.Infrastructure.Internal
     {
         public static Type[] Scan(Assembly targetAssembly, Func<Type, bool> scanFilter)
         {
-            if (targetAssembly == null)
+            if (targetAssembly is null)
             {
                 throw new ArgumentNullException(nameof(targetAssembly));
             }
 
-            if (scanFilter == null)
+            if (scanFilter is null)
             {
                 throw new ArgumentNullException(nameof(scanFilter));
             }

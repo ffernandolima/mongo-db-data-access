@@ -46,7 +46,7 @@ namespace MongoDB.Repository
 
         public virtual IList<T> Search(IMongoDbQuery<T> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -60,12 +60,12 @@ namespace MongoDB.Repository
 
         public virtual IList<TResult> Search<TResult>(IMongoDbQuery<T, TResult> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -79,7 +79,7 @@ namespace MongoDB.Repository
 
         public virtual T SingleOrDefault(IMongoDbQuery<T> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -93,12 +93,12 @@ namespace MongoDB.Repository
 
         public virtual TResult SingleOrDefault<TResult>(IMongoDbQuery<T, TResult> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -112,7 +112,7 @@ namespace MongoDB.Repository
 
         public virtual T FirstOrDefault(IMongoDbQuery<T> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -126,12 +126,12 @@ namespace MongoDB.Repository
 
         public virtual TResult FirstOrDefault<TResult>(IMongoDbQuery<T, TResult> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -145,7 +145,7 @@ namespace MongoDB.Repository
 
         public virtual T LastOrDefault(IMongoDbQuery<T> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -159,12 +159,12 @@ namespace MongoDB.Repository
 
         public virtual TResult LastOrDefault<TResult>(IMongoDbQuery<T, TResult> query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -180,7 +180,7 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Any() : queryable.Any(predicate);
+            var result = predicate is null ? queryable.Any() : queryable.Any(predicate);
 
             return result;
         }
@@ -189,7 +189,7 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Count() : queryable.Count(predicate);
+            var result = predicate is null ? queryable.Count() : queryable.Count(predicate);
 
             return result;
         }
@@ -198,77 +198,77 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.LongCount() : queryable.LongCount(predicate);
+            var result = predicate is null ? queryable.LongCount() : queryable.LongCount(predicate);
 
             return result;
         }
 
         public virtual TResult Max<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Max(selector) : queryable.Where(predicate).Max(selector);
+            var result = predicate is null ? queryable.Max(selector) : queryable.Where(predicate).Max(selector);
 
             return result;
         }
 
         public virtual TResult Min<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Min(selector) : queryable.Where(predicate).Min(selector);
+            var result = predicate is null ? queryable.Min(selector) : queryable.Where(predicate).Min(selector);
 
             return result;
         }
 
         public virtual decimal Average(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Average(selector) : queryable.Where(predicate).Average(selector);
+            var result = predicate is null ? queryable.Average(selector) : queryable.Where(predicate).Average(selector);
 
             return result;
         }
 
         public virtual decimal Sum(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.Sum(selector) : queryable.Where(predicate).Sum(selector);
+            var result = predicate is null ? queryable.Sum(selector) : queryable.Where(predicate).Sum(selector);
 
             return result;
         }
 
         public virtual object InsertOne(T entity, InsertOneOptions options = null)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
 
             bool DoInsertOne()
             {
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     Collection.InsertOne(Context.Session, entity, options);
                 }
@@ -292,14 +292,14 @@ namespace MongoDB.Repository
 
         public virtual object InsertMany(IEnumerable<T> entities, InsertManyOptions options = null)
         {
-            if (entities == null || !entities.Any())
+            if (entities is null || !entities.Any())
             {
                 throw new ArgumentException($"{nameof(entities)} cannot be null or empty.", nameof(entities));
             }
 
             bool DoInsertMany()
             {
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     Collection.InsertMany(Context.Session, entities, options);
                 }
@@ -323,17 +323,17 @@ namespace MongoDB.Repository
 
         public virtual object UpdateOne(Expression<Func<T, bool>> predicate, T entity, Expression<Func<T, object>>[] properties, UpdateOptions options = null)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
 
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
 
-            if (properties == null || !properties.Any())
+            if (properties is null || !properties.Any())
             {
                 throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
             }
@@ -346,7 +346,7 @@ namespace MongoDB.Repository
 
                 var value = compiled.Invoke(entity);
 
-                if (definition == null)
+                if (definition is null)
                 {
                     definition = Builders<T>.Update.Set(property, value);
                 }
@@ -360,7 +360,7 @@ namespace MongoDB.Repository
             {
                 UpdateResult result = null;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.UpdateOne(Context.Session, predicate, definition, options);
                 }
@@ -384,12 +384,12 @@ namespace MongoDB.Repository
 
         public virtual object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
 
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
@@ -398,7 +398,7 @@ namespace MongoDB.Repository
             {
                 ReplaceOneResult result = null;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.ReplaceOne(Context.Session, predicate, entity, options);
                 }
@@ -422,7 +422,7 @@ namespace MongoDB.Repository
 
         public virtual object DeleteOne(Expression<Func<T, bool>> predicate, DeleteOptions options = null)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
@@ -431,7 +431,7 @@ namespace MongoDB.Repository
             {
                 DeleteResult result = null;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.DeleteOne(Context.Session, predicate, options);
                 }
@@ -455,7 +455,7 @@ namespace MongoDB.Repository
 
         public virtual object DeleteMany(Expression<Func<T, bool>> predicate, DeleteOptions options = null)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
@@ -464,7 +464,7 @@ namespace MongoDB.Repository
             {
                 DeleteResult result = null;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.DeleteMany(Context.Session, predicate, options);
                 }
@@ -492,7 +492,7 @@ namespace MongoDB.Repository
 
         public virtual Task<IList<T>> SearchAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -506,12 +506,12 @@ namespace MongoDB.Repository
 
         public virtual Task<IList<TResult>> SearchAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -525,7 +525,7 @@ namespace MongoDB.Repository
 
         public virtual Task<T> SingleOrDefaultAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -539,12 +539,12 @@ namespace MongoDB.Repository
 
         public virtual Task<TResult> SingleOrDefaultAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -558,7 +558,7 @@ namespace MongoDB.Repository
 
         public virtual Task<T> FirstOrDefaultAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
@@ -572,12 +572,12 @@ namespace MongoDB.Repository
 
         public virtual Task<TResult> FirstOrDefaultAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new ArgumentNullException(nameof(query), $"{nameof(query)} cannot be null.");
             }
 
-            if (query.Selector == null)
+            if (query.Selector is null)
             {
                 throw new ArgumentNullException(nameof(query.Selector), $"{nameof(query.Selector)} cannot be null.");
             }
@@ -593,7 +593,7 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.AnyAsync(cancellationToken) : queryable.AnyAsync(predicate, cancellationToken);
+            var result = predicate is null ? queryable.AnyAsync(cancellationToken) : queryable.AnyAsync(predicate, cancellationToken);
 
             return result;
         }
@@ -602,7 +602,7 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.CountAsync(cancellationToken) : queryable.CountAsync(predicate, cancellationToken);
+            var result = predicate is null ? queryable.CountAsync(cancellationToken) : queryable.CountAsync(predicate, cancellationToken);
 
             return result;
         }
@@ -611,70 +611,70 @@ namespace MongoDB.Repository
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.LongCountAsync(cancellationToken) : queryable.LongCountAsync(predicate, cancellationToken);
+            var result = predicate is null ? queryable.LongCountAsync(cancellationToken) : queryable.LongCountAsync(predicate, cancellationToken);
 
             return result;
         }
 
         public virtual Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.MaxAsync(selector, cancellationToken) : queryable.Where(predicate).MaxAsync(selector, cancellationToken);
+            var result = predicate is null ? queryable.MaxAsync(selector, cancellationToken) : queryable.Where(predicate).MaxAsync(selector, cancellationToken);
 
             return result;
         }
 
         public virtual Task<TResult> MinAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.MinAsync(selector, cancellationToken) : queryable.Where(predicate).MinAsync(selector, cancellationToken);
+            var result = predicate is null ? queryable.MinAsync(selector, cancellationToken) : queryable.Where(predicate).MinAsync(selector, cancellationToken);
 
             return result;
         }
 
         public virtual Task<decimal> AverageAsync(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.AverageAsync(selector, cancellationToken) : queryable.Where(predicate).AverageAsync(selector, cancellationToken);
+            var result = predicate is null ? queryable.AverageAsync(selector, cancellationToken) : queryable.Where(predicate).AverageAsync(selector, cancellationToken);
 
             return result;
         }
 
         public virtual Task<decimal> SumAsync(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
-            if (selector == null)
+            if (selector is null)
             {
                 throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
             }
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate == null ? queryable.SumAsync(selector, cancellationToken) : queryable.Where(predicate).SumAsync(selector, cancellationToken);
+            var result = predicate is null ? queryable.SumAsync(selector, cancellationToken) : queryable.Where(predicate).SumAsync(selector, cancellationToken);
 
             return result;
         }
 
         public virtual Task<object> InsertOneAsync(T entity, InsertOneOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
@@ -683,7 +683,7 @@ namespace MongoDB.Repository
             {
                 Task result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.InsertOneAsync(Context.Session, entity, options, cancellationToken);
                 }
@@ -707,7 +707,7 @@ namespace MongoDB.Repository
 
         public virtual Task<object> InsertManyAsync(IEnumerable<T> entities, InsertManyOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (entities == null || !entities.Any())
+            if (entities is null || !entities.Any())
             {
                 throw new ArgumentException($"{nameof(entities)} cannot be null or empty.", nameof(entities));
             }
@@ -716,7 +716,7 @@ namespace MongoDB.Repository
             {
                 Task result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.InsertManyAsync(Context.Session, entities, options, cancellationToken);
                 }
@@ -740,17 +740,17 @@ namespace MongoDB.Repository
 
         public virtual Task<object> UpdateOneAsync(Expression<Func<T, bool>> predicate, T entity, Expression<Func<T, object>>[] properties, UpdateOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
 
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
 
-            if (properties == null || !properties.Any())
+            if (properties is null || !properties.Any())
             {
                 throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
             }
@@ -763,7 +763,7 @@ namespace MongoDB.Repository
 
                 var value = compiled.Invoke(entity);
 
-                if (definition == null)
+                if (definition is null)
                 {
                     definition = Builders<T>.Update.Set(property, value);
                 }
@@ -777,7 +777,7 @@ namespace MongoDB.Repository
             {
                 Task<UpdateResult> result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.UpdateOneAsync(Context.Session, predicate, definition, options, cancellationToken);
                 }
@@ -801,12 +801,12 @@ namespace MongoDB.Repository
 
         public virtual Task<object> ReplaceOneAsync(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
 
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity), $"{nameof(entity)} cannot be null.");
             }
@@ -815,7 +815,7 @@ namespace MongoDB.Repository
             {
                 Task<ReplaceOneResult> result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.ReplaceOneAsync(Context.Session, predicate, entity, options, cancellationToken);
                 }
@@ -839,7 +839,7 @@ namespace MongoDB.Repository
 
         public virtual Task<object> DeleteOneAsync(Expression<Func<T, bool>> predicate, DeleteOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
@@ -848,7 +848,7 @@ namespace MongoDB.Repository
             {
                 Task<DeleteResult> result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.DeleteOneAsync(Context.Session, predicate, options, cancellationToken);
                 }
@@ -872,7 +872,7 @@ namespace MongoDB.Repository
 
         public virtual Task<object> DeleteManyAsync(Expression<Func<T, bool>> predicate, DeleteOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
             }
@@ -881,7 +881,7 @@ namespace MongoDB.Repository
             {
                 Task<DeleteResult> result;
 
-                if (Context.Session != null)
+                if (Context.Session is not null)
                 {
                     result = Collection.DeleteManyAsync(Context.Session, predicate, options, cancellationToken);
                 }
@@ -918,7 +918,7 @@ namespace MongoDB.Repository
 
             IQueryable<T> queryable = Collection.AsQueryable();
 
-            if (query.Predicate != null)
+            if (query.Predicate is not null)
             {
                 queryable = queryable.Filter(query.Predicate);
             }
@@ -928,16 +928,16 @@ namespace MongoDB.Repository
                 queryable = queryable.Sort(query.Sortings);
             }
 
-            if (multipleResultQuery != null && multipleResultQuery.Topping.IsEnabled)
+            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
             {
                 queryable = queryable.Top(multipleResultQuery.Topping);
             }
 
-            if (multipleResultQuery != null && multipleResultQuery.Paging.IsEnabled)
+            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
             {
                 IQueryable<T> countQueryable = Collection.AsQueryable();
 
-                if (multipleResultQuery.Predicate != null)
+                if (multipleResultQuery.Predicate is not null)
                 {
                     countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
                 }
@@ -950,7 +950,7 @@ namespace MongoDB.Repository
                 queryable = queryable.Page(multipleResultQuery.Paging);
             }
 
-            if (query.Selector != null)
+            if (query.Selector is not null)
             {
                 queryable = queryable.Select(query.Selector);
             }
@@ -969,7 +969,7 @@ namespace MongoDB.Repository
 
             IQueryable<T> queryable = Collection.AsQueryable();
 
-            if (query.Predicate != null)
+            if (query.Predicate is not null)
             {
                 queryable = queryable.Filter(query.Predicate);
             }
@@ -979,16 +979,16 @@ namespace MongoDB.Repository
                 queryable = queryable.Sort(query.Sortings);
             }
 
-            if (multipleResultQuery != null && multipleResultQuery.Topping.IsEnabled)
+            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
             {
                 queryable = queryable.Top(multipleResultQuery.Topping);
             }
 
-            if (multipleResultQuery != null && multipleResultQuery.Paging.IsEnabled)
+            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
             {
                 IQueryable<T> countQueryable = Collection.AsQueryable();
 
-                if (multipleResultQuery.Predicate != null)
+                if (multipleResultQuery.Predicate is not null)
                 {
                     countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
                 }

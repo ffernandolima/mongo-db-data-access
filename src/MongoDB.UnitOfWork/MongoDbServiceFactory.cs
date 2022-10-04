@@ -9,7 +9,7 @@ namespace MongoDB.UnitOfWork
 
         public MongoDbServiceFactory(IServiceScopeFactory serviceScopeFactory)
         {
-            if (serviceScopeFactory == null)
+            if (serviceScopeFactory is null)
             {
                 throw new ArgumentNullException(nameof(serviceScopeFactory));
             }

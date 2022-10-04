@@ -11,7 +11,7 @@ namespace MongoDB.Repository.Internal
     {
         public static IQueryable<T> Filter<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate) where T : class
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 return source;
             }
@@ -50,7 +50,7 @@ namespace MongoDB.Repository.Internal
 
             var orderedQueryable = false;
 
-            foreach (var sorting in sortings.Where(s => s != null))
+            foreach (var sorting in sortings.Where(s => s is not null))
             {
                 if (sorting.SortDirection == MongoDbSortDirection.Ascending)
                 {
@@ -65,7 +65,7 @@ namespace MongoDB.Repository.Internal
                                 orderedQueryable = true;
                             }
                         }
-                        else if (sorting.KeySelector != null)
+                        else if (sorting.KeySelector is not null)
                         {
                             source = source.OrderBy(sorting.KeySelector);
 
@@ -78,7 +78,7 @@ namespace MongoDB.Repository.Internal
                         {
                             source = ((IOrderedQueryable<T>)source).ThenBy(sorting.FieldName, out _);
                         }
-                        else if (sorting.KeySelector != null)
+                        else if (sorting.KeySelector is not null)
                         {
                             source = ((IOrderedQueryable<T>)source).ThenBy(sorting.KeySelector);
                         }
@@ -97,7 +97,7 @@ namespace MongoDB.Repository.Internal
                                 orderedQueryable = true;
                             }
                         }
-                        else if (sorting.KeySelector != null)
+                        else if (sorting.KeySelector is not null)
                         {
                             source = source.OrderByDescending(sorting.KeySelector);
 
@@ -110,7 +110,7 @@ namespace MongoDB.Repository.Internal
                         {
                             source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.FieldName, out _);
                         }
-                        else if (sorting.KeySelector != null)
+                        else if (sorting.KeySelector is not null)
                         {
                             source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.KeySelector);
                         }
@@ -125,7 +125,7 @@ namespace MongoDB.Repository.Internal
         {
             var expression = GenerateMethodCall(source, nameof(OrderBy), fieldName, out success);
 
-            var queryable = (expression == null ? source : source.Provider.CreateQuery<T>(expression)) as IOrderedQueryable<T>;
+            var queryable = (expression is null ? source : source.Provider.CreateQuery<T>(expression)) as IOrderedQueryable<T>;
 
             return queryable;
         }
@@ -134,7 +134,7 @@ namespace MongoDB.Repository.Internal
         {
             var expression = GenerateMethodCall(source, nameof(OrderByDescending), fieldName, out success);
 
-            var queryable = (expression == null ? source : source.Provider.CreateQuery<T>(expression)) as IOrderedQueryable<T>;
+            var queryable = (expression is null ? source : source.Provider.CreateQuery<T>(expression)) as IOrderedQueryable<T>;
 
             return queryable;
         }
@@ -143,7 +143,7 @@ namespace MongoDB.Repository.Internal
         {
             var expression = GenerateMethodCall(source, nameof(ThenBy), fieldName, out success);
 
-            var queryable = expression == null ? source : source.Provider.CreateQuery<T>(expression) as IOrderedQueryable<T>;
+            var queryable = expression is null ? source : source.Provider.CreateQuery<T>(expression) as IOrderedQueryable<T>;
 
             return queryable;
         }
@@ -152,7 +152,7 @@ namespace MongoDB.Repository.Internal
         {
             var expression = GenerateMethodCall(source, nameof(ThenByDescending), fieldName, out success);
 
-            var queryable = expression == null ? source : source.Provider.CreateQuery<T>(expression) as IOrderedQueryable<T>;
+            var queryable = expression is null ? source : source.Provider.CreateQuery<T>(expression) as IOrderedQueryable<T>;
 
             return queryable;
         }
@@ -167,7 +167,7 @@ namespace MongoDB.Repository.Internal
 
                 var selector = Expression.Lambda(body, parameter);
 
-                if (success = selector != null)
+                if (success = selector is not null)
                 {
                     var expression = Expression.Call(typeof(Queryable), methodName, new[] { typeof(T), body.Type }, source.Expression, selector);
 

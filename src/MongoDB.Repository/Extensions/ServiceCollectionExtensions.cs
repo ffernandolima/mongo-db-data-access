@@ -11,7 +11,7 @@ namespace MongoDB.Repository.Extensions
             where TService : class, IMongoDbRepository
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }
@@ -49,7 +49,7 @@ namespace MongoDB.Repository.Extensions
             where TService : class, IMongoDbRepository
             where TImplementation : class, TService
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services), $"{nameof(services)} cannot be null.");
             }

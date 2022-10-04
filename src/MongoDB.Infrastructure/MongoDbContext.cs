@@ -36,7 +36,7 @@ namespace MongoDB.Infrastructure
 
         public MongoDbContext(MongoClientSettings clientSettings, string databaseName, MongoDatabaseSettings databaseSettings = null)
         {
-            if (clientSettings == null)
+            if (clientSettings is null)
             {
                 throw new ArgumentNullException(nameof(clientSettings));
             }
@@ -56,7 +56,7 @@ namespace MongoDB.Infrastructure
 
         public MongoDbContext(MongoUrl url, string databaseName, MongoDatabaseSettings databaseSettings = null)
         {
-            if (url == null)
+            if (url is null)
             {
                 throw new ArgumentNullException(nameof(url));
             }
@@ -96,7 +96,7 @@ namespace MongoDB.Infrastructure
 
         public MongoDbContext(IConfiguration configuration)
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
@@ -106,7 +106,7 @@ namespace MongoDB.Infrastructure
 
             var clientSettings = configuration.GetSection("MongoSettings:MongoClientSettings")?.Get<MongoClientSettings>();
 
-            if (clientSettings == null)
+            if (clientSettings is null)
             {
                 throw new ArgumentNullException(nameof(clientSettings));
             }
@@ -175,7 +175,7 @@ namespace MongoDB.Infrastructure
 
         public object AddCommand(Func<object> command)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
@@ -224,7 +224,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session == null)
+                if (session is null)
                 {
                     throw new InvalidOperationException("There's no active session.");
                 }
@@ -249,7 +249,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session != null)
+                if (session is not null)
                 {
                     session.AbortTransaction();
                 }
@@ -311,7 +311,7 @@ namespace MongoDB.Infrastructure
 
         public Task<object> AddCommandAsync(Func<Task<object>> command)
         {
-            if (command == null)
+            if (command is null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
@@ -334,7 +334,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session == null)
+                if (session is null)
                 {
                     throw new InvalidOperationException("There's no active session.");
                 }
@@ -359,7 +359,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session != null)
+                if (session is not null)
                 {
                     await session.AbortTransactionAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
                 }
@@ -380,7 +380,7 @@ namespace MongoDB.Infrastructure
 
         public static void ApplyConfigurationsFromAssembly(Assembly targetAssembly)
         {
-            if (targetAssembly == null)
+            if (targetAssembly is null)
             {
                 throw new ArgumentNullException(nameof(targetAssembly));
             }

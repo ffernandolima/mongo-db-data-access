@@ -7,7 +7,7 @@ namespace MongoDB.Infrastructure.Internal
     {
         public static MongoClientSettings AddDiagnostics(this MongoClientSettings settings)
         {
-            if (settings != null)
+            if (settings is not null)
             {
                 var options = new InstrumentationOptions { CaptureCommandText = true };
 

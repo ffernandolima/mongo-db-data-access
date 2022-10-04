@@ -63,7 +63,7 @@ namespace MongoDB.Generators
         /// <returns>An Id.</returns>
         public object GenerateId(object container, object document)
         {
-            if (container == null)
+            if (container is null)
             {
                 throw new ArgumentNullException(nameof(container));
             }

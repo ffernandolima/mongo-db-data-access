@@ -13,7 +13,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public static TResult RunSync<TResult>(Func<Task<TResult>> function)
         {
-            if (function == null)
+            if (function is null)
             {
                 throw new ArgumentNullException(nameof(function));
             }
@@ -37,7 +37,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public static void RunSync(Func<Task> function)
         {
-            if (function == null)
+            if (function is null)
             {
                 throw new ArgumentNullException(nameof(function));
             }
