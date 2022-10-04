@@ -66,6 +66,26 @@ namespace MongoDB.Tests.Implementation
             Assert.Equal(50, longCount);
         }
 
+        [Fact]
+        public async Task AddUnsuccessfulBlogWithinTransactionAsync()
+        {
+            var repository = _unitOfWork.Repository<Blog>();
+
+            var blog = Seeder.SeedBlog(51);
+
+            _unitOfWork.StartTransaction();
+
+            var insertOneResult = await repository.InsertOneAsync(blog).ConfigureAwait(continueOnCapturedContext: false);
+
+            var saveChangesResult = await _unitOfWork.SaveChangesAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork.AbortTransactionAsync().ConfigureAwait(continueOnCapturedContext: false);
+
+            var id = await repository.MaxAsync(x => x.Id).ConfigureAwait(continueOnCapturedContext: false);
+
+            Assert.Equal(50, id);
+        }
+
         private async Task SeedAsync()
         {
             var repository = _unitOfWork.Repository<Blog>();

@@ -16,7 +16,9 @@ namespace MongoDB.Infrastructure
 
         private readonly MongoClient _client;
         private readonly IList<object> _commands;
+        private readonly AsyncLocal<MongoDbSession> _session;
 
+        private static readonly object _sync = new();
         private static readonly object _emptyResult = new();
 
         #endregion Private Fields
@@ -25,7 +27,7 @@ namespace MongoDB.Infrastructure
 
         public IMongoClient Client => _client;
         public IMongoDatabase Database { get; private set; }
-        public IClientSessionHandle Session { get; private set; }
+        public IClientSessionHandle Session => GetSession();
         public bool AcceptAllChangesOnSave { get; protected set; } = true;
 
         #endregion IMongoDbContext Members
@@ -47,6 +49,7 @@ namespace MongoDB.Infrastructure
             clientSettings.AddDiagnostics();
 
             _commands = new List<object>();
+            _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
         }
@@ -66,6 +69,7 @@ namespace MongoDB.Infrastructure
             var clientSettings = MongoClientSettings.FromUrl(url).AddDiagnostics();
 
             _commands = new List<object>();
+            _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
         }
@@ -85,6 +89,7 @@ namespace MongoDB.Infrastructure
             var clientSettings = MongoClientSettings.FromConnectionString(connectionString).AddDiagnostics();
 
             _commands = new List<object>();
+            _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
         }
@@ -97,6 +102,7 @@ namespace MongoDB.Infrastructure
             }
 
             _commands = new List<object>();
+            _session = new AsyncLocal<MongoDbSession>();
 
             var clientSettings = configuration.GetSection("MongoSettings:MongoClientSettings")?.Get<MongoClientSettings>();
 
@@ -200,31 +206,30 @@ namespace MongoDB.Infrastructure
 
         public IClientSessionHandle StartSession(ClientSessionOptions options = null)
         {
-            if (Session != null)
-            {
-                throw new InvalidOperationException("There's already an active session.");
-            }
+            var session = GetSession() ?? CreateSession(options);
 
-            return Session = _client.StartSession(options);
+            return session;
         }
 
         public void StartTransaction(ClientSessionOptions sessionOptions = null, TransactionOptions transactionOptions = null)
         {
-            Session = StartSession(sessionOptions);
+            var session = StartSession(sessionOptions);
 
-            Session.StartTransaction(transactionOptions);
+            session.StartTransaction(transactionOptions);
         }
 
         public void CommitTransaction()
         {
             try
             {
-                if (Session == null)
+                var session = GetSession();
+
+                if (session == null)
                 {
                     throw new InvalidOperationException("There's no active session.");
                 }
 
-                Session.CommitTransaction();
+                session.CommitTransaction();
             }
             catch
             {
@@ -242,9 +247,11 @@ namespace MongoDB.Infrastructure
         {
             try
             {
-                if (Session != null)
+                var session = GetSession();
+
+                if (session != null)
                 {
-                    Session.AbortTransaction();
+                    session.AbortTransaction();
                 }
             }
             catch
@@ -316,24 +323,23 @@ namespace MongoDB.Infrastructure
 
         public async Task<IClientSessionHandle> StartSessionAsync(ClientSessionOptions options = null, CancellationToken cancellationToken = default)
         {
-            if (Session != null)
-            {
-                throw new InvalidOperationException("There's already an active session.");
-            }
+            var session = GetSession() ?? await CreateSessionAsync(options).ConfigureAwait(continueOnCapturedContext: false);
 
-            return Session = await _client.StartSessionAsync(options).ConfigureAwait(continueOnCapturedContext: false);
+            return session;
         }
 
         public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             try
             {
-                if (Session == null)
+                var session = GetSession();
+
+                if (session == null)
                 {
                     throw new InvalidOperationException("There's no active session.");
                 }
 
-                await Session.CommitTransactionAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                await session.CommitTransactionAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
             }
             catch
             {
@@ -351,9 +357,11 @@ namespace MongoDB.Infrastructure
         {
             try
             {
-                if (Session != null)
+                var session = GetSession();
+
+                if (session != null)
                 {
-                    await Session.AbortTransactionAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
+                    await session.AbortTransactionAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
                 }
             }
             catch
@@ -377,20 +385,23 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentNullException(nameof(targetAssembly));
             }
 
-            var configurationType = typeof(IMongoDbFluentConfiguration);
-
-            var configurationTypes = AssemblyScanner.Scan(
-                targetAssembly,
-                (Type scannedType) => configurationType.IsAssignableFrom(scannedType) && !scannedType.IsInterface && !scannedType.IsAbstract
-            );
-
-            if (configurationTypes?.Any() ?? false)
+            lock (_sync)
             {
-                foreach (var configurationTypeItem in configurationTypes)
-                {
-                    var configurationInstance = Activator.CreateInstance(configurationTypeItem) as IMongoDbFluentConfiguration;
+                var configurationType = typeof(IMongoDbFluentConfiguration);
 
-                    configurationInstance?.Configure();
+                var configurationTypes = AssemblyScanner.Scan(
+                    targetAssembly,
+                    (Type scannedType) => configurationType.IsAssignableFrom(scannedType) && !scannedType.IsInterface && !scannedType.IsAbstract
+                );
+
+                if (configurationTypes?.Any() ?? false)
+                {
+                    foreach (var configurationTypeItem in configurationTypes)
+                    {
+                        var configurationInstance = Activator.CreateInstance(configurationTypeItem) as IMongoDbFluentConfiguration;
+
+                        configurationInstance?.Configure();
+                    }
                 }
             }
         }
@@ -401,13 +412,35 @@ namespace MongoDB.Infrastructure
 
         private void ClearCommands() => _commands.Clear();
 
+        private IClientSessionHandle GetSession()
+        {
+            var session = _session.Value?.SessionHandle;
+
+            return session;
+        }
+
+        private IClientSessionHandle CreateSession(ClientSessionOptions options = null)
+        {
+            var session = _client.StartSession(options);
+
+            _session.Value = new MongoDbSession(session);
+
+            return session;
+        }
+
+        public async Task<IClientSessionHandle> CreateSessionAsync(ClientSessionOptions options = null, CancellationToken cancellationToken = default)
+        {
+            var session = await _client.StartSessionAsync(options).ConfigureAwait(continueOnCapturedContext: false);
+
+            _session.Value = new MongoDbSession(session);
+
+            return session;
+        }
+
         private void DisposeSession()
         {
-            if (Session != null)
-            {
-                Session.Dispose();
-                Session = null;
-            }
+            _session.Value?.SessionHandle.Dispose();
+            _session.Value = null;
         }
 
         #endregion Private Methods
