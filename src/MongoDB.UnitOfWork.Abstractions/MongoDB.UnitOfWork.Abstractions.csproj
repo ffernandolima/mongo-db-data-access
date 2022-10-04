@@ -17,7 +17,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>MongoDB;Mongo DB;mongo-db;Data;UnitOfWork;Unit Of Work;unit-of-work;Abstractions</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
