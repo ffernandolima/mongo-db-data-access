@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MongoDB.Infrastructure;
-using MongoDB.Infrastructure.Extensions;
+using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.Tests.Stubs;
 using System.Collections.Generic;
@@ -11,27 +10,14 @@ using Xunit;
 
 namespace MongoDB.Tests.Implementation
 {
-    public class Int64IdGeneratorTests : Startup
+    public class Int64IdGeneratorTests : InfrastructureTestsBase
     {
         private readonly IMongoDbContext _context;
 
-        public Int64IdGeneratorTests()
-            : base()
+        public Int64IdGeneratorTests(InfrastructureFixture infrastructureFixture)
+            : base(infrastructureFixture)
         {
             _context = ServiceProvider.GetRequiredService<IMongoDbContext>();
-        }
-
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMongoDbContext<IMongoDbContext, MongoDbContext>(provider =>
-            {
-                var connectionString = Configuration.GetValue<string>("MongoSettings:ConnectionString");
-                var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
-
-                var context = new MongoDbContext(connectionString, databaseName);
-
-                return context;
-            });
         }
 
         [Fact]

@@ -1,18 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Data;
-using MongoDB.Infrastructure;
-using MongoDB.Infrastructure.Extensions;
 using MongoDB.Models;
+using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
-using MongoDB.UnitOfWork.Abstractions.Extensions;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MongoDB.Tests.Implementation
 {
-    public class AsyncDataAccessTests : Startup
+    public class AsyncDataAccessTests : InfrastructureTestsBase
     {
         private readonly IMongoDbUnitOfWork _unitOfWork;
         private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWorkOfT;
@@ -20,36 +17,18 @@ namespace MongoDB.Tests.Implementation
         private readonly IMongoDbRepositoryFactory _repositoryFactory;
         private readonly IMongoDbRepositoryFactory<BloggingContext> _repositoryFactoryOfT;
 
-        public AsyncDataAccessTests()
-            : base()
+        public AsyncDataAccessTests(InfrastructureFixture infrastructureFixture)
+            : base(infrastructureFixture)
         {
             // IUnitOfWork used for reading/writing scenario;
-            _unitOfWork = ServiceProvider.GetService<IMongoDbUnitOfWork>();
+            _unitOfWork = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
             // IUnitOfWork<T> used for used for multiple databases scenario;
-            _unitOfWorkOfT = ServiceProvider.GetService<IMongoDbUnitOfWork<BloggingContext>>();
+            _unitOfWorkOfT = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
 
             // IRepositoryFactory used for readonly scenario;
-            _repositoryFactory = ServiceProvider.GetService<IMongoDbRepositoryFactory>();
+            _repositoryFactory = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory>();
             // IRepositoryFactory<T> used for readonly/multiple databases scenario;
-            _repositoryFactoryOfT = ServiceProvider.GetService<IMongoDbRepositoryFactory<BloggingContext>>();
-
-            _ = SeedAsync();
-        }
-
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(provider =>
-            {
-                var connectionString = Configuration.GetValue<string>("MongoSettings:ConnectionString");
-                var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
-
-                var bloggingContext = new BloggingContext(connectionString, databaseName);
-
-                return bloggingContext;
-            });
-
-            services.AddMongoDbUnitOfWork();
-            services.AddMongoDbUnitOfWork<BloggingContext>();
+            _repositoryFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory<BloggingContext>>();
         }
 
         [Fact]
@@ -84,20 +63,6 @@ namespace MongoDB.Tests.Implementation
             var id = await repository.MaxAsync(x => x.Id).ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, id);
-        }
-
-        private async Task SeedAsync()
-        {
-            var repository = _unitOfWork.Repository<Blog>();
-
-            if (!repository.Any())
-            {
-                var blogs = Seeder.SeedBlogs();
-
-                await repository.InsertManyAsync(blogs).ConfigureAwait(continueOnCapturedContext: false);
-
-                await _unitOfWork.SaveChangesAsync().ConfigureAwait(continueOnCapturedContext: false);
-            }
         }
     }
 }
