@@ -15,7 +15,7 @@ namespace MongoDB.Infrastructure
         #region Private Fields
 
         private readonly MongoClient _client;
-        private readonly IList<object> _commands;
+        private readonly AsyncLocal<IList<object>> _commands;
         private readonly AsyncLocal<MongoDbSession> _session;
 
         private static readonly object _sync = new();
@@ -48,7 +48,7 @@ namespace MongoDB.Infrastructure
 
             clientSettings.AddDiagnostics();
 
-            _commands = new List<object>();
+            _commands = new AsyncLocal<IList<object>>();
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
@@ -68,7 +68,7 @@ namespace MongoDB.Infrastructure
 
             var clientSettings = MongoClientSettings.FromUrl(url).AddDiagnostics();
 
-            _commands = new List<object>();
+            _commands = new AsyncLocal<IList<object>>();
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
@@ -88,7 +88,7 @@ namespace MongoDB.Infrastructure
 
             var clientSettings = MongoClientSettings.FromConnectionString(connectionString).AddDiagnostics();
 
-            _commands = new List<object>();
+            _commands = new AsyncLocal<IList<object>>();
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
@@ -101,7 +101,7 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            _commands = new List<object>();
+            _commands = new AsyncLocal<IList<object>>();
             _session = new AsyncLocal<MongoDbSession>();
 
             var clientSettings = configuration.GetSection("MongoSettings:MongoClientSettings")?.Get<MongoClientSettings>();
@@ -132,7 +132,7 @@ namespace MongoDB.Infrastructure
 
         public ISaveChangesResult SaveChanges()
         {
-            if (!AcceptAllChangesOnSave)
+            if (!AcceptAllChangesOnSave || !(_commands.Value?.Any() ?? false))
             {
                 return SaveChangesResult.Empty;
             }
@@ -141,7 +141,7 @@ namespace MongoDB.Infrastructure
 
             try
             {
-                foreach (var command in _commands)
+                foreach (var command in _commands.Value)
                 {
                     object commandResult = null;
 
@@ -169,7 +169,7 @@ namespace MongoDB.Infrastructure
             return saveChangesResult;
         }
 
-        public bool HasChanges() => _commands.Any();
+        public bool HasChanges() => _commands.Value?.Any() ?? false;
 
         public void DiscardChanges() => ClearCommands();
 
@@ -180,7 +180,8 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentNullException(nameof(command));
             }
 
-            _commands.Add(command);
+            _commands.Value ??= new List<object>();
+            _commands.Value.Add(command);
 
             return _emptyResult;
         }
@@ -270,7 +271,7 @@ namespace MongoDB.Infrastructure
 
         public async Task<ISaveChangesResult> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            if (!AcceptAllChangesOnSave)
+            if (!AcceptAllChangesOnSave || !(_commands.Value?.Any() ?? false))
             {
                 return SaveChangesResult.Empty;
             }
@@ -279,7 +280,7 @@ namespace MongoDB.Infrastructure
 
             try
             {
-                foreach (var command in _commands)
+                foreach (var command in _commands.Value)
                 {
                     object commandResult = null;
 
@@ -316,7 +317,8 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentNullException(nameof(command));
             }
 
-            _commands.Add(command);
+            _commands.Value ??= new List<object>();
+            _commands.Value.Add(command);
 
             return Task.FromResult(_emptyResult);
         }
@@ -410,7 +412,7 @@ namespace MongoDB.Infrastructure
 
         #region Private Methods
 
-        private void ClearCommands() => _commands.Clear();
+        private void ClearCommands() => _commands.Value?.Clear();
 
         private IClientSessionHandle GetSession()
         {
