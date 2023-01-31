@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.Infrastructure
+namespace MongoDB.Infrastructure.Internal
 {
-    public class ThrottledMongoDbCollection<T> : IMongoCollection<T>
+    internal class ThrottlingMongoDbCollection<T> : IMongoCollection<T>
     {
         private readonly IMongoCollection<T> _collection;
-        private readonly ThrottlingSemaphoreSlim _semaphore;
+        private readonly ThrottlingMongoDbSemaphore _semaphore;
 
-        public ThrottledMongoDbCollection(IMongoCollection<T> collection, int maximumNumberOfConcurrentRequests)
+        public ThrottlingMongoDbCollection(IMongoCollection<T> collection, int maximumNumberOfConcurrentRequests)
         {
             _collection = collection;
-            _semaphore = new ThrottlingSemaphoreSlim(maximumNumberOfConcurrentRequests, maximumNumberOfConcurrentRequests);
+            _semaphore = new ThrottlingMongoDbSemaphore(maximumNumberOfConcurrentRequests, maximumNumberOfConcurrentRequests);
         }
 
         public CollectionNamespace CollectionNamespace => _collection.CollectionNamespace;

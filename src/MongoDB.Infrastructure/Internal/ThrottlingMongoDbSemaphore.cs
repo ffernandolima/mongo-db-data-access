@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.Infrastructure
+namespace MongoDB.Infrastructure.Internal
 {
-    public class ThrottlingSemaphoreSlim : SemaphoreSlim
+    internal class ThrottlingMongoDbSemaphore : SemaphoreSlim
     {
-        public ThrottlingSemaphoreSlim(int initialCount)
+        public ThrottlingMongoDbSemaphore(int initialCount)
             : base(initialCount)
         { }
 
-        public ThrottlingSemaphoreSlim(int initialCount, int maximumCount)
+        public ThrottlingMongoDbSemaphore(int initialCount, int maximumCount)
             : base(initialCount, maximumCount)
         { }
 
