@@ -29,6 +29,7 @@ namespace MongoDB.Infrastructure
         public IMongoDatabase Database { get; private set; }
         public IClientSessionHandle Session => GetSession();
         public bool AcceptAllChangesOnSave { get; protected set; } = true;
+        public int? MaximumNumberOfConcurrentRequests { get; protected set; }
 
         #endregion IMongoDbContext Members
 
@@ -200,7 +201,24 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentException(nameof(name));
             }
 
-            var collection = Database.GetCollection<T>(name, settings);
+            IMongoCollection<T> collection;
+
+            var maximumNumberOfConcurrentRequests = MaximumNumberOfConcurrentRequests ?? 0;
+
+            if (maximumNumberOfConcurrentRequests == 0)
+            {
+                maximumNumberOfConcurrentRequests = _client.Settings.MaxConnectionPoolSize / 2;
+
+                collection = new ThrottledMongoDbCollection<T>(Database.GetCollection<T>(name, settings), maximumNumberOfConcurrentRequests);
+            }
+            else if (maximumNumberOfConcurrentRequests > 0)
+            {
+                collection = new ThrottledMongoDbCollection<T>(Database.GetCollection<T>(name, settings), maximumNumberOfConcurrentRequests);
+            }
+            else
+            {
+                collection = Database.GetCollection<T>(name, settings);
+            }
 
             return collection;
         }
@@ -250,10 +268,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session is not null)
-                {
-                    session.AbortTransaction();
-                }
+                session?.AbortTransaction();
             }
             catch
             {
@@ -432,7 +447,7 @@ namespace MongoDB.Infrastructure
 
         public async Task<IClientSessionHandle> CreateSessionAsync(ClientSessionOptions options = null, CancellationToken cancellationToken = default)
         {
-            var session = await _client.StartSessionAsync(options).ConfigureAwait(continueOnCapturedContext: false);
+            var session = await _client.StartSessionAsync(options, cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
             _session.Value = new MongoDbSession(session);
 
