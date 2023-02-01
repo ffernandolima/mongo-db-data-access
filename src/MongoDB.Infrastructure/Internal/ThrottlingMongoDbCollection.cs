@@ -15,7 +15,13 @@ namespace MongoDB.Infrastructure.Internal
 
         public ThrottlingMongoDbCollection(IMongoCollection<T> collection, int maximumNumberOfConcurrentRequests)
         {
-            _collection = collection;
+            _collection = collection ?? throw new ArgumentNullException(nameof(collection));
+
+            if (maximumNumberOfConcurrentRequests <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(maximumNumberOfConcurrentRequests));
+            }
+
             _semaphore = new ThrottlingMongoDbSemaphore(maximumNumberOfConcurrentRequests, maximumNumberOfConcurrentRequests);
         }
 
