@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure.Internal
@@ -15,6 +16,11 @@ namespace MongoDB.Infrastructure.Internal
 
         public async Task<T> AddRequest<T>(Task<T> task)
         {
+            if (task is null)
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+
             T result;
 
             try
@@ -32,6 +38,11 @@ namespace MongoDB.Infrastructure.Internal
 
         public async Task AddRequest(Task task)
         {
+            if (task is null)
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+
             try
             {
                 await WaitAsync().ConfigureAwait(continueOnCapturedContext: false);

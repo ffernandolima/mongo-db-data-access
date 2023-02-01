@@ -207,7 +207,7 @@ namespace MongoDB.Infrastructure
 
             if (maximumNumberOfConcurrentRequests == 0)
             {
-                maximumNumberOfConcurrentRequests = _client.Settings.MaxConnectionPoolSize / 2;
+                maximumNumberOfConcurrentRequests = Math.Max(_client.Settings.MaxConnectionPoolSize / 2, 1);
 
                 collection = new ThrottlingMongoDbCollection<T>(Database.GetCollection<T>(name, settings), maximumNumberOfConcurrentRequests);
             }
