@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure.Internal
 {
-    internal class ThrottlingMongoDbSemaphore : SemaphoreSlim
+    internal class ThrottlingMongoDbSemaphore : SemaphoreSlim, IThrottlingMongoDbSemaphore
     {
         public ThrottlingMongoDbSemaphore(int initialCount)
             : base(initialCount)
@@ -14,7 +14,25 @@ namespace MongoDB.Infrastructure.Internal
             : base(initialCount, maximumCount)
         { }
 
-        public async Task<T> AddRequest<T>(Task<T> task)
+        public async Task AddRequestAsync(Task task)
+        {
+            if (task is null)
+            {
+                throw new ArgumentNullException(nameof(task));
+            }
+
+            try
+            {
+                await WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
+                await task.ConfigureAwait(continueOnCapturedContext: false);
+            }
+            finally
+            {
+                Release();
+            }
+        }
+
+        public async Task<T> AddRequestAsync<T>(Task<T> task)
         {
             if (task is null)
             {
@@ -34,24 +52,6 @@ namespace MongoDB.Infrastructure.Internal
             }
 
             return result;
-        }
-
-        public async Task AddRequest(Task task)
-        {
-            if (task is null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
-            try
-            {
-                await WaitAsync().ConfigureAwait(continueOnCapturedContext: false);
-                await task.ConfigureAwait(continueOnCapturedContext: false);
-            }
-            finally
-            {
-                Release();
-            }
         }
     }
 }
