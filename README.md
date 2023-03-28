@@ -49,6 +49,13 @@ P.S.: MongoDB.Data.UnitOfWork depends on the other packages, so installing this 
 First of all, please register the dependencies into the MS Built-In container:
 
 ```C#
+public class BloggingContext : MongoDbContext
+{
+    public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
 // Register the DbContext
 services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
     connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
