@@ -1,5 +1,4 @@
 ﻿using MongoDB.QueryBuilder;
-using MongoDB.Repository.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +6,10 @@ using System.Linq.Expressions;
 
 namespace MongoDB.Repository.Internal
 {
-    internal static class QueryableExtensions
+    internal static class MongoDbQueryableExtensions
     {
-        public static IQueryable<T> Filter<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate) where T : class
+        public static IQueryable<T> Filter<T>(this IQueryable<T> source, Expression<Func<T, bool>> predicate)
+            where T : class
         {
             if (predicate is null)
             {
@@ -19,7 +19,8 @@ namespace MongoDB.Repository.Internal
             return source.Where(predicate);
         }
 
-        public static IQueryable<T> Top<T>(this IQueryable<T> source, IMongoDbTopping topping) where T : class
+        public static IQueryable<T> Top<T>(this IQueryable<T> source, IMongoDbTopping topping)
+            where T : class
         {
             if (!(topping?.TopRows > 0))
             {
@@ -29,7 +30,8 @@ namespace MongoDB.Repository.Internal
             return source.Take(topping.TopRows.Value);
         }
 
-        public static IQueryable<T> Page<T>(this IQueryable<T> source, IMongoDbPaging paging) where T : class
+        public static IQueryable<T> Page<T>(this IQueryable<T> source, IMongoDbPaging paging)
+            where T : class
         {
             if (!(paging?.PageSize > 0))
             {
@@ -41,7 +43,8 @@ namespace MongoDB.Repository.Internal
             return skipCount < 0 ? source : source.Skip(skipCount).Take(paging.PageSize.Value);
         }
 
-        public static IQueryable<T> Sort<T>(this IQueryable<T> source, IList<IMongoDbSorting<T>> sortings) where T : class
+        public static IQueryable<T> Sort<T>(this IQueryable<T> source, IList<IMongoDbSorting<T>> sortings)
+            where T : class
         {
             if (!(sortings?.Any() ?? false))
             {
@@ -52,7 +55,7 @@ namespace MongoDB.Repository.Internal
 
             foreach (var sorting in sortings.Where(s => s is not null))
             {
-                if (sorting.SortDirection == MongoDbSortDirection.Ascending)
+                if (sorting.SortingDirection == MongoDbSortingDirection.Ascending)
                 {
                     if (!orderedQueryable)
                     {
@@ -67,7 +70,7 @@ namespace MongoDB.Repository.Internal
                         }
                         else if (sorting.KeySelector is not null)
                         {
-                            source = source.OrderBy(sorting.KeySelector);
+                            source = sorting.KeySelector.Invoke(source);
 
                             orderedQueryable = true;
                         }
@@ -80,11 +83,11 @@ namespace MongoDB.Repository.Internal
                         }
                         else if (sorting.KeySelector is not null)
                         {
-                            source = ((IOrderedQueryable<T>)source).ThenBy(sorting.KeySelector);
+                            source = sorting.KeySelector.Invoke(source);
                         }
                     }
                 }
-                else if (sorting.SortDirection == MongoDbSortDirection.Descending)
+                else if (sorting.SortingDirection == MongoDbSortingDirection.Descending)
                 {
                     if (!orderedQueryable)
                     {
@@ -99,7 +102,7 @@ namespace MongoDB.Repository.Internal
                         }
                         else if (sorting.KeySelector is not null)
                         {
-                            source = source.OrderByDescending(sorting.KeySelector);
+                            source = sorting.KeySelector.Invoke(source);
 
                             orderedQueryable = true;
                         }
@@ -112,7 +115,7 @@ namespace MongoDB.Repository.Internal
                         }
                         else if (sorting.KeySelector is not null)
                         {
-                            source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.KeySelector);
+                            source = sorting.KeySelector.Invoke(source);
                         }
                     }
                 }
@@ -121,7 +124,8 @@ namespace MongoDB.Repository.Internal
             return source;
         }
 
-        public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string fieldName, out bool success) where T : class
+        public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string fieldName, out bool success)
+            where T : class
         {
             var expression = GenerateMethodCall(source, nameof(OrderBy), fieldName, out success);
 
@@ -130,7 +134,8 @@ namespace MongoDB.Repository.Internal
             return queryable;
         }
 
-        public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string fieldName, out bool success) where T : class
+        public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string fieldName, out bool success)
+            where T : class
         {
             var expression = GenerateMethodCall(source, nameof(OrderByDescending), fieldName, out success);
 
@@ -139,7 +144,8 @@ namespace MongoDB.Repository.Internal
             return queryable;
         }
 
-        public static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> source, string fieldName, out bool success) where T : class
+        public static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> source, string fieldName, out bool success)
+            where T : class
         {
             var expression = GenerateMethodCall(source, nameof(ThenBy), fieldName, out success);
 
@@ -148,7 +154,8 @@ namespace MongoDB.Repository.Internal
             return queryable;
         }
 
-        public static IOrderedQueryable<T> ThenByDescending<T>(this IOrderedQueryable<T> source, string fieldName, out bool success) where T : class
+        public static IOrderedQueryable<T> ThenByDescending<T>(this IOrderedQueryable<T> source, string fieldName, out bool success)
+            where T : class
         {
             var expression = GenerateMethodCall(source, nameof(ThenByDescending), fieldName, out success);
 
@@ -157,7 +164,8 @@ namespace MongoDB.Repository.Internal
             return queryable;
         }
 
-        private static MethodCallExpression GenerateMethodCall<T>(IQueryable<T> source, string methodName, string fieldName, out bool success) where T : class
+        private static MethodCallExpression GenerateMethodCall<T>(IQueryable<T> source, string methodName, string fieldName, out bool success)
+            where T : class
         {
             try
             {

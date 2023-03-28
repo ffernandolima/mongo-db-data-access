@@ -2,6 +2,7 @@
 using MongoDB.QueryBuilder.Internal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace MongoDB.QueryBuilder
@@ -41,14 +42,15 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T> OrderBy(Expression<Func<T, object>> keySelector)
+        public IMongoDbQuery<T> OrderBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
-                    KeySelector = keySelector,
-                    SortDirection = MongoDbSortDirection.Ascending
+                    SortingType = MongoDbSortingType.OrderBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending,
+                    KeySelector = queryable => queryable.OrderBy(keySelector)
                 };
 
                 Sortings.Add(sorting);
@@ -57,7 +59,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T> ThenBy(Expression<Func<T, object>> keySelector) => OrderBy(keySelector);
+        public IMongoDbQuery<T> ThenBy<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            if (keySelector is not null)
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    SortingType = MongoDbSortingType.ThenBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending,
+                    KeySelector = queryable => ((IOrderedQueryable<T>)queryable).ThenBy(keySelector)
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenBy);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T> OrderBy(string fieldName)
         {
@@ -66,7 +84,8 @@ namespace MongoDB.QueryBuilder
                 var sorting = new MongoDbSorting<T>
                 {
                     FieldName = fieldName,
-                    SortDirection = MongoDbSortDirection.Ascending
+                    SortingType = MongoDbSortingType.OrderBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending
                 };
 
                 Sortings.Add(sorting);
@@ -75,16 +94,33 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T> ThenBy(string fieldName) => OrderBy(fieldName);
+        public IMongoDbQuery<T> ThenBy(string fieldName)
+        {
+            if (!string.IsNullOrWhiteSpace(fieldName))
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    FieldName = fieldName,
+                    SortingType = MongoDbSortingType.ThenBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending
+                };
 
-        public IMongoDbQuery<T> OrderByDescending(Expression<Func<T, object>> keySelector)
+                Sortings.Validate(MongoDbSortingType.ThenBy);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
+
+        public IMongoDbQuery<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
-                    KeySelector = keySelector,
-                    SortDirection = MongoDbSortDirection.Descending
+                    SortingType = MongoDbSortingType.OrderByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending,
+                    KeySelector = queryable => queryable.OrderByDescending(keySelector)
                 };
 
                 Sortings.Add(sorting);
@@ -93,7 +129,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T> ThenByDescending(Expression<Func<T, object>> keySelector) => OrderByDescending(keySelector);
+        public IMongoDbQuery<T> ThenByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            if (keySelector is not null)
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    SortingType = MongoDbSortingType.ThenByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending,
+                    KeySelector = queryable => ((IOrderedQueryable<T>)queryable).ThenByDescending(keySelector)
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenByDescending);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T> OrderByDescending(string fieldName)
         {
@@ -102,7 +154,8 @@ namespace MongoDB.QueryBuilder
                 var sorting = new MongoDbSorting<T>
                 {
                     FieldName = fieldName,
-                    SortDirection = MongoDbSortDirection.Descending
+                    SortingType = MongoDbSortingType.OrderByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending
                 };
 
                 Sortings.Add(sorting);
@@ -111,7 +164,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T> ThenByDescending(string fieldName) => OrderByDescending(fieldName);
+        public IMongoDbQuery<T> ThenByDescending(string fieldName)
+        {
+            if (!string.IsNullOrWhiteSpace(fieldName))
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    FieldName = fieldName,
+                    SortingType = MongoDbSortingType.ThenByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenByDescending);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T> Select(Expression<Func<T, T>> selector)
         {
@@ -123,7 +192,8 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> Select<TResult>(Expression<Func<T, TResult>> selector) => this.ToQuery(selector);
+        public IMongoDbQuery<T, TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
+            => this.ToQuery(selector);
 
         #endregion IMongoDbQuery<T> Members
     }
@@ -163,14 +233,15 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> OrderBy(Expression<Func<T, object>> keySelector)
+        public IMongoDbQuery<T, TResult> OrderBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
-                    KeySelector = keySelector,
-                    SortDirection = MongoDbSortDirection.Ascending
+                    SortingType = MongoDbSortingType.OrderBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending,
+                    KeySelector = queryable => queryable.OrderBy(keySelector)
                 };
 
                 Sortings.Add(sorting);
@@ -179,7 +250,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> ThenBy(Expression<Func<T, object>> keySelector) => OrderBy(keySelector);
+        public IMongoDbQuery<T, TResult> ThenBy<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            if (keySelector is not null)
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    SortingType = MongoDbSortingType.ThenBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending,
+                    KeySelector = queryable => ((IOrderedQueryable<T>)queryable).ThenBy(keySelector)
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenBy);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T, TResult> OrderBy(string fieldName)
         {
@@ -188,7 +275,8 @@ namespace MongoDB.QueryBuilder
                 var sorting = new MongoDbSorting<T>
                 {
                     FieldName = fieldName,
-                    SortDirection = MongoDbSortDirection.Ascending
+                    SortingType = MongoDbSortingType.OrderBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending
                 };
 
                 Sortings.Add(sorting);
@@ -197,16 +285,33 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> ThenBy(string fieldName) => OrderBy(fieldName);
+        public IMongoDbQuery<T, TResult> ThenBy(string fieldName)
+        {
+            if (!string.IsNullOrWhiteSpace(fieldName))
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    FieldName = fieldName,
+                    SortingType = MongoDbSortingType.ThenBy,
+                    SortingDirection = MongoDbSortingDirection.Ascending
+                };
 
-        public IMongoDbQuery<T, TResult> OrderByDescending(Expression<Func<T, object>> keySelector)
+                Sortings.Validate(MongoDbSortingType.ThenBy);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
+
+        public IMongoDbQuery<T, TResult> OrderByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             if (keySelector is not null)
             {
                 var sorting = new MongoDbSorting<T>
                 {
-                    KeySelector = keySelector,
-                    SortDirection = MongoDbSortDirection.Descending
+                    SortingType = MongoDbSortingType.OrderByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending,
+                    KeySelector = queryable => queryable.OrderByDescending(keySelector)
                 };
 
                 Sortings.Add(sorting);
@@ -215,7 +320,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> ThenByDescending(Expression<Func<T, object>> keySelector) => OrderByDescending(keySelector);
+        public IMongoDbQuery<T, TResult> ThenByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
+        {
+            if (keySelector is not null)
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    SortingType = MongoDbSortingType.ThenByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending,
+                    KeySelector = queryable => ((IOrderedQueryable<T>)queryable).ThenByDescending(keySelector)
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenByDescending);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T, TResult> OrderByDescending(string fieldName)
         {
@@ -224,7 +345,8 @@ namespace MongoDB.QueryBuilder
                 var sorting = new MongoDbSorting<T>
                 {
                     FieldName = fieldName,
-                    SortDirection = MongoDbSortDirection.Descending
+                    SortingType = MongoDbSortingType.OrderByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending
                 };
 
                 Sortings.Add(sorting);
@@ -233,7 +355,23 @@ namespace MongoDB.QueryBuilder
             return this;
         }
 
-        public IMongoDbQuery<T, TResult> ThenByDescending(string fieldName) => OrderByDescending(fieldName);
+        public IMongoDbQuery<T, TResult> ThenByDescending(string fieldName)
+        {
+            if (!string.IsNullOrWhiteSpace(fieldName))
+            {
+                var sorting = new MongoDbSorting<T>
+                {
+                    FieldName = fieldName,
+                    SortingType = MongoDbSortingType.ThenByDescending,
+                    SortingDirection = MongoDbSortingDirection.Descending
+                };
+
+                Sortings.Validate(MongoDbSortingType.ThenByDescending);
+                Sortings.Add(sorting);
+            }
+
+            return this;
+        }
 
         public IMongoDbQuery<T, TResult> Select(Expression<Func<T, TResult>> selector)
         {

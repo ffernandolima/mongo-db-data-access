@@ -3,16 +3,18 @@ using System;
 
 namespace MongoDB.Infrastructure
 {
-    public interface ISyncMongoDbContext
+    public interface IMongoDbSyncContext
     {
-        ISaveChangesResult SaveChanges();
+        IMongoDbSaveChangesResult SaveChanges();
         bool HasChanges();
         void DiscardChanges();
         object AddCommand(Func<object> command);
         IMongoCollection<T> GetCollection<T>(MongoCollectionSettings settings = null);
         IMongoCollection<T> GetCollection<T>(string name, MongoCollectionSettings settings = null);
         IClientSessionHandle StartSession(ClientSessionOptions options = null);
-        void StartTransaction(ClientSessionOptions sessionOptions = null, TransactionOptions transactionOptions = null);
+        void StartTransaction(
+            ClientSessionOptions sessionOptions = null,
+            TransactionOptions transactionOptions = null);
         void CommitTransaction();
         void AbortTransaction();
     }

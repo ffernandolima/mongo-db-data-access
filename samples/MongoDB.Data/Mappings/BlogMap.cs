@@ -7,9 +7,11 @@ namespace MongoDB.Data.Mappings
 {
     public class BlogMap : IMongoDbFluentConfiguration
     {
+        public bool IsConfigured => BsonClassMap.IsClassMapRegistered(typeof(Blog));
+
         public void Configure()
         {
-            if (BsonClassMap.IsClassMapRegistered(typeof(Blog)))
+            if (IsConfigured)
             {
                 return;
             }

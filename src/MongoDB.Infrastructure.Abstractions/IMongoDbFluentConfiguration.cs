@@ -2,6 +2,7 @@
 {
     public interface IMongoDbFluentConfiguration
     {
+        bool IsConfigured { get; }
         void Configure();
     }
 }

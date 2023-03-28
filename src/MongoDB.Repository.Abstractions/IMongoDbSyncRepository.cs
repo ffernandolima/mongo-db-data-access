@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 
 namespace MongoDB.Repository
 {
-    public interface ISyncMongoDbRepository : IMongoDbRepository, IDisposable
+    public interface IMongoDbSyncRepository : IMongoDbRepository, IDisposable
     { }
 
-    public interface ISyncMongoDbRepository<T> : ISyncMongoDbRepository, IMongoDbQueryFactory<T>, IDisposable where T : class
+    public interface ISyncMongoDbRepository<T> : IMongoDbSyncRepository, IMongoDbQueryFactory<T>, IDisposable where T : class
     {
         IList<T> Search(IMongoDbQuery<T> query);
         IList<TResult> Search<TResult>(IMongoDbQuery<T, TResult> query);
@@ -28,7 +28,11 @@ namespace MongoDB.Repository
         decimal Sum(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null);
         object InsertOne(T entity, InsertOneOptions options = null);
         object InsertMany(IEnumerable<T> entities, InsertManyOptions options = null);
-        object UpdateOne(Expression<Func<T, bool>> predicate, T entity, Expression<Func<T, object>>[] properties, UpdateOptions options = null);
+        object UpdateOne(
+            Expression<Func<T, bool>> predicate,
+            T entity,
+            Expression<Func<T, object>>[] properties,
+            UpdateOptions options = null);
         object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null);
         object DeleteOne(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
         object DeleteMany(Expression<Func<T, bool>> predicate, DeleteOptions options = null);

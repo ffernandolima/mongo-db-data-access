@@ -2,11 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MongoDB.Repository.Extensions
+namespace MongoDB.Infrastructure.Extensions
 {
-    public static class TaskExtensions
+    public static class MongoDbTaskExtensions
     {
-        public static Task<TResult> Then<TSource, TResult>(this Task<TSource> sourceTask, Func<TSource, TResult> selector, CancellationToken cancellationToken = default)
+        public static Task<TResult> Then<TSource, TResult>(
+            this Task<TSource> sourceTask,
+            Func<TSource, TResult> selector,
+            CancellationToken cancellationToken = default)
         {
             var taskCompletionSource = new TaskCompletionSource<TResult>();
 
@@ -24,7 +27,7 @@ namespace MongoDB.Repository.Extensions
                 {
                     try
                     {
-                        var result = selector(task.Result);
+                        var result = selector.Invoke(task.Result);
 
                         taskCompletionSource.TrySetResult(result);
                     }
@@ -39,7 +42,10 @@ namespace MongoDB.Repository.Extensions
             return taskCompletionSource.Task;
         }
 
-        public static Task<TResult> Then<TResult>(this Task sourceTask, Func<TResult> selector, CancellationToken cancellationToken = default)
+        public static Task<TResult> Then<TResult>(
+            this Task sourceTask,
+            Func<TResult> selector,
+            CancellationToken cancellationToken = default)
         {
             var taskCompletionSource = new TaskCompletionSource<TResult>();
 
@@ -57,7 +63,7 @@ namespace MongoDB.Repository.Extensions
                 {
                     try
                     {
-                        var result = selector();
+                        var result = selector.Invoke();
 
                         taskCompletionSource.TrySetResult(result);
                     }

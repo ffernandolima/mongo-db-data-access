@@ -1,8 +1,8 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MongoDB.Infrastructure;
+using MongoDB.Infrastructure.Extensions;
 using MongoDB.QueryBuilder;
-using MongoDB.Repository.Extensions;
 using MongoDB.Repository.Internal;
 using System;
 using System.Collections.Generic;
@@ -34,11 +34,17 @@ namespace MongoDB.Repository
 
         #region IQueryFactory<T> Members
 
-        public virtual IMongoDbSingleResultQuery<T> SingleResultQuery() => MongoDbSingleResultQuery<T>.New();
-        public virtual IMongoDbMultipleResultQuery<T> MultipleResultQuery() => MongoDbMultipleResultQuery<T>.New();
+        public virtual IMongoDbSingleResultQuery<T> SingleResultQuery()
+            => MongoDbSingleResultQuery<T>.New();
 
-        public virtual IMongoDbSingleResultQuery<T, TResult> SingleResultQuery<TResult>() => MongoDbSingleResultQuery<T, TResult>.New();
-        public virtual IMongoDbMultipleResultQuery<T, TResult> MultipleResultQuery<TResult>() => MongoDbMultipleResultQuery<T, TResult>.New();
+        public virtual IMongoDbMultipleResultQuery<T> MultipleResultQuery()
+            => MongoDbMultipleResultQuery<T>.New();
+
+        public virtual IMongoDbSingleResultQuery<T, TResult> SingleResultQuery<TResult>()
+            => MongoDbSingleResultQuery<T, TResult>.New();
+
+        public virtual IMongoDbMultipleResultQuery<T, TResult> MultipleResultQuery<TResult>()
+            => MongoDbMultipleResultQuery<T, TResult>.New();
 
         #endregion IQueryFactory<T> Members
 
@@ -280,7 +286,7 @@ namespace MongoDB.Repository
                 return true;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
                 return Context.AddCommand(() => DoInsertOne());
             }
@@ -311,7 +317,7 @@ namespace MongoDB.Repository
                 return true;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
                 return Context.AddCommand(() => DoInsertMany());
             }
@@ -321,7 +327,11 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual object UpdateOne(Expression<Func<T, bool>> predicate, T entity, Expression<Func<T, object>>[] properties, UpdateOptions options = null)
+        public virtual object UpdateOne(
+            Expression<Func<T, bool>> predicate,
+            T entity,
+            Expression<Func<T, object>>[] properties,
+            UpdateOptions options = null)
         {
             if (predicate is null)
             {
@@ -372,9 +382,9 @@ namespace MongoDB.Repository
                 return result;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommand(() => DoUpdateOne());
+                return Context.AddCommand(DoUpdateOne);
             }
             else
             {
@@ -410,9 +420,9 @@ namespace MongoDB.Repository
                 return result;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommand(() => DoReplaceOne());
+                return Context.AddCommand(DoReplaceOne);
             }
             else
             {
@@ -443,9 +453,9 @@ namespace MongoDB.Repository
                 return result;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommand(() => DoDeleteOne());
+                return Context.AddCommand(DoDeleteOne);
             }
             else
             {
@@ -476,9 +486,9 @@ namespace MongoDB.Repository
                 return result;
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommand(() => DoDeleteMany());
+                return Context.AddCommand(DoDeleteMany);
             }
             else
             {
@@ -490,7 +500,9 @@ namespace MongoDB.Repository
 
         #region IAsyncRepository<T> Members
 
-        public virtual Task<IList<T>> SearchAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
+        public virtual Task<IList<T>> SearchAsync(
+            IMongoDbQuery<T> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -499,12 +511,15 @@ namespace MongoDB.Repository
 
             var queryable = ToQueryable(query);
 
-            var entities = queryable.ToListAsync(cancellationToken).Then<List<T>, IList<T>>(result => result, cancellationToken);
+            var entities = queryable.ToListAsync(cancellationToken)
+                .Then<List<T>, IList<T>>(result => result, cancellationToken);
 
             return entities;
         }
 
-        public virtual Task<IList<TResult>> SearchAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
+        public virtual Task<IList<TResult>> SearchAsync<TResult>(
+            IMongoDbQuery<T, TResult> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -518,12 +533,15 @@ namespace MongoDB.Repository
 
             var queryable = ToQueryable(query);
 
-            var entities = queryable.ToListAsync(cancellationToken).Then<List<TResult>, IList<TResult>>(result => result, cancellationToken);
+            var entities = queryable.ToListAsync(cancellationToken)
+                .Then<List<TResult>, IList<TResult>>(result => result, cancellationToken);
 
             return entities;
         }
 
-        public virtual Task<T> SingleOrDefaultAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
+        public virtual Task<T> SingleOrDefaultAsync(
+            IMongoDbQuery<T> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -537,7 +555,9 @@ namespace MongoDB.Repository
             return entity;
         }
 
-        public virtual Task<TResult> SingleOrDefaultAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> SingleOrDefaultAsync<TResult>(
+            IMongoDbQuery<T, TResult> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -556,7 +576,9 @@ namespace MongoDB.Repository
             return entity;
         }
 
-        public virtual Task<T> FirstOrDefaultAsync(IMongoDbQuery<T> query, CancellationToken cancellationToken = default)
+        public virtual Task<T> FirstOrDefaultAsync(
+            IMongoDbQuery<T> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -570,7 +592,9 @@ namespace MongoDB.Repository
             return entity;
         }
 
-        public virtual Task<TResult> FirstOrDefaultAsync<TResult>(IMongoDbQuery<T, TResult> query, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> FirstOrDefaultAsync<TResult>(
+            IMongoDbQuery<T, TResult> query,
+            CancellationToken cancellationToken = default)
         {
             if (query is null)
             {
@@ -589,62 +613,49 @@ namespace MongoDB.Repository
             return entity;
         }
 
-        public virtual Task<bool> AnyAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual Task<bool> AnyAsync(
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate is null ? queryable.AnyAsync(cancellationToken) : queryable.AnyAsync(predicate, cancellationToken);
+            var result = predicate is null
+                ? queryable.AnyAsync(cancellationToken)
+                : queryable.AnyAsync(predicate, cancellationToken);
 
             return result;
         }
 
-        public virtual Task<int> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual Task<int> CountAsync(
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate is null ? queryable.CountAsync(cancellationToken) : queryable.CountAsync(predicate, cancellationToken);
+            var result = predicate is null
+                ? queryable.CountAsync(cancellationToken)
+                : queryable.CountAsync(predicate, cancellationToken);
 
             return result;
         }
 
-        public virtual Task<long> LongCountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual Task<long> LongCountAsync(
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             var queryable = Collection.AsQueryable();
 
-            var result = predicate is null ? queryable.LongCountAsync(cancellationToken) : queryable.LongCountAsync(predicate, cancellationToken);
+            var result = predicate is null
+                ? queryable.LongCountAsync(cancellationToken)
+                : queryable.LongCountAsync(predicate, cancellationToken);
 
             return result;
         }
 
-        public virtual Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
-        {
-            if (selector is null)
-            {
-                throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
-            }
-
-            var queryable = Collection.AsQueryable();
-
-            var result = predicate is null ? queryable.MaxAsync(selector, cancellationToken) : queryable.Where(predicate).MaxAsync(selector, cancellationToken);
-
-            return result;
-        }
-
-        public virtual Task<TResult> MinAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
-        {
-            if (selector is null)
-            {
-                throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
-            }
-
-            var queryable = Collection.AsQueryable();
-
-            var result = predicate is null ? queryable.MinAsync(selector, cancellationToken) : queryable.Where(predicate).MinAsync(selector, cancellationToken);
-
-            return result;
-        }
-
-        public virtual Task<decimal> AverageAsync(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> MaxAsync<TResult>(
+            Expression<Func<T, TResult>> selector,
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             if (selector is null)
             {
@@ -653,12 +664,17 @@ namespace MongoDB.Repository
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate is null ? queryable.AverageAsync(selector, cancellationToken) : queryable.Where(predicate).AverageAsync(selector, cancellationToken);
+            var result = predicate is null
+                ? queryable.MaxAsync(selector, cancellationToken)
+                : queryable.Where(predicate).MaxAsync(selector, cancellationToken);
 
             return result;
         }
 
-        public virtual Task<decimal> SumAsync(Expression<Func<T, decimal>> selector, Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+        public virtual Task<TResult> MinAsync<TResult>(
+            Expression<Func<T, TResult>> selector,
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
         {
             if (selector is null)
             {
@@ -667,12 +683,55 @@ namespace MongoDB.Repository
 
             var queryable = Collection.AsQueryable();
 
-            var result = predicate is null ? queryable.SumAsync(selector, cancellationToken) : queryable.Where(predicate).SumAsync(selector, cancellationToken);
+            var result = predicate is null
+                ? queryable.MinAsync(selector, cancellationToken)
+                : queryable.Where(predicate).MinAsync(selector, cancellationToken);
 
             return result;
         }
 
-        public virtual Task<object> InsertOneAsync(T entity, InsertOneOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<decimal> AverageAsync(
+            Expression<Func<T, decimal>> selector,
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (selector is null)
+            {
+                throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
+            }
+
+            var queryable = Collection.AsQueryable();
+
+            var result = predicate is null
+                ? queryable.AverageAsync(selector, cancellationToken)
+                : queryable.Where(predicate).AverageAsync(selector, cancellationToken);
+
+            return result;
+        }
+
+        public virtual Task<decimal> SumAsync(
+            Expression<Func<T, decimal>> selector,
+            Expression<Func<T, bool>> predicate = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (selector is null)
+            {
+                throw new ArgumentNullException(nameof(selector), $"{nameof(selector)} cannot be null.");
+            }
+
+            var queryable = Collection.AsQueryable();
+
+            var result = predicate is null
+                ? queryable.SumAsync(selector, cancellationToken)
+                : queryable.Where(predicate).SumAsync(selector, cancellationToken);
+
+            return result;
+        }
+
+        public virtual Task<object> InsertOneAsync(
+            T entity,
+            InsertOneOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (entity is null)
             {
@@ -695,9 +754,9 @@ namespace MongoDB.Repository
                 return result.Then<object>(() => true, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoInsertOneAsync());
+                return Context.AddCommandAsync(DoInsertOneAsync);
             }
             else
             {
@@ -705,7 +764,10 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual Task<object> InsertManyAsync(IEnumerable<T> entities, InsertManyOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<object> InsertManyAsync(
+            IEnumerable<T> entities,
+            InsertManyOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (entities is null || !entities.Any())
             {
@@ -728,9 +790,9 @@ namespace MongoDB.Repository
                 return result.Then<object>(() => true, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoInsertManyAsync());
+                return Context.AddCommandAsync(DoInsertManyAsync);
             }
             else
             {
@@ -738,7 +800,12 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual Task<object> UpdateOneAsync(Expression<Func<T, bool>> predicate, T entity, Expression<Func<T, object>>[] properties, UpdateOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<object> UpdateOneAsync(
+            Expression<Func<T, bool>> predicate,
+            T entity,
+            Expression<Func<T, object>>[] properties,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (predicate is null)
             {
@@ -789,9 +856,9 @@ namespace MongoDB.Repository
                 return result.Then<UpdateResult, object>(source => source, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoUpdateOneAsync());
+                return Context.AddCommandAsync(DoUpdateOneAsync);
             }
             else
             {
@@ -799,7 +866,11 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual Task<object> ReplaceOneAsync(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<object> ReplaceOneAsync(
+            Expression<Func<T, bool>> predicate,
+            T entity,
+            ReplaceOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (predicate is null)
             {
@@ -827,9 +898,9 @@ namespace MongoDB.Repository
                 return result.Then<ReplaceOneResult, object>(source => source, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoReplaceOneAsync());
+                return Context.AddCommandAsync(DoReplaceOneAsync);
             }
             else
             {
@@ -837,7 +908,10 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual Task<object> DeleteOneAsync(Expression<Func<T, bool>> predicate, DeleteOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<object> DeleteOneAsync(
+            Expression<Func<T, bool>> predicate,
+            DeleteOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (predicate is null)
             {
@@ -860,9 +934,9 @@ namespace MongoDB.Repository
                 return result.Then<DeleteResult, object>(source => source, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoDeleteOneAsync());
+                return Context.AddCommandAsync(DoDeleteOneAsync);
             }
             else
             {
@@ -870,7 +944,10 @@ namespace MongoDB.Repository
             }
         }
 
-        public virtual Task<object> DeleteManyAsync(Expression<Func<T, bool>> predicate, DeleteOptions options = null, CancellationToken cancellationToken = default)
+        public virtual Task<object> DeleteManyAsync(
+            Expression<Func<T, bool>> predicate,
+            DeleteOptions options = null,
+            CancellationToken cancellationToken = default)
         {
             if (predicate is null)
             {
@@ -893,9 +970,9 @@ namespace MongoDB.Repository
                 return result.Then<DeleteResult, object>(source => source, cancellationToken);
             }
 
-            if (Context.AcceptAllChangesOnSave)
+            if (Context.Options.AcceptAllChangesOnSave)
             {
-                return Context.AddCommandAsync(() => DoDeleteManyAsync());
+                return Context.AddCommandAsync(DoDeleteManyAsync);
             }
             else
             {

@@ -9,9 +9,10 @@ namespace MongoDB.Generators
     /// </summary>
     public sealed class Int64IdGenerator<T> : IntIdGeneratorBase<T>
     {
-        private static readonly Lazy<Int64IdGenerator<T>> GeneratorFactory = new(() => new Int64IdGenerator<T>(), isThreadSafe: true);
+        private static readonly Lazy<Int64IdGenerator<T>> _factory = new(
+            () => new Int64IdGenerator<T>(), isThreadSafe: true);
 
-        public static Int64IdGenerator<T> Instance => GeneratorFactory.Value;
+        public static Int64IdGenerator<T> Instance => _factory.Value;
 
         #region Constructors
 
@@ -38,7 +39,8 @@ namespace MongoDB.Generators
         /// Creates the update definition.
         /// </summary>
         /// <returns>The update definition.</returns>
-        protected override UpdateDefinition<BsonDocument> CreateUpdateDefinition() => Builders<BsonDocument>.Update.Inc(x => x["seq"], 1L);
+        protected override UpdateDefinition<BsonDocument> CreateUpdateDefinition()
+            => Builders<BsonDocument>.Update.Inc(x => x["seq"], 1L);
 
         /// <summary>
         /// Converts to the new data type.

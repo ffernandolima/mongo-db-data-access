@@ -1,5 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using MongoDB.QueryBuilder.Internal;
+using System;
+using System.Linq;
 
 namespace MongoDB.QueryBuilder
 {
@@ -8,7 +9,8 @@ namespace MongoDB.QueryBuilder
         internal MongoDbSorting()
         { }
 
-        public Expression<Func<T, object>> KeySelector { get; internal set; }
+        internal MongoDbSortingType SortingType { get; set; }
+        public Func<IQueryable<T>, IOrderedQueryable<T>> KeySelector { get; internal set; }
     }
 
     public class MongoDbSorting : IMongoDbSorting
@@ -17,6 +19,6 @@ namespace MongoDB.QueryBuilder
         { }
 
         public string FieldName { get; internal set; }
-        public MongoDbSortDirection SortDirection { get; internal set; }
+        public MongoDbSortingDirection SortingDirection { get; internal set; }
     }
 }

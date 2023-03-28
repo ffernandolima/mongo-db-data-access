@@ -2,15 +2,15 @@
 
 namespace MongoDB.Infrastructure
 {
-    public sealed class SaveChangesResult : ISaveChangesResult
+    public sealed class MongoDbSaveChangesResult : IMongoDbSaveChangesResult
     {
         private readonly List<object> _results;
 
-        internal static readonly SaveChangesResult Empty = new();
+        internal static readonly MongoDbSaveChangesResult Empty = new();
 
         public IReadOnlyList<object> Results => _results.AsReadOnly();
 
-        internal SaveChangesResult() => _results = new List<object>();
+        internal MongoDbSaveChangesResult() => _results = new List<object>();
 
         internal void Add(object result) => _results.Add(result);
     }

@@ -54,7 +54,12 @@ namespace MongoDB.Tests.Implementation
             var repository = _unitOfWork.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
-                                  .Select(selector => new { Name = selector.Title, Link = selector.Url, Type = selector.Type.Description });
+                                  .Select(selector => new
+                                  {
+                                      Name = selector.Title,
+                                      Link = selector.Url,
+                                      Type = selector.Type.Description
+                                  });
 
             var blogs = repository.Search(query);
 
@@ -132,7 +137,10 @@ namespace MongoDB.Tests.Implementation
                                   .Page(1, 20);
 
             var blogs = repository.Search(query)
-                                  .ToPagedList(query.Paging.PageIndex, query.Paging.PageSize, query.Paging.TotalCount);
+                                  .ToPagedList(
+                                    query.Paging.PageIndex,
+                                    query.Paging.PageSize,
+                                    query.Paging.TotalCount);
 
             Assert.NotNull(blogs);
             Assert.Equal(20, blogs.Count);
@@ -198,7 +206,13 @@ namespace MongoDB.Tests.Implementation
 
             var query = repository.SingleResultQuery()
                                   .AndFilter(blog => blog.Id == 1)
-                                  .Select(selector => new { selector.Id, Name = selector.Title, Link = selector.Url, Type = selector.Type.Description });
+                                  .Select(selector => new
+                                  {
+                                      selector.Id,
+                                      Name = selector.Title,
+                                      Link = selector.Url,
+                                      Type = selector.Type.Description
+                                  });
 
             var blogResult = repository.SingleOrDefault(query);
 

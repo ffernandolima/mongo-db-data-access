@@ -5,11 +5,8 @@ namespace MongoDB.Data
 {
     public class BloggingContext : MongoDbContext
     {
-        public BloggingContext(string connectionString, string databaseName, MongoDatabaseSettings databaseSettings = null)
-            : base(connectionString, databaseName, databaseSettings)
-        {
-            AcceptAllChangesOnSave = true;
-            ApplyConfigurationsFromAssembly(typeof(BloggingContext).Assembly);
-        }
+        public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+            : base(client, database, options)
+        { }
     }
 }

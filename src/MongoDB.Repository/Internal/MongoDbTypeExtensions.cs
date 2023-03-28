@@ -2,7 +2,7 @@
 
 namespace MongoDB.Repository.Internal
 {
-    internal static class TypeExtensions
+    internal static class MongoDbTypeExtensions
     {
         public static bool IsGenericType(this Type sourceType, Type targetType) => sourceType.IsGenericType(targetType, out _);
 
