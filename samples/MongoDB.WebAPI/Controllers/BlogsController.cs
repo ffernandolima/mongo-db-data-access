@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Data;
 using MongoDB.Data.Repositories.Interfaces;
 using MongoDB.Models;
 using MongoDB.Repository.Extensions;
@@ -14,9 +15,10 @@ namespace MongoDB.WebAPI.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class BlogsController : Controller
     {
-        private readonly IMongoDbUnitOfWork _unitOfWork;
+        private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWork;
 
-        public BlogsController(IMongoDbUnitOfWork unitOfWork) => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork)
+            => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
 
         // GET: api/Blogs
         [HttpGet]
@@ -37,7 +39,10 @@ namespace MongoDB.WebAPI.Controllers
             {
                 // Example: PagedList
                 var blogs = await repository.SearchAsync(query)
-                                            .ToPagedListAsync(query.Paging.PageIndex, query.Paging.PageSize, query.Paging.TotalCount)
+                                            .ToPagedListAsync(
+                                                query.Paging.PageIndex,
+                                                query.Paging.PageSize,
+                                                query.Paging.TotalCount)
                                             .ConfigureAwait(continueOnCapturedContext: false);
 
                 return Ok(blogs);
@@ -122,7 +127,10 @@ namespace MongoDB.WebAPI.Controllers
             }
 
             // Example: Update Properties
-            repository.UpdateOne(blog => blog.Id == id, model, new Expression<Func<Blog, object>>[] { x => x.Title });
+            repository.UpdateOne(
+                blog => blog.Id == id,
+                model,
+                new Expression<Func<Blog, object>>[] { x => x.Title });
 
             // Example: Update Model
             repository.ReplaceOne(blog => blog.Id == id, model);
@@ -149,7 +157,10 @@ namespace MongoDB.WebAPI.Controllers
             _unitOfWork.StartTransaction();
 
             // Without Parameters
-            await repository.UpdateOneAsync(blog => blog.Id == id, new Blog { Id = id, Title = title }, new Expression<Func<Blog, object>>[] { x => x.Title })
+            await repository.UpdateOneAsync(
+                                blog => blog.Id == id,
+                                new Blog { Id = id, Title = title },
+                                new Expression<Func<Blog, object>>[] { x => x.Title })
                             .ConfigureAwait(continueOnCapturedContext: false);
 
             await _unitOfWork.SaveChangesAsync()

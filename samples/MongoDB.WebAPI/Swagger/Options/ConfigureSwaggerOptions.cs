@@ -25,8 +25,8 @@ namespace MongoDB.WebAPI.Swagger.Options
         /// <param name="configuration">The <see cref="IConfiguration">configuration</see> used to get configs from appsettings.json.</param>
         public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IConfiguration configuration)
         {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider), $"{nameof(provider)} cannot be null.");
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration), $"{nameof(configuration)} cannot be null.");
         }
 
         /// <inheritdoc />

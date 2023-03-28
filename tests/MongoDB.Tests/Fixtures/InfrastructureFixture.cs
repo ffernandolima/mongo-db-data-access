@@ -42,15 +42,10 @@ namespace MongoDB.Tests.Fixtures
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(provider =>
-            {
-                var connectionString = Configuration.GetValue<string>("MongoSettings:ConnectionString");
-                var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
-
-                var bloggingContext = new BloggingContext(connectionString, databaseName);
-
-                return bloggingContext;
-            });
+            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+                connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
+                databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
+                setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
 
             services.AddMongoDbUnitOfWork();
             services.AddMongoDbUnitOfWork<BloggingContext>();

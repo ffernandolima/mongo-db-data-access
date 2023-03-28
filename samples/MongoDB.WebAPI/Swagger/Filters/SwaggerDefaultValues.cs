@@ -32,7 +32,8 @@ namespace MongoDB.WebAPI.Swagger.Filters
 
             foreach (var parameter in operation.Parameters)
             {
-                var description = apiDescription.ParameterDescriptions.FirstOrDefault(p => string.Equals(p.Name, parameter.Name, StringComparison.OrdinalIgnoreCase));
+                var description = apiDescription.ParameterDescriptions.FirstOrDefault(p => 
+                    string.Equals(p.Name, parameter.Name, StringComparison.OrdinalIgnoreCase));
 
                 if (description is null)
                 {

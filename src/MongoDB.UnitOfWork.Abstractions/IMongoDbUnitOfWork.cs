@@ -3,7 +3,7 @@ using System;
 
 namespace MongoDB.UnitOfWork
 {
-    public interface IMongoDbUnitOfWork : ISyncMongoDbUnitOfWork, IAsyncMongoDbUnitOfWork, IDisposable
+    public interface IMongoDbUnitOfWork : IMongoDbSyncUnitOfWork, IMongoDbAsyncUnitOfWork, IDisposable
     {
         IMongoDbContext Context { get; }
     }

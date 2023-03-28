@@ -5,7 +5,10 @@ namespace MongoDB.QueryBuilder.Internal
 {
     internal static class MongoDbQueryExtensions
     {
-        public static IMongoDbQuery<T, TResult> ToQuery<T, TResult>(this IMongoDbQuery<T> sourceQuery, Expression<Func<T, TResult>> selector = null) where T : class
+        public static IMongoDbQuery<T, TResult> ToQuery<T, TResult>(
+            this IMongoDbQuery<T> sourceQuery,
+            Expression<Func<T, TResult>> selector = null)
+                where T : class
         {
             MongoDbQuery<T, TResult> destinationQuery = null;
 

@@ -14,7 +14,8 @@ namespace MongoDB.Tests.Infrastructure
 
         public InfrastructureTestsBase(InfrastructureFixture infrastructureFixture)
         {
-            InfrastructureFixture = infrastructureFixture ?? throw new ArgumentNullException(nameof(infrastructureFixture));
+            InfrastructureFixture = infrastructureFixture 
+                ?? throw new ArgumentNullException(nameof(infrastructureFixture), $"{nameof(infrastructureFixture)} cannot be null.");
 
             Configuration = infrastructureFixture.Configuration;
             ServiceProvider = infrastructureFixture.ServiceProvider;

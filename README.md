@@ -12,32 +12,32 @@ If you like or are using this project to learn or start your solution, please gi
 
  | Package | NuGet |
  | ------- | ------- |
- | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.1.5) |
- | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.1.5) |
- | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.1.5) |
- | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.1.5) |
+ | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.2.0) |
+ | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.2.0) |
+ | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.2.0) |
+ | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.2.0) |
  | ------- | ------- |
- | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.1.5) |
- | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.1.5) |
- | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.1.5) |
- | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.1.5) |
- | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.1.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.1.5) |
+ | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.2.0) |
+ | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.2.0) |
+ | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.2.0) |
+ | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.2.0) |
+ | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.2.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.2.0) |
 
 ## Installation
 
 MongoDB.DataAccess is available on Nuget.
 
 ```
-Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.1.5
-Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.1.5
-Install-Package MongoDB.Data.Repository.Abstractions -Version 1.1.5
-Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.1.5
+Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.2.0
+Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.2.0
+Install-Package MongoDB.Data.Repository.Abstractions -Version 1.2.0
+Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.2.0
 
-Install-Package MongoDB.Data.Generators -Version 1.1.5
-Install-Package MongoDB.Data.Infrastructure -Version 1.1.5
-Install-Package MongoDB.Data.QueryBuilder -Version 1.1.5
-Install-Package MongoDB.Data.Repository -Version 1.1.5
-Install-Package MongoDB.Data.UnitOfWork -Version 1.1.5
+Install-Package MongoDB.Data.Generators -Version 1.2.0
+Install-Package MongoDB.Data.Infrastructure -Version 1.2.0
+Install-Package MongoDB.Data.QueryBuilder -Version 1.2.0
+Install-Package MongoDB.Data.Repository -Version 1.2.0
+Install-Package MongoDB.Data.UnitOfWork -Version 1.2.0
 ```
 
 P.S.: MongoDB.Data.UnitOfWork depends on the other packages, so installing this package is enough.
@@ -50,28 +50,23 @@ First of all, please register the dependencies into the MS Built-In container:
 
 ```C#
 // Register the DbContext
-services.AddMongoDbContext<IMongoDbContext, BloggingContext>(provider =>
-{
-    var connectionString = Configuration.GetValue<string>("MongoSettings:ConnectionString");
-    var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
-
-    var bloggingContext = new BloggingContext(connectionString, databaseName);
-
-    return bloggingContext;
-});
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
+    configureFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
 
 // Register the UnitOfWork
-services.AddMongoDbUnitOfWork();
 services.AddMongoDbUnitOfWork<BloggingContext>();
 ```
 
 After that, use the structure in your code like that:
 
 ```C#
-private readonly IMongoDbUnitOfWork _unitOfWork;
+private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWork;
 	
 // Injection
-public BlogsController(IMongoDbUnitOfWork unitOfWork) => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork) 
+    => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
 
 public void GetAllBlogs()
 {
@@ -87,7 +82,12 @@ public void GetAllBlogsProjection()
     var repository = _unitOfWork.Repository<Blog>();
 
     var query = repository.MultipleResultQuery()
-                          .Select(selector => new { Name = selector.Title, Link = selector.Url, Type = selector.Type.Description });
+                          .Select(selector => new 
+                          {
+                              Name = selector.Title, 
+                              Link = selector.Url, 
+                              Type = selector.Type.Description 
+                          });
 
     var blogs = repository.Search(query);
 }
@@ -138,7 +138,10 @@ public void GetBlogsPagedList()
                           .Page(1, 20);
 
     var blogs = repository.Search(query)
-                          .ToPagedList(query.Paging.PageIndex, query.Paging.PageSize, query.Paging.TotalCount);
+                          .ToPagedList(
+                            query.Paging.PageIndex,
+                            query.Paging.PageSize,
+                            query.Paging.TotalCount);
 }
 
 public void GetFilteredBlogs()
@@ -187,7 +190,13 @@ public void GetBlogByIdProjection()
 
     var query = repository.SingleResultQuery()
                           .AndFilter(blog => blog.Id == 1)
-                          .Select(selector => new { selector.Id, Name = selector.Title, Link = selector.Url, Type = selector.Type.Description });
+                          .Select(selector => new 
+                          {
+                              selector.Id, 
+                              Name = selector.Title, 
+                              Link = selector.Url, 
+                              Type = selector.Type.Description
+                          });
 
     var blogResult = repository.SingleOrDefault(query);
 }

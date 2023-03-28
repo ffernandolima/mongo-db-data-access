@@ -58,14 +58,15 @@ namespace MongoDB.Generators
         /// <summary>
         /// Generates an Id for a document.
         /// </summary>
-        /// <param name="container">The container of the document (it will be an <see cref="MongoDB.Driver.IMongoCollection{T}"/> when called from the C# driver).</param>
+        /// <param name="container">The container of the document 
+        /// (it will be an <see cref="MongoDB.Driver.IMongoCollection{T}"/> when called from the C# driver).</param>
         /// <param name="document">The document.</param>
         /// <returns>An Id.</returns>
         public object GenerateId(object container, object document)
         {
             if (container is null)
             {
-                throw new ArgumentNullException(nameof(container));
+                throw new ArgumentNullException(nameof(container), $"{nameof(container)} cannot be null.");
             }
 
             var collection = (IMongoCollection<T>)container;

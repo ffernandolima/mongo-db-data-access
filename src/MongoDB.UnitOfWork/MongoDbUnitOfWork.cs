@@ -28,8 +28,8 @@ namespace MongoDB.UnitOfWork
 
         public MongoDbUnitOfWork(IMongoDbContext context, IMongoDbServiceFactory factory)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            Context = context ?? throw new ArgumentNullException(nameof(context), $"{nameof(context)} cannot be null.");
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory), $"{nameof(factory)} cannot be null.");
             _repositories = new ConcurrentDictionary<string, IMongoDbRepository>();
         }
 
@@ -48,33 +48,45 @@ namespace MongoDB.UnitOfWork
             static IMongoDbRepository Factory(IMongoDbContext dbContext, Type type)
             {
                 return (IMongoDbRepository)AppDomain.CurrentDomain.GetAssemblies()
-                                                    .SelectMany(selector => selector.GetTypes())
-                                                    .Where(predicate => type.IsAssignableFrom(predicate) && !predicate.IsInterface && !predicate.IsAbstract)
-                                                    .Select(selector => Activator.CreateInstance(selector, dbContext))
-                                                    .SingleOrDefault();
+                    .SelectMany(selector => selector.GetTypes())
+                    .Where(predicate => type.IsAssignableFrom(predicate) && !predicate.IsInterface && !predicate.IsAbstract)
+                    .Select(selector => Activator.CreateInstance(selector, dbContext))
+                    .SingleOrDefault();
             }
 
-            return _factory.GetService<T>() ?? (T)GetRepository(typeof(T), Factory, "Custom");
+            var repository = _factory.GetService<T>() ??
+                (T)GetRepository(typeof(T), Factory, "Custom");
+
+            return repository;
         }
 
         public IMongoDbRepository<T> Repository<T>() where T : class
         {
-            static IMongoDbRepository Factory(IMongoDbContext dbContext, Type type) => new MongoDbRepository<T>(dbContext);
+            static IMongoDbRepository Factory(IMongoDbContext dbContext, Type type)
+                => new MongoDbRepository<T>(dbContext);
 
-            return _factory.GetService<IMongoDbRepository<T>>() ?? (IMongoDbRepository<T>)GetRepository(typeof(T), Factory, "Generic");
+            var repository = _factory.GetService<IMongoDbRepository<T>>() ??
+                (IMongoDbRepository<T>)GetRepository(typeof(T), Factory, "Generic");
+
+            return repository;
         }
 
         #endregion IRepositoryFactory Members
 
         #region ISyncMongoDbUnitOfWork Members
 
-        public ISaveChangesResult SaveChanges() => Context.SaveChanges();
+        public IMongoDbSaveChangesResult SaveChanges() => Context.SaveChanges();
 
         public bool HasChanges() => Context.HasChanges();
 
         public void DiscardChanges() => Context.DiscardChanges();
 
-        public void StartTransaction(ClientSessionOptions sessionOptions = null, TransactionOptions transactionOptions = null) => Context.StartTransaction(sessionOptions, transactionOptions);
+        public void StartTransaction(
+            ClientSessionOptions sessionOptions = null,
+            TransactionOptions transactionOptions = null)
+        {
+            Context.StartTransaction(sessionOptions, transactionOptions);
+        }
 
         public void CommitTransaction() => Context.CommitTransaction();
 
@@ -84,17 +96,31 @@ namespace MongoDB.UnitOfWork
 
         #region IAsyncMongoDbUnitOfWork Members
 
-        public Task<ISaveChangesResult> SaveChangesAsync(CancellationToken cancellationToken = default) => Context.SaveChangesAsync(cancellationToken);
+        public Task<IMongoDbSaveChangesResult> SaveChangesAsync(CancellationToken cancellationToken = default)
+            => Context.SaveChangesAsync(cancellationToken);
 
-        public Task CommitTransactionAsync(CancellationToken cancellationToken = default) => Context.CommitTransactionAsync(cancellationToken);
+        public Task StartTransactionAsync(
+            ClientSessionOptions sessionOptions = null,
+            TransactionOptions transactionOptions = null,
+            CancellationToken cancellationToken = default)
+        {
+            return Context.StartTransactionAsync(sessionOptions, transactionOptions, cancellationToken);
+        }
 
-        public Task AbortTransactionAsync(CancellationToken cancellationToken = default) => Context.AbortTransactionAsync(cancellationToken);
+        public Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+            => Context.CommitTransactionAsync(cancellationToken);
+
+        public Task AbortTransactionAsync(CancellationToken cancellationToken = default)
+            => Context.AbortTransactionAsync(cancellationToken);
 
         #endregion IAsyncMongoDbUnitOfWork Members
 
         #region Private Methods
 
-        private IMongoDbRepository GetRepository(Type objectType, Func<IMongoDbContext, Type, IMongoDbRepository> repositoryFactory, string prefix)
+        private IMongoDbRepository GetRepository(
+            Type objectType,
+            Func<IMongoDbContext, Type, IMongoDbRepository> repositoryFactory,
+            string prefix)
         {
             var typeName = $"{prefix}.{objectType.FullName}";
 
@@ -126,8 +152,6 @@ namespace MongoDB.UnitOfWork
                     }
 
                     _repositories.Clear();
-
-                    _factory.Dispose();
                 }
             }
 

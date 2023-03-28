@@ -66,17 +66,11 @@ namespace MongoDB.WebAPI
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
-            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(provider =>
-            {
-                var connectionString = Configuration.GetValue<string>("MongoSettings:ConnectionString");
-                var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
+            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+                 connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
+                 databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
+                 setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
 
-                var bloggingContext = new BloggingContext(connectionString, databaseName);
-
-                return bloggingContext;
-            });
-
-            services.AddMongoDbUnitOfWork();
             services.AddMongoDbUnitOfWork<BloggingContext>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
@@ -113,21 +107,21 @@ namespace MongoDB.WebAPI
             {
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
-                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"API {description.GroupName.ToUpperInvariant()}");
+                    options.SwaggerEndpoint(
+                        $"/swagger/{description.GroupName}/swagger.json", $"API {description.GroupName.ToUpperInvariant()}");
                 }
             });
 
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-
             using var serviceScope = serviceScopeFactory.CreateScope();
 
-            var context = serviceScope.ServiceProvider.GetService<BloggingContext>();
-
             var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
-            context.Client.DropDatabase(databaseName);
+            var context = serviceScope.ServiceProvider.GetRequiredService<BloggingContext>();
 
-            var unitOfWork = serviceScope.ServiceProvider.GetService<IMongoDbUnitOfWork>();
+            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
             var repository = unitOfWork.Repository<Blog>();
+
+            context.Client.DropDatabase(databaseName);
 
             if (!repository.Any())
             {

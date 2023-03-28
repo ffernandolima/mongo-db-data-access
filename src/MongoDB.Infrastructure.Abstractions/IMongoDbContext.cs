@@ -2,11 +2,11 @@
 
 namespace MongoDB.Infrastructure
 {
-    public interface IMongoDbContext : ISyncMongoDbContext, IAsyncMongoDbContext
+    public interface IMongoDbContext : IMongoDbSyncContext, IMongoDbAsyncContext
     {
         IMongoClient Client { get; }
         IMongoDatabase Database { get; }
         IClientSessionHandle Session { get; }
-        bool AcceptAllChangesOnSave { get; }
+        IMongoDbContextOptions Options { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 namespace MongoDB.QueryBuilder
 {
-    public enum MongoDbSortDirection
+    public enum MongoDbSortingDirection
     {
         Ascending,
         Descending

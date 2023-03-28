@@ -2,7 +2,7 @@
 
 namespace MongoDB.Infrastructure
 {
-    public interface ISaveChangesResult
+    public interface IMongoDbSaveChangesResult
     {
         IReadOnlyList<object> Results { get; }
     }
