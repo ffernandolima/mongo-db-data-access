@@ -17,6 +17,8 @@ namespace MongoDB.Infrastructure
         private readonly MongoClient _client;
         private readonly AsyncLocal<IList<object>> _commands;
         private readonly AsyncLocal<MongoDbSession> _session;
+        private readonly IThrottlingMongoDbSemaphore _semaphore;
+        private readonly int _maximumNumberOfConcurrentRequests;
 
         private static readonly object _sync = new();
         private static readonly object _emptyResult = new();
@@ -29,6 +31,22 @@ namespace MongoDB.Infrastructure
         public IMongoDatabase Database { get; private set; }
         public IClientSessionHandle Session => GetSession();
         public bool AcceptAllChangesOnSave { get; protected set; } = true;
+        public int MaximumNumberOfConcurrentRequests
+        {
+            get => _maximumNumberOfConcurrentRequests;
+            protected init
+            {
+                _maximumNumberOfConcurrentRequests = value;
+                if (_maximumNumberOfConcurrentRequests == 0)
+                {
+                    _maximumNumberOfConcurrentRequests = GetDefaultMaximumNumberOfConcurrentRequests();
+                }
+
+                _semaphore = _maximumNumberOfConcurrentRequests > 0
+                    ? new ThrottlingMongoDbSemaphore(_maximumNumberOfConcurrentRequests)
+                    : NoopThrottlingMongoDbSemaphore.Instance;
+            }
+        }
 
         #endregion IMongoDbContext Members
 
@@ -52,6 +70,7 @@ namespace MongoDB.Infrastructure
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
+            MaximumNumberOfConcurrentRequests = GetDefaultMaximumNumberOfConcurrentRequests();
         }
 
         public MongoDbContext(MongoUrl url, string databaseName, MongoDatabaseSettings databaseSettings = null)
@@ -72,6 +91,7 @@ namespace MongoDB.Infrastructure
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
+            MaximumNumberOfConcurrentRequests = GetDefaultMaximumNumberOfConcurrentRequests();
         }
 
         public MongoDbContext(string connectionString, string databaseName, MongoDatabaseSettings databaseSettings = null)
@@ -92,6 +112,7 @@ namespace MongoDB.Infrastructure
             _session = new AsyncLocal<MongoDbSession>();
             _client = new MongoClient(clientSettings);
             Database = _client.GetDatabase(databaseName, databaseSettings);
+            MaximumNumberOfConcurrentRequests = GetDefaultMaximumNumberOfConcurrentRequests();
         }
 
         public MongoDbContext(IConfiguration configuration)
@@ -124,6 +145,7 @@ namespace MongoDB.Infrastructure
             }
 
             Database = _client.GetDatabase(databaseName, databaseSettings);
+            MaximumNumberOfConcurrentRequests = GetDefaultMaximumNumberOfConcurrentRequests();
         }
 
         #endregion Ctor
@@ -200,7 +222,7 @@ namespace MongoDB.Infrastructure
                 throw new ArgumentException(nameof(name));
             }
 
-            var collection = Database.GetCollection<T>(name, settings);
+            var collection = new ThrottlingMongoDbCollection<T>(_semaphore, Database.GetCollection<T>(name, settings));
 
             return collection;
         }
@@ -250,10 +272,7 @@ namespace MongoDB.Infrastructure
             {
                 var session = GetSession();
 
-                if (session is not null)
-                {
-                    session.AbortTransaction();
-                }
+                session?.AbortTransaction();
             }
             catch
             {
@@ -412,6 +431,8 @@ namespace MongoDB.Infrastructure
 
         #region Private Methods
 
+        private int GetDefaultMaximumNumberOfConcurrentRequests() => Math.Max(_client.Settings.MaxConnectionPoolSize / 2, 1);
+
         private void ClearCommands() => _commands.Value?.Clear();
 
         private IClientSessionHandle GetSession()
@@ -432,7 +453,7 @@ namespace MongoDB.Infrastructure
 
         public async Task<IClientSessionHandle> CreateSessionAsync(ClientSessionOptions options = null, CancellationToken cancellationToken = default)
         {
-            var session = await _client.StartSessionAsync(options).ConfigureAwait(continueOnCapturedContext: false);
+            var session = await _client.StartSessionAsync(options, cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
             _session.Value = new MongoDbSession(session);
 
