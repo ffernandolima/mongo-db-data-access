@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure
 {
-    public class MongoDbContext : IMongoDbContext
+    public class MongoDbContext : IMongoDbContext, IDisposable
     {
         #region Private Fields
 
@@ -318,5 +318,31 @@ namespace MongoDB.Infrastructure
         }
 
         #endregion Private Methods
+
+        #region IDisposable Members
+
+        private bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    DiscardChanges();
+                    DisposeSession();
+                }
+            }
+
+            _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable Members
     }
 }

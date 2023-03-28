@@ -55,69 +55,77 @@ namespace MongoDB.Repository.Internal
 
             foreach (var sorting in sortings.Where(s => s is not null))
             {
-                if (sorting.SortingDirection == MongoDbSortingDirection.Ascending)
+                switch (sorting.SortingDirection)
                 {
-                    if (!orderedQueryable)
-                    {
-                        if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+                    case MongoDbSortingDirection.Ascending:
                         {
-                            source = source.OrderBy(sorting.FieldName, out var success);
-
-                            if (success)
+                            if (!orderedQueryable)
                             {
-                                orderedQueryable = true;
+                                if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+                                {
+                                    source = source.OrderBy(sorting.FieldName, out var success);
+
+                                    if (success)
+                                    {
+                                        orderedQueryable = true;
+                                    }
+                                }
+                                else if (sorting.KeySelector is not null)
+                                {
+                                    source = sorting.KeySelector.Invoke(source);
+
+                                    orderedQueryable = true;
+                                }
                             }
-                        }
-                        else if (sorting.KeySelector is not null)
-                        {
-                            source = sorting.KeySelector.Invoke(source);
-
-                            orderedQueryable = true;
-                        }
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrWhiteSpace(sorting.FieldName))
-                        {
-                            source = ((IOrderedQueryable<T>)source).ThenBy(sorting.FieldName, out _);
-                        }
-                        else if (sorting.KeySelector is not null)
-                        {
-                            source = sorting.KeySelector.Invoke(source);
-                        }
-                    }
-                }
-                else if (sorting.SortingDirection == MongoDbSortingDirection.Descending)
-                {
-                    if (!orderedQueryable)
-                    {
-                        if (!string.IsNullOrWhiteSpace(sorting.FieldName))
-                        {
-                            source = source.OrderByDescending(sorting.FieldName, out var success);
-
-                            if (success)
+                            else
                             {
-                                orderedQueryable = true;
+                                if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+                                {
+                                    source = ((IOrderedQueryable<T>)source).ThenBy(sorting.FieldName, out _);
+                                }
+                                else if (sorting.KeySelector is not null)
+                                {
+                                    source = sorting.KeySelector.Invoke(source);
+                                }
                             }
-                        }
-                        else if (sorting.KeySelector is not null)
-                        {
-                            source = sorting.KeySelector.Invoke(source);
 
-                            orderedQueryable = true;
+                            break;
                         }
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+
+                    case MongoDbSortingDirection.Descending:
                         {
-                            source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.FieldName, out _);
+                            if (!orderedQueryable)
+                            {
+                                if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+                                {
+                                    source = source.OrderByDescending(sorting.FieldName, out var success);
+
+                                    if (success)
+                                    {
+                                        orderedQueryable = true;
+                                    }
+                                }
+                                else if (sorting.KeySelector is not null)
+                                {
+                                    source = sorting.KeySelector.Invoke(source);
+
+                                    orderedQueryable = true;
+                                }
+                            }
+                            else
+                            {
+                                if (!string.IsNullOrWhiteSpace(sorting.FieldName))
+                                {
+                                    source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.FieldName, out _);
+                                }
+                                else if (sorting.KeySelector is not null)
+                                {
+                                    source = sorting.KeySelector.Invoke(source);
+                                }
+                            }
+
+                            break;
                         }
-                        else if (sorting.KeySelector is not null)
-                        {
-                            source = sorting.KeySelector.Invoke(source);
-                        }
-                    }
                 }
             }
 

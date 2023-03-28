@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure
 {
-    public interface IMongoDbAsyncContext
+    public interface IMongoDbAsyncContext : IDisposable
     {
         Task<IMongoDbSaveChangesResult> SaveChangesAsync(CancellationToken cancellationToken = default);
         Task<object> AddCommandAsync(Func<Task<object>> command);
