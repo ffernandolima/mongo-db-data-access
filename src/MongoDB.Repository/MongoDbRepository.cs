@@ -982,9 +982,9 @@ namespace MongoDB.Repository
 
         #endregion IAsyncRepository<T> Members
 
-        #region Private Methods
+        #region IMongoDbRepository<T> Members
 
-        private IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
+        public IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
         {
             IMongoDbMultipleResultQuery<T> multipleResultQuery = null;
 
@@ -1035,7 +1035,7 @@ namespace MongoDB.Repository
             return (IMongoQueryable<T>)queryable;
         }
 
-        private IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query)
+        public IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query)
         {
             IMongoDbMultipleResultQuery<T, TResult> multipleResultQuery = null;
 
@@ -1081,7 +1081,7 @@ namespace MongoDB.Repository
             return (IMongoQueryable<TResult>)queryable.Select(query.Selector);
         }
 
-        #endregion Private Methods
+        #endregion IMongoDbRepository<T> Members
 
         #region IDisposable Members
 
