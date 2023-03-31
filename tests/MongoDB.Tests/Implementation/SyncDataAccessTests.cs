@@ -7,8 +7,10 @@ using MongoDB.Repository.Extensions;
 using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace MongoDB.Tests.Implementation
@@ -270,13 +272,22 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void AddUnsuccessfulBlogWithinTransaction()
         {
+            const int Id = 51;
+
             var repository = _unitOfWork.Repository<Blog>();
 
-            var blog = Seeder.SeedBlog(51);
+            var blog = Seeder.SeedBlog(Id);
 
             _unitOfWork.StartTransaction();
 
             var insertOneResult = repository.InsertOne(blog);
+
+            blog.Title += " - Updated";
+
+            var UpdateOneResult = repository.UpdateOne(
+                x => x.Id == Id,
+                blog,
+                new Expression<Func<Blog, object>>[] { x => x.Title });
 
             var saveChangesResult = _unitOfWork.SaveChanges();
 

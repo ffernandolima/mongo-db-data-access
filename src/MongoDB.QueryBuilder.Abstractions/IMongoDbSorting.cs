@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
+using System.Linq.Expressions;
 
 namespace MongoDB.QueryBuilder
 {
     public interface IMongoDbSorting<T> : IMongoDbSorting
     {
-        Func<IQueryable<T>, IOrderedQueryable<T>> KeySelector { get; }
+        Expression<Func<T, object>> KeySelector { get; }
     }
 
     public interface IMongoDbSorting

@@ -72,7 +72,7 @@ namespace MongoDB.Repository.Internal
                                 }
                                 else if (sorting.KeySelector is not null)
                                 {
-                                    source = sorting.KeySelector.Invoke(source);
+                                    source = source.OrderBy(sorting.KeySelector);
 
                                     orderedQueryable = true;
                                 }
@@ -85,7 +85,7 @@ namespace MongoDB.Repository.Internal
                                 }
                                 else if (sorting.KeySelector is not null)
                                 {
-                                    source = sorting.KeySelector.Invoke(source);
+                                    source = ((IOrderedQueryable<T>)source).ThenBy(sorting.KeySelector);
                                 }
                             }
 
@@ -107,7 +107,7 @@ namespace MongoDB.Repository.Internal
                                 }
                                 else if (sorting.KeySelector is not null)
                                 {
-                                    source = sorting.KeySelector.Invoke(source);
+                                    source = source.OrderByDescending(sorting.KeySelector);
 
                                     orderedQueryable = true;
                                 }
@@ -120,7 +120,7 @@ namespace MongoDB.Repository.Internal
                                 }
                                 else if (sorting.KeySelector is not null)
                                 {
-                                    source = sorting.KeySelector.Invoke(source);
+                                    source = ((IOrderedQueryable<T>)source).ThenByDescending(sorting.KeySelector);
                                 }
                             }
 

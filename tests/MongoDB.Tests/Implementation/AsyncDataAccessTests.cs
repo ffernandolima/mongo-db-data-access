@@ -4,6 +4,8 @@ using MongoDB.Models;
 using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
+using System.Linq.Expressions;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -36,11 +38,13 @@ namespace MongoDB.Tests.Implementation
         {
             var repository = _unitOfWork.Repository<Blog>();
 
-            var count = await repository.CountAsync().ConfigureAwait(continueOnCapturedContext: false);
+            var count = await repository.CountAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, count);
 
-            var longCount = await repository.LongCountAsync().ConfigureAwait(continueOnCapturedContext: false);
+            var longCount = await repository.LongCountAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, longCount);
         }
@@ -48,19 +52,33 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public async Task AddUnsuccessfulBlogWithinTransactionAsync()
         {
+            const int Id = 51;
+
             var repository = _unitOfWork.Repository<Blog>();
 
-            var blog = Seeder.SeedBlog(51);
+            var blog = Seeder.SeedBlog(Id);
 
             _unitOfWork.StartTransaction();
 
-            var insertOneResult = await repository.InsertOneAsync(blog).ConfigureAwait(continueOnCapturedContext: false);
+            var insertOneResult = await repository.InsertOneAsync(blog)
+                .ConfigureAwait(continueOnCapturedContext: false);
 
-            var saveChangesResult = await _unitOfWork.SaveChangesAsync().ConfigureAwait(continueOnCapturedContext: false);
+            blog.Title += " - Updated";
 
-            await _unitOfWork.AbortTransactionAsync().ConfigureAwait(continueOnCapturedContext: false);
+            var UpdateOneResult = await repository.UpdateOneAsync(
+                    x => x.Id == Id,
+                    blog,
+                    new Expression<Func<Blog, object>>[] { x => x.Title })
+                .ConfigureAwait(continueOnCapturedContext: false);
 
-            var id = await repository.MaxAsync(x => x.Id).ConfigureAwait(continueOnCapturedContext: false);
+            var saveChangesResult = await _unitOfWork.SaveChangesAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork.AbortTransactionAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            var id = await repository.MaxAsync(x => x.Id)
+                .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, id);
         }
