@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MongoDB.QueryBuilder;
 using System;
 using System.Collections.Generic;
@@ -36,5 +37,7 @@ namespace MongoDB.Repository
         object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null);
         object DeleteOne(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
         object DeleteMany(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
+        IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query);
+        IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query);
     }
 }

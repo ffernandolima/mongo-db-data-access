@@ -496,6 +496,103 @@ namespace MongoDB.Repository
             }
         }
 
+        public IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
+        {
+            IMongoDbMultipleResultQuery<T> multipleResultQuery = null;
+
+            if (query is IMongoDbMultipleResultQuery<T>)
+            {
+                multipleResultQuery = (IMongoDbMultipleResultQuery<T>)query;
+            }
+
+            IQueryable<T> queryable = Collection.AsQueryable();
+
+            if (query.Predicate is not null)
+            {
+                queryable = queryable.Filter(query.Predicate);
+            }
+
+            if (query.Sortings.Any())
+            {
+                queryable = queryable.Sort(query.Sortings);
+            }
+
+            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
+            {
+                queryable = queryable.Top(multipleResultQuery.Topping);
+            }
+
+            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
+            {
+                IQueryable<T> countQueryable = Collection.AsQueryable();
+
+                if (multipleResultQuery.Predicate is not null)
+                {
+                    countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
+                }
+
+                if (multipleResultQuery.Paging is MongoDbPaging paging)
+                {
+                    paging.TotalCount = countQueryable.Count();
+                }
+
+                queryable = queryable.Page(multipleResultQuery.Paging);
+            }
+
+            if (query.Selector is not null)
+            {
+                queryable = queryable.Select(query.Selector);
+            }
+
+            return (IMongoQueryable<T>)queryable;
+        }
+
+        public IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query)
+        {
+            IMongoDbMultipleResultQuery<T, TResult> multipleResultQuery = null;
+
+            if (query is IMongoDbMultipleResultQuery<T, TResult>)
+            {
+                multipleResultQuery = (IMongoDbMultipleResultQuery<T, TResult>)query;
+            }
+
+            IQueryable<T> queryable = Collection.AsQueryable();
+
+            if (query.Predicate is not null)
+            {
+                queryable = queryable.Filter(query.Predicate);
+            }
+
+            if (query.Sortings.Any())
+            {
+                queryable = queryable.Sort(query.Sortings);
+            }
+
+            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
+            {
+                queryable = queryable.Top(multipleResultQuery.Topping);
+            }
+
+            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
+            {
+                IQueryable<T> countQueryable = Collection.AsQueryable();
+
+                if (multipleResultQuery.Predicate is not null)
+                {
+                    countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
+                }
+
+                if (multipleResultQuery.Paging is MongoDbPaging paging)
+                {
+                    paging.TotalCount = countQueryable.Count();
+                }
+
+                queryable = queryable.Page(multipleResultQuery.Paging);
+            }
+
+            return (IMongoQueryable<TResult>)queryable.Select(query.Selector);
+        }
+
         #endregion ISyncRepository<T> Members
 
         #region IAsyncRepository<T> Members
@@ -981,107 +1078,6 @@ namespace MongoDB.Repository
         }
 
         #endregion IAsyncRepository<T> Members
-
-        #region IMongoDbRepository<T> Members
-
-        public IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
-        {
-            IMongoDbMultipleResultQuery<T> multipleResultQuery = null;
-
-            if (query is IMongoDbMultipleResultQuery<T>)
-            {
-                multipleResultQuery = (IMongoDbMultipleResultQuery<T>)query;
-            }
-
-            IQueryable<T> queryable = Collection.AsQueryable();
-
-            if (query.Predicate is not null)
-            {
-                queryable = queryable.Filter(query.Predicate);
-            }
-
-            if (query.Sortings.Any())
-            {
-                queryable = queryable.Sort(query.Sortings);
-            }
-
-            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
-            {
-                queryable = queryable.Top(multipleResultQuery.Topping);
-            }
-
-            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
-            {
-                IQueryable<T> countQueryable = Collection.AsQueryable();
-
-                if (multipleResultQuery.Predicate is not null)
-                {
-                    countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
-                }
-
-                if (multipleResultQuery.Paging is MongoDbPaging paging)
-                {
-                    paging.TotalCount = countQueryable.Count();
-                }
-
-                queryable = queryable.Page(multipleResultQuery.Paging);
-            }
-
-            if (query.Selector is not null)
-            {
-                queryable = queryable.Select(query.Selector);
-            }
-
-            return (IMongoQueryable<T>)queryable;
-        }
-
-        public IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query)
-        {
-            IMongoDbMultipleResultQuery<T, TResult> multipleResultQuery = null;
-
-            if (query is IMongoDbMultipleResultQuery<T, TResult>)
-            {
-                multipleResultQuery = (IMongoDbMultipleResultQuery<T, TResult>)query;
-            }
-
-            IQueryable<T> queryable = Collection.AsQueryable();
-
-            if (query.Predicate is not null)
-            {
-                queryable = queryable.Filter(query.Predicate);
-            }
-
-            if (query.Sortings.Any())
-            {
-                queryable = queryable.Sort(query.Sortings);
-            }
-
-            if (multipleResultQuery is not null && multipleResultQuery.Topping.IsEnabled)
-            {
-                queryable = queryable.Top(multipleResultQuery.Topping);
-            }
-
-            if (multipleResultQuery is not null && multipleResultQuery.Paging.IsEnabled)
-            {
-                IQueryable<T> countQueryable = Collection.AsQueryable();
-
-                if (multipleResultQuery.Predicate is not null)
-                {
-                    countQueryable = countQueryable.Filter(multipleResultQuery.Predicate);
-                }
-
-                if (multipleResultQuery.Paging is MongoDbPaging paging)
-                {
-                    paging.TotalCount = countQueryable.Count();
-                }
-
-                queryable = queryable.Page(multipleResultQuery.Paging);
-            }
-
-            return (IMongoQueryable<TResult>)queryable.Select(query.Selector);
-        }
-
-        #endregion IMongoDbRepository<T> Members
 
         #region IDisposable Members
 
