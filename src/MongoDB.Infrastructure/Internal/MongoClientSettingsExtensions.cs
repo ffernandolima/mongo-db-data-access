@@ -1,20 +1,21 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal static class MongoClientSettingsExtensions
     {
-        public static MongoClientSettings AddDiagnostics(this MongoClientSettings settings)
+        public static MongoClientSettings ConfigureCluster(
+            this MongoClientSettings mongoClientSettings,
+            MongoDbKeepAliveSettings keepAliveSettings = null)
         {
-            if (settings is not null)
+            if (mongoClientSettings is not null)
             {
-                var options = new InstrumentationOptions { CaptureCommandText = true };
-
-                settings.ClusterConfigurator = builder => builder.Subscribe(new DiagnosticsActivityEventSubscriber(options));
+                mongoClientSettings.ClusterConfigurator = clusterBuilder =>
+                     clusterBuilder.ConfigureDiagnostics()
+                                   .ConfigureTcp(keepAliveSettings);
             }
 
-            return settings;
+            return mongoClientSettings;
         }
     }
 }

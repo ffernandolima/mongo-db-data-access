@@ -15,6 +15,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
             MongoDbContextOptions dbContextOptions = null,
+            MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -35,7 +36,7 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentException($"{nameof(databaseName)} cannot be null or whitespace.", nameof(databaseName));
             }
 
-            clientSettings.AddDiagnostics();
+            clientSettings.ConfigureCluster(keepAliveSettings);
 
             services.TryAddSingleton<IMongoClient>(new MongoClient(clientSettings));
             services.TryAddSingleton(provider =>
@@ -72,6 +73,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
             Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -109,6 +111,13 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
+            MongoDbKeepAliveSettings keepAliveSettings = null;
+            if (setupKeepAliveSettings is not null)
+            {
+                keepAliveSettings = new MongoDbKeepAliveSettings();
+                setupKeepAliveSettings.Invoke(keepAliveSettings);
+            }
+
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null;
             if (setupFluentConfigurationOptions is not null)
             {
@@ -121,6 +130,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -133,6 +143,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
             MongoDbContextOptions dbContextOptions = null,
+            MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -158,6 +169,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -170,6 +182,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
             Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -206,6 +219,13 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
+            MongoDbKeepAliveSettings keepAliveSettings = null;
+            if (setupKeepAliveSettings is not null)
+            {
+                keepAliveSettings = new MongoDbKeepAliveSettings();
+                setupKeepAliveSettings.Invoke(keepAliveSettings);
+            }
+
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null;
             if (setupFluentConfigurationOptions is not null)
             {
@@ -218,6 +238,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -230,6 +251,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
             MongoDbContextOptions dbContextOptions = null,
+            MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -255,6 +277,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -267,6 +290,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
             Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -295,6 +319,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 setupDatabaseSettings,
                 setupDbContextOptions,
+                setupKeepAliveSettings,
                 setupFluentConfigurationOptions,
                 serviceLifetime);
 
@@ -307,6 +332,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
             MongoDbContextOptions dbContextOptions = null,
+            MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -332,6 +358,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -344,6 +371,7 @@ namespace MongoDB.Infrastructure.Extensions
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
             Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -380,6 +408,13 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
+            MongoDbKeepAliveSettings keepAliveSettings = null;
+            if (setupKeepAliveSettings is not null)
+            {
+                keepAliveSettings = new MongoDbKeepAliveSettings();
+                setupKeepAliveSettings.Invoke(keepAliveSettings);
+            }
+
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null;
             if (setupFluentConfigurationOptions is not null)
             {
@@ -392,6 +427,7 @@ namespace MongoDB.Infrastructure.Extensions
                 databaseName,
                 databaseSettings,
                 dbContextOptions,
+                keepAliveSettings,
                 fluentConfigurationOptions,
                 serviceLifetime);
 
@@ -402,6 +438,7 @@ namespace MongoDB.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration,
             MongoDbContextOptions dbContextOptions = null,
+            MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -436,6 +473,7 @@ namespace MongoDB.Infrastructure.Extensions
                     configuration.GetDatabaseName(),
                     configuration.GetMongoDatabaseSettings(),
                     dbContextOptions,
+                    keepAliveSettings,
                     fluentConfigurationOptions,
                     serviceLifetime);
             }
@@ -447,6 +485,7 @@ namespace MongoDB.Infrastructure.Extensions
                     configuration.GetDatabaseName(),
                     configuration.GetMongoDatabaseSettings(),
                     dbContextOptions,
+                    keepAliveSettings,
                     fluentConfigurationOptions,
                     serviceLifetime);
             }
@@ -458,6 +497,7 @@ namespace MongoDB.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration,
             Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where TService : IMongoDbContext
@@ -492,6 +532,13 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
+            MongoDbKeepAliveSettings keepAliveSettings = null;
+            if (setupKeepAliveSettings is not null)
+            {
+                keepAliveSettings = new MongoDbKeepAliveSettings();
+                setupKeepAliveSettings.Invoke(keepAliveSettings);
+            }
+
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null;
             if (setupFluentConfigurationOptions is not null)
             {
@@ -506,6 +553,7 @@ namespace MongoDB.Infrastructure.Extensions
                     configuration.GetDatabaseName(),
                     configuration.GetMongoDatabaseSettings(),
                     dbContextOptions,
+                    keepAliveSettings,
                     fluentConfigurationOptions,
                     serviceLifetime);
             }
@@ -517,6 +565,7 @@ namespace MongoDB.Infrastructure.Extensions
                     configuration.GetDatabaseName(),
                     configuration.GetMongoDatabaseSettings(),
                     dbContextOptions,
+                    keepAliveSettings,
                     fluentConfigurationOptions,
                     serviceLifetime);
             }
