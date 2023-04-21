@@ -8,6 +8,9 @@ using System.Linq.Expressions;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using System.Collections.Generic;
+using MongoDB.Driver;
+using System.Linq;
 
 namespace MongoDB.Tests.Implementation
 {
@@ -47,6 +50,53 @@ namespace MongoDB.Tests.Implementation
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, longCount);
+        }
+
+
+        [Fact]
+        public async Task UpdateManyBlogsAsync()
+        {
+            var blog1 = Seeder.SeedBlog(idx: 51);
+            var blog2 = Seeder.SeedBlog(idx: 52);
+            var blogs = new List<Blog> { blog1, blog2 };
+            var blogsId = blogs.Select(b => b.Id);
+            var updatedTitle = "updated-title";
+
+            var repository = _unitOfWork.Repository<Blog>();
+
+            await repository
+                .InsertManyAsync(blogs)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            var filter = Builders<Blog>.Filter.In(b => b.Id, blogsId);
+            var update = Builders<Blog>.Update.Set(b => b.Title, updatedTitle);
+
+            await repository
+                .UpdateManyAsync(filter, update)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork
+                .SaveChangesAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            var query = repository
+                .MultipleResultQuery()
+                .AndFilter(r => blogsId.Contains(r.Id));
+
+            var result = await repository
+                .SearchAsync(query)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            Assert.Equal(result.First(r => r.Id == blog1.Id)?.Title, updatedTitle);
+            Assert.Equal(result.First(r => r.Id == blog2.Id)?.Title, updatedTitle);
+
+            await repository
+                .DeleteManyAsync(b => blogsId.Contains(b.Id))
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork
+                .SaveChangesAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
         }
 
         [Fact]

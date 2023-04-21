@@ -37,6 +37,7 @@ namespace MongoDB.Repository
         object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null);
         object DeleteOne(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
         object DeleteMany(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
+        object UpdateMany(FilterDefinition<T> filter, UpdateDefinition<T> update, UpdateOptions options = null);
         IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query);
         IMongoQueryable<TResult> ToQueryable<TResult>(IMongoDbQuery<T, TResult> query);
     }

@@ -101,5 +101,11 @@ namespace MongoDB.Repository
             Expression<Func<T, bool>> predicate,
             DeleteOptions options = null,
             CancellationToken cancellationToken = default);
+
+        Task<object> UpdateManyAsync(
+            FilterDefinition<T> filter,
+	        UpdateDefinition<T> update,
+	        UpdateOptions options = null,
+	        CancellationToken cancellationToken = default);
     }
 }

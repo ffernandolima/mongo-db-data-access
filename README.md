@@ -264,6 +264,18 @@ public void DeleteBlog()
 
     _unitOfWork.SaveChanges();
 }
+
+public void UpdateManyBlogs()
+{
+    var repository = _unitOfWork.Repository<Blog>();
+    
+    var filter = Builders<Blog>.Filter.In(b => b.Id, blogsId);
+    var update = Builders<Blog>.Update.Set(b => b.Title, "updated-title");
+            
+    repository.UpdateMany(filter, update);
+
+    _unitOfWork.SaveChanges();
+}
 ```
 
 The operations above are also available as async.

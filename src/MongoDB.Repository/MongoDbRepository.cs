@@ -496,6 +496,44 @@ namespace MongoDB.Repository
             }
         }
 
+        public virtual object UpdateMany(FilterDefinition<T> filter, UpdateDefinition<T> update, UpdateOptions options = null)
+        {
+            if (filter is null)
+            {
+                throw new ArgumentNullException(nameof(filter), $"{nameof(filter)} cannot be null.");
+            }
+
+            if (update is null)
+            {
+                throw new ArgumentNullException(nameof(update), $"{nameof(update)} cannot be null.");
+            }
+
+            UpdateResult DoUpdateMany()
+            {
+                UpdateResult result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateMany(Context.Session, filter, update, options);
+                }
+                else
+                {
+                    result = Collection.UpdateMany(filter, update, options);
+                }
+
+                return result;
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommand(DoUpdateMany);
+            }
+            else
+            {
+                return DoUpdateMany();
+            }
+        }
+
         public IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
         {
             IMongoDbMultipleResultQuery<T> multipleResultQuery = null;
@@ -1074,6 +1112,48 @@ namespace MongoDB.Repository
             else
             {
                 return DoDeleteManyAsync();
+            }
+        }
+
+        public virtual Task<object> UpdateManyAsync(
+            FilterDefinition<T> filter,
+            UpdateDefinition<T> update,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (filter is null)
+            {
+                throw new ArgumentNullException(nameof(filter), $"{nameof(filter)} cannot be null.");
+            }
+
+            if (update is null)
+            {
+                throw new ArgumentNullException(nameof(update), $"{nameof(update)} cannot be null.");
+            }
+
+            Task<object> DoUpdateManyAsync()
+            {
+                Task<UpdateResult> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateManyAsync(Context.Session, filter, update, options, cancellationToken);
+                }
+                else
+                {
+                    result = Collection.UpdateManyAsync(filter, update, options, cancellationToken);
+                }
+
+                return result.Then<UpdateResult, object>(source => source, cancellationToken);
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommandAsync(DoUpdateManyAsync);
+            }
+            else
+            {
+                return DoUpdateManyAsync();
             }
         }
 

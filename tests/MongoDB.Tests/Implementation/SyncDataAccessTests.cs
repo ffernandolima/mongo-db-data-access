@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Data;
 using MongoDB.Data.Repositories.Interfaces;
+using MongoDB.Driver;
 using MongoDB.Models;
 using MongoDB.QueryBuilder;
 using MongoDB.Repository.Extensions;
@@ -35,6 +36,37 @@ namespace MongoDB.Tests.Implementation
             _repositoryFactory = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory>();
             // IRepositoryFactory<T> used for readonly/multiple databases scenario;
             _repositoryFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory<BloggingContext>>();
+        }
+
+        [Fact]
+        public void UpdateManyBlogs()
+        {
+            var blog1 = Seeder.SeedBlog(idx: 151);
+            var blog2 = Seeder.SeedBlog(idx: 152);
+            var blogs = new List<Blog> { blog1, blog2 };
+            var blogsId = blogs.Select(b => b.Id);
+            var updatedTitle = "updated-title";
+
+            var repository = _unitOfWork.Repository<Blog>();
+
+            repository.InsertMany(blogs);
+
+            var filter = Builders<Blog>.Filter.In(b => b.Id, blogsId);
+            var update = Builders<Blog>.Update.Set(b => b.Title, updatedTitle);
+
+            repository.UpdateMany(filter, update);
+            _unitOfWork.SaveChanges();
+
+            var query = repository
+                .MultipleResultQuery()
+                .AndFilter(r => blogsId.Contains(r.Id));
+            var result = repository.Search(query);
+
+            Assert.Equal(result.First(r => r.Id == blog1.Id)?.Title, updatedTitle);
+            Assert.Equal(result.First(r => r.Id == blog2.Id)?.Title, updatedTitle);
+
+            repository.DeleteMany(b => blogsId.Contains(b.Id));
+            _unitOfWork.SaveChanges();
         }
 
         [Fact]
