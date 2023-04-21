@@ -104,8 +104,13 @@ namespace MongoDB.Repository
 
         Task<object> UpdateManyAsync(
             FilterDefinition<T> filter,
-	        UpdateDefinition<T> update,
-	        UpdateOptions options = null,
-	        CancellationToken cancellationToken = default);
+            UpdateDefinition<T> update,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default);
+
+        Task<object> BulkWriteAsync(
+            IEnumerable<WriteModel<T>> requests,
+            BulkWriteOptions options = null,
+            CancellationToken cancellationToken = default);
     }
 }

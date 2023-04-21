@@ -276,6 +276,23 @@ public void UpdateManyBlogs()
 
     _unitOfWork.SaveChanges();
 }
+
+public void BulkWriteBlogs()
+{
+    var repository = _unitOfWork.Repository<Blog>();
+    
+    var requests = new List<WriteModel<Blog>>();
+    foreach (var blogId in blogsId)
+    {
+        var filter = Builders<Blog>.Filter.Eq(b => b.Id, blogId);
+        var update = Builders<Blog>.Update.Set(b => b.Title, $"{updatedTitle}-{blogId}");
+        requests.Add(new UpdateOneModel<Blog>(filter, update));
+    }
+            
+    repository.BulkWrite(requests);
+
+    _unitOfWork.SaveChanges();
+}
 ```
 
 The operations above are also available as async.

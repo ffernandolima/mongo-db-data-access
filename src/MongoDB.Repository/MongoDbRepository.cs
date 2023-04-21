@@ -534,6 +534,39 @@ namespace MongoDB.Repository
             }
         }
 
+        public virtual object BulkWrite(IEnumerable<WriteModel<T>> requests, BulkWriteOptions options = null)
+        {
+            if (requests is null || !requests.Any())
+            {
+                throw new ArgumentNullException(nameof(requests), $"{nameof(requests)} cannot be null or empty.");
+            }
+
+            object DoBulkWrite()
+            {
+                BulkWriteResult<T> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.BulkWrite(Context.Session, requests, options);
+                }
+                else
+                {
+                    result = Collection.BulkWrite(requests, options);
+                }
+
+                return result;
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommand(DoBulkWrite);
+            }
+            else
+            {
+                return DoBulkWrite();
+            }
+        }
+
         public IMongoQueryable<T> ToQueryable(IMongoDbQuery<T> query)
         {
             IMongoDbMultipleResultQuery<T> multipleResultQuery = null;
@@ -1154,6 +1187,42 @@ namespace MongoDB.Repository
             else
             {
                 return DoUpdateManyAsync();
+            }
+        }
+
+        public virtual Task<object> BulkWriteAsync(
+            IEnumerable<WriteModel<T>> requests,
+            BulkWriteOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (requests is null || !requests.Any())
+            {
+                throw new ArgumentNullException(nameof(requests), $"{nameof(requests)} cannot be null or empty.");
+            }
+
+            Task<object> DoBulkWriteAsync()
+            {
+                Task<BulkWriteResult<T>> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.BulkWriteAsync(Context.Session, requests, options, cancellationToken);
+                }
+                else
+                {
+                    result = Collection.BulkWriteAsync(requests, options, cancellationToken);
+                }
+
+                return result.Then<BulkWriteResult<T>, object>(source => source, cancellationToken);
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommandAsync(DoBulkWriteAsync);
+            }
+            else
+            {
+                return DoBulkWriteAsync();
             }
         }
 

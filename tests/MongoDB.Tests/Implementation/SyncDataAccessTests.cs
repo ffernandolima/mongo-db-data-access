@@ -41,32 +41,63 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void UpdateManyBlogs()
         {
-            var blog1 = Seeder.SeedBlog(idx: 151);
-            var blog2 = Seeder.SeedBlog(idx: 152);
-            var blogs = new List<Blog> { blog1, blog2 };
-            var blogsId = blogs.Select(b => b.Id);
-            var updatedTitle = "updated-title";
-
-            var repository = _unitOfWork.Repository<Blog>();
-
-            repository.InsertMany(blogs);
+            // Arrange
+            var idBlog1 = 14;
+            var idBlog2 = 15;
+            var blogsId = new List<int> { idBlog1, idBlog2 };
+            var updatedTitle = "a-updated-title";
 
             var filter = Builders<Blog>.Filter.In(b => b.Id, blogsId);
             var update = Builders<Blog>.Update.Set(b => b.Title, updatedTitle);
 
+            // Act
+            var repository = _unitOfWork.Repository<Blog>();
+
             repository.UpdateMany(filter, update);
             _unitOfWork.SaveChanges();
 
+            // Assert
             var query = repository
                 .MultipleResultQuery()
                 .AndFilter(r => blogsId.Contains(r.Id));
             var result = repository.Search(query);
 
-            Assert.Equal(result.First(r => r.Id == blog1.Id)?.Title, updatedTitle);
-            Assert.Equal(result.First(r => r.Id == blog2.Id)?.Title, updatedTitle);
+            Assert.Equal(result.First(r => r.Id == idBlog1)?.Title, updatedTitle);
+            Assert.Equal(result.First(r => r.Id == idBlog2)?.Title, updatedTitle);
+        }
 
-            repository.DeleteMany(b => blogsId.Contains(b.Id));
+        [Fact]
+        public void BulkWriteBlogsAsync()
+        {
+            // Arrange
+            var idBlog1 = 20;
+            var idBlog2 = 21;
+            var blogsId = new List<int> { idBlog1, idBlog2 };
+            var updatedTitle = "a-updated-title";
+
+            var requests = new List<WriteModel<Blog>>();
+            foreach (var blogId in blogsId)
+            {
+                var filter = Builders<Blog>.Filter.Eq(b => b.Id, blogId);
+                var update = Builders<Blog>.Update.Set(b => b.Title, $"{updatedTitle}-{blogId}");
+
+                requests.Add(new UpdateOneModel<Blog>(filter, update));
+            }
+
+            // Act
+            var repository = _unitOfWork.Repository<Blog>();
+
+            repository.BulkWrite(requests);
             _unitOfWork.SaveChanges();
+
+            // Assert
+            var query = repository
+                .MultipleResultQuery()
+                .AndFilter(r => blogsId.Contains(r.Id));
+            var result = repository.Search(query);
+
+            Assert.Equal(result.First(r => r.Id == idBlog1)?.Title, $"{updatedTitle}-{idBlog1}");
+            Assert.Equal(result.First(r => r.Id == idBlog2)?.Title, $"{updatedTitle}-{idBlog2}");
         }
 
         [Fact]
