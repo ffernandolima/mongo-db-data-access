@@ -12,32 +12,32 @@ If you like or are using this project to learn or start your solution, please gi
 
  | Package | NuGet |
  | ------- | ------- |
- | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.2.5) |
- | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.2.5) |
- | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.2.5) |
- | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.2.5) |
+ | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.3.0) |
+ | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.3.0) |
+ | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.3.0) |
+ | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.3.0) |
  | ------- | ------- |
- | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.2.5) |
- | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.2.5) |
- | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.2.5) |
- | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.2.5) |
- | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.2.5-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.2.5) |
+ | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.3.0) |
+ | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.3.0) |
+ | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.3.0) |
+ | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.3.0) |
+ | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.3.0) |
 
 ## Installation
 
 MongoDB.DataAccess is available on Nuget.
 
 ```
-Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.2.5
-Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.2.5
-Install-Package MongoDB.Data.Repository.Abstractions -Version 1.2.5
-Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.2.5
+Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.3.0
+Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.3.0
+Install-Package MongoDB.Data.Repository.Abstractions -Version 1.3.0
+Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.3.0
 
-Install-Package MongoDB.Data.Generators -Version 1.2.5
-Install-Package MongoDB.Data.Infrastructure -Version 1.2.5
-Install-Package MongoDB.Data.QueryBuilder -Version 1.2.5
-Install-Package MongoDB.Data.Repository -Version 1.2.5
-Install-Package MongoDB.Data.UnitOfWork -Version 1.2.5
+Install-Package MongoDB.Data.Generators -Version 1.3.0
+Install-Package MongoDB.Data.Infrastructure -Version 1.3.0
+Install-Package MongoDB.Data.QueryBuilder -Version 1.3.0
+Install-Package MongoDB.Data.Repository -Version 1.3.0
+Install-Package MongoDB.Data.UnitOfWork -Version 1.3.0
 ```
 
 **P.S.: MongoDB.Data.UnitOfWork depends on the other packages, so installing this package is enough.**
@@ -261,6 +261,39 @@ public void DeleteBlog()
     var repository = _unitOfWork.Repository<Blog>();
 
     repository.DeleteOne(x => x.Id == id);
+
+    _unitOfWork.SaveChanges();
+}
+
+public void UpdateManyBlogs()
+{
+    var repository = _unitOfWork.Repository<Blog>();
+
+    repository.UpdateMany(
+        blog => blogIds.Contains(blog.Id),
+        new Dictionary<Expression<Func<Blog, object>>, object>
+        {
+            { blog => blog.Title, "updated-title" }
+        });
+    
+    _unitOfWork.SaveChanges();
+}
+
+public void BulkWriteBlogs()
+{
+    var repository = _unitOfWork.Repository<Blog>();
+    
+    var requests = new List<WriteModel<Blog>>();
+
+    foreach (var blogId in blogIds)
+    {
+        var filter = Builders<Blog>.Filter.Eq(blog => blog.Id, blogId);
+        var definition = Builders<Blog>.Update.Set(blog => blog.Title, $"a{blogId}-updated-title");
+
+        requests.Add(new UpdateOneModel<Blog>(filter, definition));
+    }
+
+    repository.BulkWrite(requests);
 
     _unitOfWork.SaveChanges();
 }
