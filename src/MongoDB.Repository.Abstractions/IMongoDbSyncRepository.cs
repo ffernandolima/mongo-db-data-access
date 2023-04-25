@@ -34,6 +34,15 @@ namespace MongoDB.Repository
             T entity,
             Expression<Func<T, object>>[] properties,
             UpdateOptions options = null);
+        object UpdateOne(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null);
+        object UpdateMany(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null);
+        object BulkWrite(IEnumerable<WriteModel<T>> requests, BulkWriteOptions options = null);
         object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null);
         object DeleteOne(Expression<Func<T, bool>> predicate, DeleteOptions options = null);
         object DeleteMany(Expression<Func<T, bool>> predicate, DeleteOptions options = null);

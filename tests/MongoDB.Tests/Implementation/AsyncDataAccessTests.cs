@@ -1,11 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Data;
+using MongoDB.Driver;
 using MongoDB.Models;
 using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
-using System.Linq.Expressions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -47,6 +50,75 @@ namespace MongoDB.Tests.Implementation
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             Assert.Equal(50, longCount);
+        }
+
+        [Fact]
+        public async Task UpdateManyBlogsAsync()
+        {
+            // Arrange
+            var blogIds = new List<int> { 10, 11 };
+            var newBlogTitle = "a-updated-title";
+
+            // Act
+            var repository = _unitOfWork.Repository<Blog>();
+
+            await repository.UpdateManyAsync(
+                blog => blogIds.Contains(blog.Id),
+                new Dictionary<Expression<Func<Blog, object>>, object>
+                {
+                    { blog => blog.Title, newBlogTitle }
+                })
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork.SaveChangesAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            // Assert
+            var query = repository.MultipleResultQuery()
+                .AndFilter(blog => blogIds.Contains(blog.Id));
+
+            var blogResults = await repository.SearchAsync(query)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.First())?.Title, newBlogTitle);
+            Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.Last())?.Title, newBlogTitle);
+        }
+
+        [Fact]
+        public async Task BulkWriteBlogsAsync()
+        {
+            // Arrange
+            var blogIds = new List<int> { 12, 13 };
+            var newBlogTitle = "updated-title";
+
+            var requests = new List<WriteModel<Blog>>();
+
+            foreach (var blogId in blogIds)
+            {
+                var filter = Builders<Blog>.Filter.Eq(blog => blog.Id, blogId);
+                var definition = Builders<Blog>.Update.Set(blog => blog.Title, $"a{blogId}-{newBlogTitle}");
+
+                requests.Add(new UpdateOneModel<Blog>(filter, definition));
+            }
+
+            // Act
+            var repository = _unitOfWork.Repository<Blog>();
+
+            await repository.BulkWriteAsync(requests)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            await _unitOfWork.SaveChangesAsync()
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            // Assert
+            var query = repository.MultipleResultQuery()
+                .AndFilter(blog => blogIds.Contains(blog.Id));
+
+            var blogResults = await repository.SearchAsync(query)
+                .ConfigureAwait(continueOnCapturedContext: false);
+
+            Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.First())?.Title, $"a{blogIds.First()}-{newBlogTitle}");
+            Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.Last())?.Title, $"a{blogIds.Last()}-{newBlogTitle}");
         }
 
         [Fact]

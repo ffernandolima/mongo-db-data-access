@@ -86,6 +86,23 @@ namespace MongoDB.Repository
             UpdateOptions options = null,
             CancellationToken cancellationToken = default);
 
+        Task<object> UpdateOneAsync(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default);
+
+        Task<object> UpdateManyAsync(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default);
+
+        Task<object> BulkWriteAsync(
+            IEnumerable<WriteModel<T>> requests,
+            BulkWriteOptions options = null,
+            CancellationToken cancellationToken = default);
+
         Task<object> ReplaceOneAsync(
             Expression<Func<T, bool>> predicate,
             T entity,

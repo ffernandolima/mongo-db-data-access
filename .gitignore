@@ -359,3 +359,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /tests/MongoDB.Tests/docker/.data
+
+# VSCode
+.vscode

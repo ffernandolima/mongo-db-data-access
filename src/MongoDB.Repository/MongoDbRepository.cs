@@ -392,6 +392,149 @@ namespace MongoDB.Repository
             }
         }
 
+        public virtual object UpdateOne(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null)
+        {
+            if (predicate is null)
+            {
+                throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
+            }
+
+            if (properties is null || !properties.Any())
+            {
+                throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
+            }
+
+            UpdateDefinition<T> definition = null;
+
+            foreach (var property in properties)
+            {
+                if (definition is null)
+                {
+                    definition = Builders<T>.Update.Set(property.Key, property.Value);
+                }
+                else
+                {
+                    definition = definition.Set(property.Key, property.Value);
+                }
+            }
+
+            UpdateResult DoUpdateOne()
+            {
+                UpdateResult result = null;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateOne(Context.Session, predicate, definition, options);
+                }
+                else
+                {
+                    result = Collection.UpdateOne(predicate, definition, options);
+                }
+
+                return result;
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommand(DoUpdateOne);
+            }
+            else
+            {
+                return DoUpdateOne();
+            }
+        }
+
+        public virtual object UpdateMany(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null)
+        {
+            if (predicate is null)
+            {
+                throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
+            }
+
+            if (properties is null || !properties.Any())
+            {
+                throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
+            }
+
+            UpdateDefinition<T> definition = null;
+
+            foreach (var property in properties)
+            {
+                if (definition is null)
+                {
+                    definition = Builders<T>.Update.Set(property.Key, property.Value);
+                }
+                else
+                {
+                    definition = definition.Set(property.Key, property.Value);
+                }
+            }
+
+            UpdateResult DoUpdateMany()
+            {
+                UpdateResult result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateMany(Context.Session, predicate, definition, options);
+                }
+                else
+                {
+                    result = Collection.UpdateMany(predicate, definition, options);
+                }
+
+                return result;
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommand(DoUpdateMany);
+            }
+            else
+            {
+                return DoUpdateMany();
+            }
+        }
+
+        public virtual object BulkWrite(IEnumerable<WriteModel<T>> requests, BulkWriteOptions options = null)
+        {
+            if (requests is null || !requests.Any())
+            {
+                throw new ArgumentNullException(nameof(requests), $"{nameof(requests)} cannot be null or empty.");
+            }
+
+            object DoBulkWrite()
+            {
+                BulkWriteResult<T> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.BulkWrite(Context.Session, requests, options);
+                }
+                else
+                {
+                    result = Collection.BulkWrite(requests, options);
+                }
+
+                return result;
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommand(DoBulkWrite);
+            }
+            else
+            {
+                return DoBulkWrite();
+            }
+        }
+
         public virtual object ReplaceOne(Expression<Func<T, bool>> predicate, T entity, ReplaceOptions options = null)
         {
             if (predicate is null)
@@ -960,6 +1103,154 @@ namespace MongoDB.Repository
             else
             {
                 return DoUpdateOneAsync();
+            }
+        }
+
+        public virtual Task<object> UpdateOneAsync(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (predicate is null)
+            {
+                throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
+            }
+
+            if (properties is null || !properties.Any())
+            {
+                throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
+            }
+
+            UpdateDefinition<T> definition = null;
+
+            foreach (var property in properties)
+            {
+                if (definition is null)
+                {
+                    definition = Builders<T>.Update.Set(property.Key, property.Value);
+                }
+                else
+                {
+                    definition = definition.Set(property.Key, property.Value);
+                }
+            }
+
+            Task<object> DoUpdateOneAsync()
+            {
+                Task<UpdateResult> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateOneAsync(Context.Session, predicate, definition, options, cancellationToken);
+                }
+                else
+                {
+                    result = Collection.UpdateOneAsync(predicate, definition, options, cancellationToken);
+                }
+
+                return result.Then<UpdateResult, object>(source => source, cancellationToken);
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommandAsync(DoUpdateOneAsync);
+            }
+            else
+            {
+                return DoUpdateOneAsync();
+            }
+        }
+
+        public virtual Task<object> UpdateManyAsync(
+            Expression<Func<T, bool>> predicate,
+            IDictionary<Expression<Func<T, object>>, object> properties,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (predicate is null)
+            {
+                throw new ArgumentNullException(nameof(predicate), $"{nameof(predicate)} cannot be null.");
+            }
+
+            if (properties is null || !properties.Any())
+            {
+                throw new ArgumentException($"{nameof(properties)} cannot be null or empty.", nameof(properties));
+            }
+
+            UpdateDefinition<T> definition = null;
+
+            foreach (var property in properties)
+            {
+                if (definition is null)
+                {
+                    definition = Builders<T>.Update.Set(property.Key, property.Value);
+                }
+                else
+                {
+                    definition = definition.Set(property.Key, property.Value);
+                }
+            }
+
+            Task<object> DoUpdateManyAsync()
+            {
+                Task<UpdateResult> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.UpdateManyAsync(Context.Session, predicate, definition, options, cancellationToken);
+                }
+                else
+                {
+                    result = Collection.UpdateManyAsync(predicate, definition, options, cancellationToken);
+                }
+
+                return result.Then<UpdateResult, object>(source => source, cancellationToken);
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommandAsync(DoUpdateManyAsync);
+            }
+            else
+            {
+                return DoUpdateManyAsync();
+            }
+        }
+
+        public virtual Task<object> BulkWriteAsync(
+            IEnumerable<WriteModel<T>> requests,
+            BulkWriteOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (requests is null || !requests.Any())
+            {
+                throw new ArgumentNullException(nameof(requests), $"{nameof(requests)} cannot be null or empty.");
+            }
+
+            Task<object> DoBulkWriteAsync()
+            {
+                Task<BulkWriteResult<T>> result;
+
+                if (Context.Session is not null)
+                {
+                    result = Collection.BulkWriteAsync(Context.Session, requests, options, cancellationToken);
+                }
+                else
+                {
+                    result = Collection.BulkWriteAsync(requests, options, cancellationToken);
+                }
+
+                return result.Then<BulkWriteResult<T>, object>(source => source, cancellationToken);
+            }
+
+            if (Context.Options.AcceptAllChangesOnSave)
+            {
+                return Context.AddCommandAsync(DoBulkWriteAsync);
+            }
+            else
+            {
+                return DoBulkWriteAsync();
             }
         }
 
