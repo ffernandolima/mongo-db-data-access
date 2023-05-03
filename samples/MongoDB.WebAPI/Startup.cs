@@ -66,12 +66,21 @@ namespace MongoDB.WebAPI
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
-            services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
-                 connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
-                 databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
-                 setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+            services.AddMongoDbContext<IMongoDbContext<PollContext>, PollContext>(
+                 connectionString: Configuration.GetValue<string>("MongoSettings2:ConnectionString"),
+                 databaseName: Configuration.GetValue<string>("MongoSettings2:DatabaseName"),
+                 setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(PollContext).Assembly },
+                 factory: (sp, client, database, options) => new PollContext(client, database, options));
+
+            services.AddMongoDbContext<IMongoDbContext<BloggingContext>, BloggingContext>(
+                 connectionString: Configuration.GetValue<string>("MongoSettings1:ConnectionString"),
+                 databaseName: Configuration.GetValue<string>("MongoSettings1:DatabaseName"),
+                 setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly },
+                 factory: (sp, client, database, options) => new BloggingContext(client, database, options));
+
 
             services.AddMongoDbUnitOfWork<BloggingContext>();
+            services.AddMongoDbUnitOfWork<PollContext>();
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(options =>
@@ -111,14 +120,14 @@ namespace MongoDB.WebAPI
                         $"/swagger/{description.GroupName}/swagger.json", $"API {description.GroupName.ToUpperInvariant()}");
                 }
             });
-
+            
             var serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
             using var serviceScope = serviceScopeFactory.CreateScope();
 
             var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
             var context = serviceScope.ServiceProvider.GetRequiredService<BloggingContext>();
 
-            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
+            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
             var repository = unitOfWork.Repository<Blog>();
 
             context.Client.DropDatabase(databaseName);

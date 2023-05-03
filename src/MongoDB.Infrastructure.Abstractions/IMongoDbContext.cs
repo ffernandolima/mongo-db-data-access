@@ -10,4 +10,9 @@ namespace MongoDB.Infrastructure
         IClientSessionHandle Session { get; }
         IMongoDbContextOptions Options { get; }
     }
+
+    public interface IMongoDbContext<T> : IMongoDbContext where T : IMongoDbContext
+    {
+
+    }
 }

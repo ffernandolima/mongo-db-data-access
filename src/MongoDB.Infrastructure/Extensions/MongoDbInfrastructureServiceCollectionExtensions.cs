@@ -17,7 +17,8 @@ namespace MongoDB.Infrastructure.Extensions
             MongoDbContextOptions dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -38,15 +39,26 @@ namespace MongoDB.Infrastructure.Extensions
 
             clientSettings.ConfigureCluster(keepAliveSettings);
 
-            services.TryAddSingleton<IMongoClient>(new MongoClient(clientSettings));
-            services.TryAddSingleton(provider =>
+            if (factory != null)
             {
-                var client = provider.GetRequiredService<IMongoClient>();
+                var client = new MongoClient(clientSettings);
                 var database = client.GetDatabase(databaseName, databaseSettings);
-                return database;
-            });
-            services.TryAddSingleton<IMongoDbContextOptions>(dbContextOptions ?? new MongoDbContextOptions(clientSettings));
-            services.TryAdd(new ServiceDescriptor(typeof(TService), typeof(TImplementation), serviceLifetime));
+                var options = new MongoDbContextOptions(clientSettings);
+                 
+                services.TryAdd(new ServiceDescriptor(typeof(TService), sp => factory(sp, client, database, options), serviceLifetime));
+            }
+            else
+            {
+                services.TryAddSingleton<IMongoClient>(new MongoClient(clientSettings));
+                services.TryAddSingleton(provider =>
+                {
+                    var client = provider.GetRequiredService<IMongoClient>();
+                    var database = client.GetDatabase(databaseName, databaseSettings);
+                    return database;
+                });
+                services.TryAddSingleton<IMongoDbContextOptions>(dbContextOptions ?? new MongoDbContextOptions(clientSettings));
+                services.TryAdd(new ServiceDescriptor(typeof(TService), typeof(TImplementation), serviceLifetime));                
+            }
 
             if (typeof(TService) != typeof(TImplementation))
             {
@@ -75,7 +87,8 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoDbContextOptions> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -132,7 +145,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime,
+                factory);
 
             return services;
         }
@@ -145,7 +159,8 @@ namespace MongoDB.Infrastructure.Extensions
             MongoDbContextOptions dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -171,7 +186,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime,
+                factory);
 
             return services;
         }
@@ -184,7 +200,8 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoDbContextOptions> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -240,7 +257,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime, 
+                factory);
 
             return services;
         }
@@ -253,7 +271,8 @@ namespace MongoDB.Infrastructure.Extensions
             MongoDbContextOptions dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -279,7 +298,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime,
+                factory);
 
             return services;
         }
@@ -292,7 +312,8 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoDbContextOptions> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -334,7 +355,8 @@ namespace MongoDB.Infrastructure.Extensions
             MongoDbContextOptions dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -360,7 +382,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime,
+                factory);
 
             return services;
         }
@@ -373,7 +396,8 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoDbContextOptions> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -429,7 +453,8 @@ namespace MongoDB.Infrastructure.Extensions
                 dbContextOptions,
                 keepAliveSettings,
                 fluentConfigurationOptions,
-                serviceLifetime);
+                serviceLifetime,
+                factory);
 
             return services;
         }
@@ -440,7 +465,8 @@ namespace MongoDB.Infrastructure.Extensions
             MongoDbContextOptions dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -475,7 +501,8 @@ namespace MongoDB.Infrastructure.Extensions
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
-                    serviceLifetime);
+                    serviceLifetime,
+                    factory);
             }
 
             if (connectionString is not null)
@@ -487,7 +514,8 @@ namespace MongoDB.Infrastructure.Extensions
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
-                    serviceLifetime);
+                    serviceLifetime, 
+                    factory);
             }
 
             return services;
@@ -499,7 +527,8 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoDbContextOptions> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
-            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            ServiceLifetime serviceLifetime = ServiceLifetime.Scoped,
+            Func<IServiceProvider, IMongoClient, IMongoDatabase, IMongoDbContextOptions, object> factory = null)
                 where TService : IMongoDbContext
                 where TImplementation : class, TService
         {
@@ -555,7 +584,8 @@ namespace MongoDB.Infrastructure.Extensions
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
-                    serviceLifetime);
+                    serviceLifetime,
+                    factory);
             }
 
             if (connectionString is not null)
@@ -567,7 +597,8 @@ namespace MongoDB.Infrastructure.Extensions
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
-                    serviceLifetime);
+                    serviceLifetime,
+                    factory);
             }
 
             return services;
