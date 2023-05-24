@@ -2,7 +2,7 @@
 
 namespace MongoDB.Infrastructure.Internal
 {
-    internal class MongoDbThrottlingSemaphoreFactory
+    internal class MongoDbThrottlingSemaphoreFactory : IMongoDbThrottlingSemaphoreFactory
     {
         private static readonly object _sync = new();
 
@@ -13,13 +13,18 @@ namespace MongoDB.Infrastructure.Internal
 
         public static MongoDbThrottlingSemaphoreFactory Instance => _factory.Value;
 
+        public IMongoDbThrottlingSemaphore Create(int maximumNumberOfConcurrentRequests)
+        {
+            return maximumNumberOfConcurrentRequests > 0
+                ? new MongoDbThrottlingSemaphore(maximumNumberOfConcurrentRequests)
+                : MongoDbNoopThrottlingSemaphore.Instance;
+        }
+
         public IMongoDbThrottlingSemaphore GetOrCreate(int maximumNumberOfConcurrentRequests)
         {
             lock (_sync)
             {
-                return _semaphore ??= maximumNumberOfConcurrentRequests > 0
-                    ? new MongoDbThrottlingSemaphore(maximumNumberOfConcurrentRequests)
-                    : MongoDbNoopThrottlingSemaphore.Instance;
+                return _semaphore ??= Create(maximumNumberOfConcurrentRequests);
             }
         }
     }

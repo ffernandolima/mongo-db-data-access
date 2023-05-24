@@ -1,13 +1,15 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Infrastructure.Internal;
 using System;
 
 namespace MongoDB.Infrastructure
 {
-    public class MongoDbContextOptions : IMongoDbContextOptions
+    public abstract class MongoDbContextOptions : IMongoDbContextOptions
     {
         private readonly MongoClientSettings _settings;
         private int _maximumNumberOfConcurrentRequests;
 
+        public string DbContextId { get; set; } = $"{Guid.NewGuid()}";
         public bool AcceptAllChangesOnSave { get; set; } = true;
         public int MaximumNumberOfConcurrentRequests
         {
@@ -34,6 +36,18 @@ namespace MongoDB.Infrastructure
             var maximumNumberOfConcurrentRequests = Math.Max(maxConnectionPoolSize / 2, 1);
 
             return maximumNumberOfConcurrentRequests;
+        }
+    }
+
+    public class MongoDbContextOptions<T> : MongoDbContextOptions, IMongoDbContextOptions<T>
+        where T : IMongoDbContext
+    {
+        public Type DbContextType => typeof(T);
+
+        public MongoDbContextOptions(MongoClientSettings settings = null)
+            : base(settings)
+        {
+            DbContextId = $"{DbContextType.ExtractTypeName()} - {DbContextId}";
         }
     }
 }

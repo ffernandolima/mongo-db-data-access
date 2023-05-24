@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 
 namespace MongoDB.Infrastructure
 {
@@ -18,6 +19,13 @@ namespace MongoDB.Infrastructure
             var service = _serviceProvider.GetService<T>();
 
             return service;
+        }
+
+        public IEnumerable<T> GetServices<T>() where T : class
+        {
+            var services = _serviceProvider.GetServices<T>();
+
+            return services;
         }
     }
 }

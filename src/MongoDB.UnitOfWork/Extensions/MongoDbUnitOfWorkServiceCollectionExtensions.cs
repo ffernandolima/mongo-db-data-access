@@ -18,12 +18,10 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
 
             services.TryAdd<IMongoDbServiceFactory, MongoDbServiceFactory>(serviceLifetime);
 
-            services.TryAdd(
-                ServiceDescriptor.Describe(
-                    typeof(IMongoDbUnitOfWork), typeof(MongoDbUnitOfWork), serviceLifetime));
+            services.TryAdd<IMongoDbUnitOfWork, MongoDbUnitOfWork>(serviceLifetime);
 
             services.TryAdd(
-                new ServiceDescriptor(
+                ServiceDescriptor.Describe(
                     typeof(IMongoDbRepositoryFactory),
                     provider => provider.GetService<IMongoDbUnitOfWork>(),
                     serviceLifetime));
@@ -43,12 +41,12 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
 
             services.TryAdd<IMongoDbServiceFactory, MongoDbServiceFactory>(serviceLifetime);
 
-            services.TryAdd(
-                ServiceDescriptor.Describe(
-                    typeof(IMongoDbUnitOfWork<T>), typeof(MongoDbUnitOfWork<T>), serviceLifetime));
+            services.TryAdd<IMongoDbUnitOfWorkFactory<T>, MongoDbUnitOfWorkFactory<T>>(serviceLifetime);
+
+            services.TryAdd<IMongoDbUnitOfWork<T>, MongoDbUnitOfWork<T>>(serviceLifetime);
 
             services.TryAdd(
-                new ServiceDescriptor(
+                ServiceDescriptor.Describe(
                     typeof(IMongoDbRepositoryFactory<T>),
                     provider => provider.GetService<IMongoDbUnitOfWork<T>>(),
                     serviceLifetime));

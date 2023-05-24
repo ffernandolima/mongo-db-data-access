@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MongoDB.Infrastructure
 {
-    public class MongoDbContext : IMongoDbContext, IDisposable
+    public abstract class MongoDbContext : IMongoDbContext, IDisposable
     {
         #region Private Fields
 
@@ -31,14 +31,28 @@ namespace MongoDB.Infrastructure
 
         #region Ctor
 
-        public MongoDbContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        public MongoDbContext(
+            IMongoClient client,
+            IMongoDatabase database,
+            IMongoDbContextOptions options)
+            : this(client,
+                  database,
+                  options,
+                  GetSemaphore(client, options))
+        { }
+
+        internal MongoDbContext(
+            IMongoClient client,
+            IMongoDatabase database,
+            IMongoDbContextOptions options,
+            IMongoDbThrottlingSemaphore semaphore)
         {
             Client = client ?? throw new ArgumentNullException(nameof(client), $"{nameof(client)} cannot be null.");
             Database = database ?? throw new ArgumentNullException(nameof(database), $"{nameof(database)} cannot be null.");
             Options = options ?? throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null.");
 
             _commands = new List<object>();
-            _semaphore = MongoDbThrottlingSemaphoreFactory.Instance.GetOrCreate(options.MaximumNumberOfConcurrentRequests);
+            _semaphore = semaphore ?? throw new ArgumentNullException(nameof(semaphore), $"{nameof(semaphore)} cannot be null.");
         }
 
         #endregion Ctor
@@ -308,6 +322,25 @@ namespace MongoDB.Infrastructure
         #endregion Public Methods
 
         #region Private Methods
+
+        private static IMongoDbThrottlingSemaphore GetSemaphore(IMongoClient client, IMongoDbContextOptions options)
+        {
+            if (client is null)
+            {
+                throw new ArgumentNullException(nameof(client), $"{nameof(client)} cannot be null.");
+            }
+
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options), $"{nameof(options)} cannot be null.");
+            }
+
+            var semaphore = MongoDbThrottlingSemaphoreManager
+                .Instance
+                .GetOrCreate(client, options.MaximumNumberOfConcurrentRequests);
+
+            return semaphore;
+        }
 
         private void ClearCommands() => _commands?.Clear();
 
