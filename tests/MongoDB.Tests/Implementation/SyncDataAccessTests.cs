@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Models;
 using MongoDB.QueryBuilder;
 using MongoDB.Repository.Extensions;
+using MongoDB.Tests.Dummies;
 using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
@@ -20,6 +21,7 @@ namespace MongoDB.Tests.Implementation
     {
         private readonly IMongoDbUnitOfWork _unitOfWork;
         private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWorkOfT;
+        private readonly IMongoDbUnitOfWorkFactory<TestingContext> _unitOfWorkFactoryOfT;
 
         private readonly IMongoDbRepositoryFactory _repositoryFactory;
         private readonly IMongoDbRepositoryFactory<BloggingContext> _repositoryFactoryOfT;
@@ -27,21 +29,34 @@ namespace MongoDB.Tests.Implementation
         public SyncDataAccessTests(InfrastructureFixture infrastructureFixture)
             : base(infrastructureFixture)
         {
-            // IUnitOfWork used for reading/writing scenario;
+            // IMongoDbUnitOfWork used for reading/writing scenario;
             _unitOfWork = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
-            // IUnitOfWork<T> used for used for multiple databases scenario;
+            // IMongoDbUnitOfWork<T> used for used for multiple databases scenario;
             _unitOfWorkOfT = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
+            // IMongoDbUnitOfWorkFactory<T> used for used for multi-tenant scenario;
+            _unitOfWorkFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbUnitOfWorkFactory<TestingContext>>();
 
-            // IRepositoryFactory used for readonly scenario;
+            // IMongoDbRepositoryFactory used for readonly scenario;
             _repositoryFactory = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory>();
-            // IRepositoryFactory<T> used for readonly/multiple databases scenario;
+            // IMongoDbRepositoryFactory<T> used for readonly/multiple databases scenario;
             _repositoryFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory<BloggingContext>>();
+        }
+
+        [Theory]
+        [InlineData($"{nameof(TestingContext)} - 1")]
+        [InlineData($"{nameof(TestingContext)} - 2")]
+        public void GetUnitOfWork(string dbContextId)
+        {
+            var unitOfWork = _unitOfWorkFactoryOfT.Create(dbContextId);
+
+            Assert.IsAssignableFrom<IMongoDbUnitOfWork<TestingContext>>(unitOfWork);
+            Assert.Equal(dbContextId, unitOfWork.Context.Options.DbContextId);
         }
 
         [Fact]
         public void GetAllBlogs()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery();
 
@@ -54,7 +69,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetAllBlogsProjection()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
                                   .Select(selector => new
@@ -76,7 +91,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetAllOrderedBlogs()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             IMongoDbQuery<Blog> query;
             IList<Blog> blogs;
@@ -103,7 +118,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetTopBlogs()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
                                   .Top(10);
@@ -117,7 +132,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetPagedBlogs()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
                                   .Page(1, 20);
@@ -134,7 +149,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetBlogsPagedList()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
                                   .Page(1, 20);
@@ -158,7 +173,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetFilteredBlogs()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.MultipleResultQuery()
                                   .AndFilter(blog => blog.Url.StartsWith("/a/"))
@@ -174,7 +189,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetBlogByUrl()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.SingleResultQuery()
                                   .AndFilter(blog => blog.Url.StartsWith("/a/"))
@@ -190,7 +205,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetBlogById()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.SingleResultQuery()
                                   .AndFilter(blog => blog.Id == 1);
@@ -205,7 +220,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetBlogByIdProjection()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var query = repository.SingleResultQuery()
                                   .AndFilter(blog => blog.Id == 1)
@@ -229,7 +244,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void ExistsBlog()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var exists = repository.Any(blog => blog.Url.StartsWith("/a/"));
 
@@ -239,7 +254,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void GetBlogCount()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var count = repository.Count();
 
@@ -253,7 +268,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void MaxBlogId()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var id = repository.Max(blog => blog.Id);
 
@@ -263,7 +278,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void MinBlogId()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var id = repository.Min(blog => blog.Id);
 
@@ -278,7 +293,7 @@ namespace MongoDB.Tests.Implementation
             var newBlogTitle = "a-updated-title";
 
             // Act
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             repository.UpdateMany(
                 blog => blogIds.Contains(blog.Id),
@@ -287,7 +302,7 @@ namespace MongoDB.Tests.Implementation
                     { blog => blog.Title, newBlogTitle }
                 });
 
-            _unitOfWork.SaveChanges();
+            _unitOfWorkOfT.SaveChanges();
 
             // Assert
             var query = repository.MultipleResultQuery()
@@ -317,11 +332,11 @@ namespace MongoDB.Tests.Implementation
             }
 
             // Act
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             repository.BulkWrite(requests);
 
-            _unitOfWork.SaveChanges();
+            _unitOfWorkOfT.SaveChanges();
 
             // Assert
             var query = repository.MultipleResultQuery()
@@ -338,11 +353,11 @@ namespace MongoDB.Tests.Implementation
         {
             const int Id = 51;
 
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var blog = Seeder.SeedBlog(Id);
 
-            _unitOfWork.StartTransaction();
+            _unitOfWorkOfT.StartTransaction();
 
             var insertOneResult = repository.InsertOne(blog);
 
@@ -353,9 +368,9 @@ namespace MongoDB.Tests.Implementation
                 blog,
                 new Expression<Func<Blog, object>>[] { x => x.Title });
 
-            var saveChangesResult = _unitOfWork.SaveChanges();
+            var saveChangesResult = _unitOfWorkOfT.SaveChanges();
 
-            _unitOfWork.AbortTransaction();
+            _unitOfWorkOfT.AbortTransaction();
 
             var id = repository.Max(x => x.Id);
 
@@ -365,7 +380,7 @@ namespace MongoDB.Tests.Implementation
         [Fact]
         public void CustomRepository()
         {
-            var customRepository = _unitOfWork.CustomRepository<ICustomBlogRepository>();
+            var customRepository = _unitOfWorkOfT.CustomRepository<ICustomBlogRepository>();
 
             Assert.NotNull(customRepository);
         }

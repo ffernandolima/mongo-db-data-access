@@ -2,6 +2,7 @@
 using MongoDB.Data;
 using MongoDB.Driver;
 using MongoDB.Models;
+using MongoDB.Tests.Dummies;
 using MongoDB.Tests.Fixtures;
 using MongoDB.Tests.Infrastructure;
 using MongoDB.UnitOfWork;
@@ -18,6 +19,7 @@ namespace MongoDB.Tests.Implementation
     {
         private readonly IMongoDbUnitOfWork _unitOfWork;
         private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWorkOfT;
+        private readonly IMongoDbUnitOfWorkFactory<TestingContext> _unitOfWorkFactoryOfT;
 
         private readonly IMongoDbRepositoryFactory _repositoryFactory;
         private readonly IMongoDbRepositoryFactory<BloggingContext> _repositoryFactoryOfT;
@@ -25,21 +27,23 @@ namespace MongoDB.Tests.Implementation
         public AsyncDataAccessTests(InfrastructureFixture infrastructureFixture)
             : base(infrastructureFixture)
         {
-            // IUnitOfWork used for reading/writing scenario;
+            // IMongoDbUnitOfWork used for reading/writing scenario;
             _unitOfWork = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
-            // IUnitOfWork<T> used for used for multiple databases scenario;
+            // IMongoDbUnitOfWork<T> used for used for multiple databases scenario;
             _unitOfWorkOfT = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
+            // IMongoDbUnitOfWorkFactory<T> used for used for multi-tenant scenario;
+            _unitOfWorkFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbUnitOfWorkFactory<TestingContext>>();
 
-            // IRepositoryFactory used for readonly scenario;
+            // IMongoDbRepositoryFactory used for readonly scenario;
             _repositoryFactory = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory>();
-            // IRepositoryFactory<T> used for readonly/multiple databases scenario;
+            // IMongoDbRepositoryFactory<T> used for readonly/multiple databases scenario;
             _repositoryFactoryOfT = ServiceProvider.GetRequiredService<IMongoDbRepositoryFactory<BloggingContext>>();
         }
 
         [Fact]
         public async Task GetBlogCountAsync()
         {
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var count = await repository.CountAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
@@ -60,7 +64,7 @@ namespace MongoDB.Tests.Implementation
             var newBlogTitle = "a-updated-title";
 
             // Act
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             await repository.UpdateManyAsync(
                 blog => blogIds.Contains(blog.Id),
@@ -70,7 +74,7 @@ namespace MongoDB.Tests.Implementation
                 })
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            await _unitOfWork.SaveChangesAsync()
+            await _unitOfWorkOfT.SaveChangesAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             // Assert
@@ -102,12 +106,12 @@ namespace MongoDB.Tests.Implementation
             }
 
             // Act
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             await repository.BulkWriteAsync(requests)
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            await _unitOfWork.SaveChangesAsync()
+            await _unitOfWorkOfT.SaveChangesAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             // Assert
@@ -126,11 +130,11 @@ namespace MongoDB.Tests.Implementation
         {
             const int Id = 51;
 
-            var repository = _unitOfWork.Repository<Blog>();
+            var repository = _unitOfWorkOfT.Repository<Blog>();
 
             var blog = Seeder.SeedBlog(Id);
 
-            _unitOfWork.StartTransaction();
+            _unitOfWorkOfT.StartTransaction();
 
             var insertOneResult = await repository.InsertOneAsync(blog)
                 .ConfigureAwait(continueOnCapturedContext: false);
@@ -143,10 +147,10 @@ namespace MongoDB.Tests.Implementation
                     new Expression<Func<Blog, object>>[] { x => x.Title })
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            var saveChangesResult = await _unitOfWork.SaveChangesAsync()
+            var saveChangesResult = await _unitOfWorkOfT.SaveChangesAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
-            await _unitOfWork.AbortTransactionAsync()
+            await _unitOfWorkOfT.AbortTransactionAsync()
                 .ConfigureAwait(continueOnCapturedContext: false);
 
             var id = await repository.MaxAsync(x => x.Id)
