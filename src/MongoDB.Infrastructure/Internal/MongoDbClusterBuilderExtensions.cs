@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MongoDB.Infrastructure.Internal
 {
-    internal static class ClusterBuilderExtensions
+    internal static class MongoDbClusterBuilderExtensions
     {
         public static ClusterBuilder ConfigureDiagnostics(this ClusterBuilder clusterBuilder)
         {
@@ -21,7 +21,7 @@ namespace MongoDB.Infrastructure.Internal
         /// <remarks>
         /// Control sending TCP keep-alive packets and the interval at which they are sent.
         /// This control code is supported on Windows 2000 and later operating systems.
-        /// </remarks>        
+        /// </remarks>
         public static ClusterBuilder ConfigureTcp(this ClusterBuilder clusterBuilder, MongoDbKeepAliveSettings keepAliveSettings)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
