@@ -73,7 +73,7 @@ namespace MongoDB.Infrastructure.Extensions
                 services.Add(
                     ServiceDescriptor.Describe(
                         typeof(TService),
-                        provider => provider.GetService<TImplementation>(),
+                        provider => provider.GetRequiredService<TImplementation>(),
                         serviceLifetime));
             }
 

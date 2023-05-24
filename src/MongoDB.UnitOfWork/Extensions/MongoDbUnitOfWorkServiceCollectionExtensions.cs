@@ -23,7 +23,7 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
             services.TryAdd(
                 ServiceDescriptor.Describe(
                     typeof(IMongoDbRepositoryFactory),
-                    provider => provider.GetService<IMongoDbUnitOfWork>(),
+                    provider => provider.GetRequiredService<IMongoDbUnitOfWork>(),
                     serviceLifetime));
 
             return services;
@@ -48,7 +48,7 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
             services.TryAdd(
                 ServiceDescriptor.Describe(
                     typeof(IMongoDbRepositoryFactory<T>),
-                    provider => provider.GetService<IMongoDbUnitOfWork<T>>(),
+                    provider => provider.GetRequiredService<IMongoDbUnitOfWork<T>>(),
                     serviceLifetime));
 
             return services;
