@@ -7,7 +7,7 @@ namespace MongoDB.Generators
     /// <summary>
     /// Int32 identifier generator.
     /// </summary>
-    public class Int32IdGenerator<T> : IntIdGeneratorBase<T>
+    public sealed class Int32IdGenerator<T> : IntIdGeneratorBase<T>
     {
         private static readonly Lazy<Int32IdGenerator<T>> _factory = new(
             () => new Int32IdGenerator<T>(), isThreadSafe: true);
