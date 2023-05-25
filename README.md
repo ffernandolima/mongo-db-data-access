@@ -146,6 +146,11 @@ public BlogsController(IMongoDbUnitOfWorkFactory<BloggingContext> unitOfWorkFact
         throw new ArgumentNullException(nameof(unitOfWorkFactory), $"{nameof(unitOfWorkFactory)} cannot be null.");
     }
 
+    if (tenantProvider is null)
+    {
+        throw new ArgumentNullException(nameof(tenantProvider), $"{nameof(tenantProvider)} cannot be null.");
+    }
+
     var tenantId = tenantProvider.GetTenantId();
     _unitOfWork = unitOfWorkFactory.Create(tenantId);
 }
