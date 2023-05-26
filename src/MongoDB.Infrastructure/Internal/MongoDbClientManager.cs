@@ -1,14 +1,13 @@
 ﻿using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal class MongoDbClientManager : IMongoDbClientManager
     {
-        private readonly ICollection<IMongoClient> _clients;
+        private readonly ConcurrentBag<IMongoClient> _clients;
 
         private static readonly Lazy<MongoDbClientManager> _factory = new(() =>
             new MongoDbClientManager(), isThreadSafe: true);
@@ -17,7 +16,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbClientManager()
         {
-            _clients = new Collection<IMongoClient>();
+            _clients = new ConcurrentBag<IMongoClient>();
         }
 
         public IMongoClient GetOrCreate(MongoClientSettings clientSettings)

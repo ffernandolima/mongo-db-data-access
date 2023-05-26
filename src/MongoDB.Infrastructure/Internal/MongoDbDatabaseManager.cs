@@ -1,14 +1,13 @@
 ﻿using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal class MongoDbDatabaseManager : IMongoDbDatabaseManager
     {
-        private readonly ICollection<IMongoDatabase> _databases;
+        private readonly ConcurrentBag<IMongoDatabase> _databases;
 
         private static readonly Lazy<MongoDbDatabaseManager> _factory = new(() =>
             new MongoDbDatabaseManager(), isThreadSafe: true);
@@ -17,7 +16,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbDatabaseManager()
         {
-            _databases = new Collection<IMongoDatabase>();
+            _databases = new ConcurrentBag<IMongoDatabase>();
         }
 
         public IMongoDatabase GetOrCreate(IMongoClient client, string databaseName, MongoDatabaseSettings databaseSettings = null)

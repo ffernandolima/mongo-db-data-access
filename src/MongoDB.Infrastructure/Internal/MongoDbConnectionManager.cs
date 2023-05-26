@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace MongoDB.Infrastructure.Internal
 {
@@ -11,7 +11,7 @@ namespace MongoDB.Infrastructure.Internal
         private readonly IMongoDbContextOptionsManager _optionsManager;
         private readonly IMongoDbThrottlingSemaphoreManager _semaphoreManager;
 
-        private readonly IDictionary<string, MongoDbConnection> _connections;
+        private readonly ConcurrentDictionary<string, MongoDbConnection> _connections;
 
         private static readonly Lazy<MongoDbConnectionManager> _factory = new(() =>
             new MongoDbConnectionManager(
@@ -33,7 +33,7 @@ namespace MongoDB.Infrastructure.Internal
             _databaseManager = databaseManager ?? throw new ArgumentNullException(nameof(databaseManager), $"{nameof(databaseManager)} cannot be null.");
             _optionsManager = optionsManager ?? throw new ArgumentNullException(nameof(optionsManager), $"{nameof(optionsManager)} cannot be null.");
             _semaphoreManager = semaphoreManager ?? throw new ArgumentNullException(nameof(semaphoreManager), $"{nameof(semaphoreManager)} cannot be null.");
-            _connections = new Dictionary<string, MongoDbConnection>();
+            _connections = new ConcurrentDictionary<string, MongoDbConnection>();
         }
 
         public MongoDbConnection GetOrCreate(

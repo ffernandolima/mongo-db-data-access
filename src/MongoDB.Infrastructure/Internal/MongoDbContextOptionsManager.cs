@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal class MongoDbContextOptionsManager : IMongoDbContextOptionsManager
     {
-        private readonly ICollection<IMongoDbContextOptions> _options;
+        private readonly ConcurrentBag<IMongoDbContextOptions> _options;
 
         private static readonly Lazy<MongoDbContextOptionsManager> _factory = new(() =>
             new MongoDbContextOptionsManager(), isThreadSafe: true);
@@ -16,7 +15,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbContextOptionsManager()
         {
-            _options = new Collection<IMongoDbContextOptions>();
+            _options = new ConcurrentBag<IMongoDbContextOptions>();
         }
 
         public IMongoDbContextOptions GetOrAdd(IMongoDbContextOptions options)

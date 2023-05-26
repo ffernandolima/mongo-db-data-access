@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
@@ -8,7 +8,7 @@ namespace MongoDB.Infrastructure.Internal
     internal class MongoDbThrottlingSemaphoreManager : IMongoDbThrottlingSemaphoreManager
     {
         private readonly IMongoDbThrottlingSemaphoreFactory _semaphoreFactory;
-        private readonly IDictionary<IMongoClient, IMongoDbThrottlingSemaphore> _semaphores;
+        private readonly ConcurrentDictionary<IMongoClient, IMongoDbThrottlingSemaphore> _semaphores;
 
         private static readonly Lazy<MongoDbThrottlingSemaphoreManager> _factory = new(() =>
             new MongoDbThrottlingSemaphoreManager(), isThreadSafe: true);
@@ -22,7 +22,7 @@ namespace MongoDB.Infrastructure.Internal
         public MongoDbThrottlingSemaphoreManager(IMongoDbThrottlingSemaphoreFactory semaphoreFactory)
         {
             _semaphoreFactory = semaphoreFactory ?? throw new ArgumentNullException(nameof(semaphoreFactory), $"{nameof(semaphoreFactory)} cannot be null.");
-            _semaphores = new Dictionary<IMongoClient, IMongoDbThrottlingSemaphore>();
+            _semaphores = new ConcurrentDictionary<IMongoClient, IMongoDbThrottlingSemaphore>();
         }
 
         public IMongoDbThrottlingSemaphore GetOrCreate(IMongoClient client, int maximumNumberOfConcurrentRequests)
@@ -44,7 +44,8 @@ namespace MongoDB.Infrastructure.Internal
 
         private bool TryGet(IMongoClient client, out IMongoDbThrottlingSemaphore semaphore)
         {
-            semaphore = _semaphores.Where(semaphore => semaphore.Key.Settings.Servers.Count() == client.Settings.Servers.Count())
+            semaphore = _semaphores.ToArray()
+                                   .Where(semaphore => semaphore.Key.Settings.Servers.Count() == client.Settings.Servers.Count())
                                    .Where(semaphore => semaphore.Key.Settings.Servers.All(client.Settings.Servers.Contains))
                                    .Select(semaphore => semaphore.Value)
                                    .SingleOrDefault();
