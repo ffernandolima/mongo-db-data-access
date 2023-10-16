@@ -9,8 +9,6 @@ namespace MongoDB.Infrastructure.Internal
         private static readonly Lazy<MongoDbThrottlingSemaphoreFactory> _factory = new(() =>
             new MongoDbThrottlingSemaphoreFactory(), isThreadSafe: true);
 
-        private IMongoDbThrottlingSemaphore _semaphore;
-
         public static MongoDbThrottlingSemaphoreFactory Instance => _factory.Value;
 
         public IMongoDbThrottlingSemaphore Create(int maximumNumberOfConcurrentRequests)
@@ -18,14 +16,6 @@ namespace MongoDB.Infrastructure.Internal
             return maximumNumberOfConcurrentRequests > 0
                 ? new MongoDbThrottlingSemaphore(maximumNumberOfConcurrentRequests)
                 : MongoDbNoopThrottlingSemaphore.Instance;
-        }
-
-        public IMongoDbThrottlingSemaphore GetOrCreate(int maximumNumberOfConcurrentRequests)
-        {
-            lock (_sync)
-            {
-                return _semaphore ??= Create(maximumNumberOfConcurrentRequests);
-            }
         }
     }
 }

@@ -309,7 +309,7 @@ namespace MongoDB.Infrastructure
             Assembly scanningAssembly,
             Func<Type, bool> scanningFilter = null)
         {
-            MongoDbFluentConfigurator.ApplyConfigurationsFromAssemblies(new[] { scanningAssembly }, scanningFilter);
+            ApplyConfigurationsFromAssemblies(new[] { scanningAssembly }, scanningFilter);
         }
 
         public void ApplyConfigurationsFromAssemblies(

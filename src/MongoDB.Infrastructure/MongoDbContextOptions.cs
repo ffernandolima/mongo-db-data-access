@@ -11,6 +11,9 @@ namespace MongoDB.Infrastructure
 
         public string DbContextId { get; set; } = $"{Guid.NewGuid()}";
         public bool AcceptAllChangesOnSave { get; set; } = true;
+        /// <Remarks>
+        /// -1 must be set to disable the requests throttling mechanism.
+        /// </Remarks>
         public int MaximumNumberOfConcurrentRequests
         {
             get => _maximumNumberOfConcurrentRequests;

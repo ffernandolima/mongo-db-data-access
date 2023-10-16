@@ -23,7 +23,7 @@ namespace MongoDB.UnitOfWork
             var contexts = _factory.GetServices<T>();
 
             var context = contexts?.SingleOrDefault(context => string.Equals(
-                context.Options?.DbContextId,
+                context?.Options?.DbContextId,
                 dbContextId,
                 StringComparison.OrdinalIgnoreCase));
 

@@ -27,8 +27,7 @@ namespace MongoDB.Infrastructure.Internal
                     scannedType => fluentConfigurationType.IsAssignableFrom(scannedType) &&
                         !scannedType.IsInterface &&
                         !scannedType.IsAbstract &&
-                        (scanningFilter?.Invoke(scannedType) ?? true)
-                );
+                        (scanningFilter?.Invoke(scannedType) ?? true));
 
                 if (configurationTypes?.Any() ?? false)
                 {
