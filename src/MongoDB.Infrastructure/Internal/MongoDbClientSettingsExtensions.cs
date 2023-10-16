@@ -2,20 +2,20 @@
 
 namespace MongoDB.Infrastructure.Internal
 {
-    internal static class MongoClientSettingsExtensions
+    internal static class MongoDbClientSettingsExtensions
     {
         public static MongoClientSettings ConfigureCluster(
-            this MongoClientSettings mongoClientSettings,
+            this MongoClientSettings clientSettings,
             MongoDbKeepAliveSettings keepAliveSettings = null)
         {
-            if (mongoClientSettings is not null)
+            if (clientSettings is not null)
             {
-                mongoClientSettings.ClusterConfigurator = clusterBuilder =>
+                clientSettings.ClusterConfigurator = clusterBuilder =>
                      clusterBuilder.ConfigureDiagnostics()
                                    .ConfigureTcp(keepAliveSettings);
             }
 
-            return mongoClientSettings;
+            return clientSettings;
         }
     }
 }

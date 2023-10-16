@@ -12,32 +12,32 @@ If you like or are using this project to learn or start your solution, please gi
 
  | Package | NuGet |
  | ------- | ------- |
- | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.3.0) |
- | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.3.0) |
- | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.3.0) |
- | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.3.0) |
+ | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.4.0) |
+ | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.4.0) |
+ | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.4.0) |
+ | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.4.0) |
  | ------- | ------- |
- | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.3.0) |
- | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.3.0) |
- | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.3.0) |
- | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.3.0) |
- | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.3.0) |
+ | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.4.0) |
+ | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.4.0) |
+ | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.4.0) |
+ | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.4.0) |
+ | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.4.0) |
 
 ## Installation
 
 MongoDB.DataAccess is available on Nuget.
 
 ```
-Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.Repository.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.3.0
+Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.Repository.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.4.0
 
-Install-Package MongoDB.Data.Generators -Version 1.3.0
-Install-Package MongoDB.Data.Infrastructure -Version 1.3.0
-Install-Package MongoDB.Data.QueryBuilder -Version 1.3.0
-Install-Package MongoDB.Data.Repository -Version 1.3.0
-Install-Package MongoDB.Data.UnitOfWork -Version 1.3.0
+Install-Package MongoDB.Data.Generators -Version 1.4.0
+Install-Package MongoDB.Data.Infrastructure -Version 1.4.0
+Install-Package MongoDB.Data.QueryBuilder -Version 1.4.0
+Install-Package MongoDB.Data.Repository -Version 1.4.0
+Install-Package MongoDB.Data.UnitOfWork -Version 1.4.0
 ```
 
 **P.S.: MongoDB.Data.UnitOfWork depends on the other packages, so installing this package is enough.**
@@ -58,9 +58,71 @@ public class BloggingContext : MongoDbContext
 
 // Register the DbContext
 services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
-    connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
-    databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
-    configureFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+// Register the UnitOfWork
+services.AddMongoDbUnitOfWork<BloggingContext>();
+```
+
+For multiple databases:
+
+```C#
+public class BloggingContext : MongoDbContext
+{
+    public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+public class AccountingContext : MongoDbContext
+{
+    public AccountingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+// Register the DbContexts
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+services.AddMongoDbContext<IMongoDbContext, AccountingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Accounting:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Accounting:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(AccountingContext).Assembly });
+
+// Register the UnitOfWork
+services.AddMongoDbUnitOfWork<BloggingContext>();
+services.AddMongoDbUnitOfWork<AccountingContext>();
+```
+
+For multi-tenancy:
+
+P.S: There are many approaches to implementing multi-tenancy in applications (Discriminator, Database per tenant, Schema per tenant...) and this one is just an example.
+
+```C#
+public class BloggingContext : MongoDbContext
+{
+    public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+// Register the DbContexts
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:TenantA:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:TenantA:DatabaseName"),
+    setupDbContextOptions: options => options.DbContextId = $"{nameof(BloggingContext)} - TenantA",
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:TenantB:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:TenantB:DatabaseName"),
+    setupDbContextOptions: options => options.DbContextId = $"{nameof(BloggingContext)} - TenantB",
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
 
 // Register the UnitOfWork
 services.AddMongoDbUnitOfWork<BloggingContext>();
@@ -70,10 +132,28 @@ After that, use the structure in your code like that:
 
 ```C#
 private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWork;
-	
+
 // Injection
-public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork) 
+public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork)
     => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
+
+// Or
+// Factory for multi-tenancy
+public BlogsController(IMongoDbUnitOfWorkFactory<BloggingContext> unitOfWorkFactory, ITenantProvider tenantProvider) 
+{
+    if (unitOfWorkFactory is null)
+    {
+        throw new ArgumentNullException(nameof(unitOfWorkFactory), $"{nameof(unitOfWorkFactory)} cannot be null.");
+    }
+
+    if (tenantProvider is null)
+    {
+        throw new ArgumentNullException(nameof(tenantProvider), $"{nameof(tenantProvider)} cannot be null.");
+    }
+
+    var tenantId = tenantProvider.GetTenantId();
+    _unitOfWork = unitOfWorkFactory.Create(tenantId);
+}
 
 public void GetAllBlogs()
 {
