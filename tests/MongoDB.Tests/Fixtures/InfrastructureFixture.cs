@@ -7,6 +7,7 @@ using MongoDB.Infrastructure;
 using MongoDB.Infrastructure.Extensions;
 using MongoDB.Models;
 using MongoDB.Repository.Extensions;
+using MongoDB.Tests.Dummies;
 using MongoDB.UnitOfWork;
 using MongoDB.UnitOfWork.Abstractions.Extensions;
 using System;
@@ -43,19 +44,29 @@ namespace MongoDB.Tests.Fixtures
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
-                connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
-                databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
+                connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:ConnectionString"),
+                databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:DatabaseName"),
                 setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+            for (int idx = 1; idx <= 2; idx++)
+            {
+                services.AddMongoDbContext<IMongoDbContext, TestingContext>(
+                    connectionString: Configuration.GetValue<string>("MongoSettings:Testing:ConnectionString"),
+                    databaseName: Configuration.GetValue<string>("MongoSettings:Testing:DatabaseName"),
+                    setupDbContextOptions: options => options.DbContextId = $"{nameof(TestingContext)} - {idx}",
+                    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(TestingContext).Assembly });
+            }
 
             services.AddMongoDbUnitOfWork();
             services.AddMongoDbUnitOfWork<BloggingContext>();
+            services.AddMongoDbUnitOfWork<TestingContext>();
 
             services.AddCustomMongoDbRepository<ICustomBlogRepository, CustomBlogRepository>();
         }
 
         private void Seed()
         {
-            var unitOfWork = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
+            var unitOfWork = ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
 
             var repository = unitOfWork.Repository<Blog>();
 

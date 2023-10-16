@@ -58,9 +58,71 @@ public class BloggingContext : MongoDbContext
 
 // Register the DbContext
 services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
-    connectionString: Configuration.GetValue<string>("MongoSettings:ConnectionString"),
-    databaseName: Configuration.GetValue<string>("MongoSettings:DatabaseName"),
-    configureFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+// Register the UnitOfWork
+services.AddMongoDbUnitOfWork<BloggingContext>();
+```
+
+For multiple databases:
+
+```C#
+public class BloggingContext : MongoDbContext
+{
+    public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+public class AccountingContext : MongoDbContext
+{
+    public AccountingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+// Register the DbContexts
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+services.AddMongoDbContext<IMongoDbContext, AccountingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Accounting:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Accounting:DatabaseName"),
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(AccountingContext).Assembly });
+
+// Register the UnitOfWork
+services.AddMongoDbUnitOfWork<BloggingContext>();
+services.AddMongoDbUnitOfWork<AccountingContext>();
+```
+
+For multi-tenancy:
+
+P.S: There are many approaches to implementing multi-tenancy in applications (Discriminator, Database per tenant, Schema per tenant...) and this one is just an example.
+
+```C#
+public class BloggingContext : MongoDbContext
+{
+    public BloggingContext(IMongoClient client, IMongoDatabase database, IMongoDbContextOptions options)
+        : base(client, database, options)
+    { }
+}
+
+// Register the DbContexts
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:TenantA:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:TenantA:DatabaseName"),
+    setupDbContextOptions: options => options.DbContextId = $"{nameof(BloggingContext)} - TenantA",
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
+
+services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
+    connectionString: Configuration.GetValue<string>("MongoSettings:Blogging:TenantB:ConnectionString"),
+    databaseName: Configuration.GetValue<string>("MongoSettings:Blogging:TenantB:DatabaseName"),
+    setupDbContextOptions: options => options.DbContextId = $"{nameof(BloggingContext)} - TenantB",
+    setupFluentConfigurationOptions: options => options.ScanningAssemblies = new[] { typeof(BloggingContext).Assembly });
 
 // Register the UnitOfWork
 services.AddMongoDbUnitOfWork<BloggingContext>();
@@ -70,10 +132,28 @@ After that, use the structure in your code like that:
 
 ```C#
 private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWork;
-	
+
 // Injection
-public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork) 
+public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork)
     => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
+
+// Or
+// Factory for multi-tenancy
+public BlogsController(IMongoDbUnitOfWorkFactory<BloggingContext> unitOfWorkFactory, ITenantProvider tenantProvider) 
+{
+    if (unitOfWorkFactory is null)
+    {
+        throw new ArgumentNullException(nameof(unitOfWorkFactory), $"{nameof(unitOfWorkFactory)} cannot be null.");
+    }
+
+    if (tenantProvider is null)
+    {
+        throw new ArgumentNullException(nameof(tenantProvider), $"{nameof(tenantProvider)} cannot be null.");
+    }
+
+    var tenantId = tenantProvider.GetTenantId();
+    _unitOfWork = unitOfWorkFactory.Create(tenantId);
+}
 
 public void GetAllBlogs()
 {

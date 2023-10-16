@@ -14,7 +14,7 @@ namespace MongoDB.Infrastructure.Extensions
             MongoClientSettings clientSettings,
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
-            MongoDbContextOptions dbContextOptions = null,
+            MongoDbContextOptions<TImplementation> dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -38,22 +38,42 @@ namespace MongoDB.Infrastructure.Extensions
 
             clientSettings.ConfigureCluster(keepAliveSettings);
 
-            services.TryAddSingleton<IMongoClient>(new MongoClient(clientSettings));
-            services.TryAddSingleton(provider =>
-            {
-                var client = provider.GetRequiredService<IMongoClient>();
-                var database = client.GetDatabase(databaseName, databaseSettings);
-                return database;
-            });
-            services.TryAddSingleton<IMongoDbContextOptions>(dbContextOptions ?? new MongoDbContextOptions(clientSettings));
-            services.TryAdd(new ServiceDescriptor(typeof(TService), typeof(TImplementation), serviceLifetime));
+            services.TryAddSingleton<IMongoDbConnectionManager>(MongoDbConnectionManager.Instance);
+            services.TryAddSingleton<IMongoDbClientManager>(MongoDbClientManager.Instance);
+            services.TryAddSingleton<IMongoDbDatabaseManager>(MongoDbDatabaseManager.Instance);
+            services.TryAddSingleton<IMongoDbContextOptionsManager>(MongoDbContextOptionsManager.Instance);
+            services.TryAddSingleton<IMongoDbThrottlingSemaphoreManager>(MongoDbThrottlingSemaphoreManager.Instance);
+            services.TryAddSingleton<IMongoDbThrottlingSemaphoreFactory>(MongoDbThrottlingSemaphoreFactory.Instance);
+
+            services.Add(
+                ServiceDescriptor.Describe(
+                    typeof(TImplementation),
+                    provider =>
+                    {
+                        var connectionManager = provider.GetRequiredService<IMongoDbConnectionManager>();
+
+                        var connection = connectionManager.GetOrCreate(
+                            clientSettings,
+                            databaseName,
+                            databaseSettings,
+                            dbContextOptions ?? CreateDbContextOptions<TService, TImplementation>(clientSettings));
+
+                        var context = (TImplementation)Activator.CreateInstance(
+                            typeof(TImplementation),
+                            connection.Client,
+                            connection.Database,
+                            connection.Options);
+
+                        return context;
+
+                    }, serviceLifetime));
 
             if (typeof(TService) != typeof(TImplementation))
             {
-                services.TryAdd(
-                    new ServiceDescriptor(
-                        typeof(TImplementation),
-                        provider => (TImplementation)provider.GetService<TService>(),
+                services.Add(
+                    ServiceDescriptor.Describe(
+                        typeof(TService),
+                        provider => provider.GetRequiredService<TImplementation>(),
                         serviceLifetime));
             }
 
@@ -72,7 +92,7 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoClientSettings> setupClientSettings,
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
-            Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbContextOptions<TImplementation>> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -104,10 +124,10 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDatabaseSettings.Invoke(databaseSettings);
             }
 
-            MongoDbContextOptions dbContextOptions = null;
+            MongoDbContextOptions<TImplementation> dbContextOptions = null;
             if (setupDbContextOptions is not null)
             {
-                dbContextOptions = new MongoDbContextOptions(clientSettings);
+                dbContextOptions = CreateDbContextOptions<TService, TImplementation>(clientSettings);
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
@@ -142,7 +162,7 @@ namespace MongoDB.Infrastructure.Extensions
             MongoUrl url,
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
-            MongoDbContextOptions dbContextOptions = null,
+            MongoDbContextOptions<TImplementation> dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -181,7 +201,7 @@ namespace MongoDB.Infrastructure.Extensions
             MongoUrl url,
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
-            Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbContextOptions<TImplementation>> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -212,10 +232,10 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDatabaseSettings.Invoke(databaseSettings);
             }
 
-            MongoDbContextOptions dbContextOptions = null;
+            MongoDbContextOptions<TImplementation> dbContextOptions = null;
             if (setupDbContextOptions is not null)
             {
-                dbContextOptions = new MongoDbContextOptions(clientSettings);
+                dbContextOptions = CreateDbContextOptions<TService, TImplementation>(clientSettings);
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
@@ -250,7 +270,7 @@ namespace MongoDB.Infrastructure.Extensions
             MongoUrlBuilder urlBuilder,
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
-            MongoDbContextOptions dbContextOptions = null,
+            MongoDbContextOptions<TImplementation> dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -289,7 +309,7 @@ namespace MongoDB.Infrastructure.Extensions
             Action<MongoUrlBuilder> setupUrlBuilder,
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
-            Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbContextOptions<TImplementation>> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -331,7 +351,7 @@ namespace MongoDB.Infrastructure.Extensions
             string connectionString,
             string databaseName,
             MongoDatabaseSettings databaseSettings = null,
-            MongoDbContextOptions dbContextOptions = null,
+            MongoDbContextOptions<TImplementation> dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -370,7 +390,7 @@ namespace MongoDB.Infrastructure.Extensions
             string connectionString,
             string databaseName,
             Action<MongoDatabaseSettings> setupDatabaseSettings = null,
-            Action<MongoDbContextOptions> setupDbContextOptions = null,
+            Action<MongoDbContextOptions<TImplementation>> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -401,10 +421,10 @@ namespace MongoDB.Infrastructure.Extensions
                 setupDatabaseSettings.Invoke(databaseSettings);
             }
 
-            MongoDbContextOptions dbContextOptions = null;
+            MongoDbContextOptions<TImplementation> dbContextOptions = null;
             if (setupDbContextOptions is not null)
             {
-                dbContextOptions = new MongoDbContextOptions(clientSettings);
+                dbContextOptions = CreateDbContextOptions<TService, TImplementation>(clientSettings);
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
@@ -437,7 +457,11 @@ namespace MongoDB.Infrastructure.Extensions
         public static IServiceCollection AddMongoDbContext<TService, TImplementation>(
             this IServiceCollection services,
             IConfiguration configuration,
-            MongoDbContextOptions dbContextOptions = null,
+            string clientSettingsSectionKey = "MongoSettings:MongoClientSettings",
+            string connectionStringSectionKey = "MongoSettings:ConnectionString",
+            string databaseNameSectionKey = "MongoSettings:DatabaseName",
+            string databaseSettingsSectionKey = "MongoSettings:MongoDatabaseSettings",
+            MongoDbContextOptions<TImplementation> dbContextOptions = null,
             MongoDbKeepAliveSettings keepAliveSettings = null,
             MongoDbFluentConfigurationOptions fluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -454,8 +478,8 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentNullException(nameof(configuration), $"{nameof(configuration)} cannot be null.");
             }
 
-            var clientSettings = configuration.GetMongoClientSettings();
-            var connectionString = configuration.GetConnectionString();
+            var clientSettings = configuration.GetMongoClientSettings(sectionKey: clientSettingsSectionKey);
+            var connectionString = configuration.GetConnectionString(sectionKey: connectionStringSectionKey);
 
             switch (clientSettings, connectionString)
             {
@@ -470,8 +494,8 @@ namespace MongoDB.Infrastructure.Extensions
             {
                 services.AddMongoDbContext<TService, TImplementation>(
                     clientSettings,
-                    configuration.GetDatabaseName(),
-                    configuration.GetMongoDatabaseSettings(),
+                    configuration.GetDatabaseName(sectionKey: databaseNameSectionKey),
+                    configuration.GetMongoDatabaseSettings(sectionKey: databaseSettingsSectionKey),
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
@@ -482,8 +506,8 @@ namespace MongoDB.Infrastructure.Extensions
             {
                 services.AddMongoDbContext<TService, TImplementation>(
                     connectionString,
-                    configuration.GetDatabaseName(),
-                    configuration.GetMongoDatabaseSettings(),
+                    configuration.GetDatabaseName(sectionKey: databaseNameSectionKey),
+                    configuration.GetMongoDatabaseSettings(sectionKey: databaseSettingsSectionKey),
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
@@ -496,7 +520,11 @@ namespace MongoDB.Infrastructure.Extensions
         public static IServiceCollection AddMongoDbContext<TService, TImplementation>(
             this IServiceCollection services,
             IConfiguration configuration,
-            Action<MongoDbContextOptions> setupDbContextOptions = null,
+            string clientSettingsSectionKey = "MongoSettings:MongoClientSettings",
+            string connectionStringSectionKey = "MongoSettings:ConnectionString",
+            string databaseNameSectionKey = "MongoSettings:DatabaseName",
+            string databaseSettingsSectionKey = "MongoSettings:MongoDatabaseSettings",
+            Action<MongoDbContextOptions<TImplementation>> setupDbContextOptions = null,
             Action<MongoDbKeepAliveSettings> setupKeepAliveSettings = null,
             Action<MongoDbFluentConfigurationOptions> setupFluentConfigurationOptions = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
@@ -513,8 +541,8 @@ namespace MongoDB.Infrastructure.Extensions
                 throw new ArgumentNullException(nameof(configuration), $"{nameof(configuration)} cannot be null.");
             }
 
-            var clientSettings = configuration.GetMongoClientSettings();
-            var connectionString = configuration.GetConnectionString();
+            var clientSettings = configuration.GetMongoClientSettings(sectionKey: clientSettingsSectionKey);
+            var connectionString = configuration.GetConnectionString(sectionKey: connectionStringSectionKey);
 
             switch (clientSettings, connectionString)
             {
@@ -525,10 +553,10 @@ namespace MongoDB.Infrastructure.Extensions
                     throw new ArgumentException($"Both {nameof(clientSettings)} and {nameof(connectionString)} have been set up.");
             }
 
-            MongoDbContextOptions dbContextOptions = null;
+            MongoDbContextOptions<TImplementation> dbContextOptions = null;
             if (setupDbContextOptions is not null)
             {
-                dbContextOptions = new MongoDbContextOptions(clientSettings);
+                dbContextOptions = CreateDbContextOptions<TService, TImplementation>(clientSettings);
                 setupDbContextOptions.Invoke(dbContextOptions);
             }
 
@@ -550,8 +578,8 @@ namespace MongoDB.Infrastructure.Extensions
             {
                 services.AddMongoDbContext<TService, TImplementation>(
                     clientSettings,
-                    configuration.GetDatabaseName(),
-                    configuration.GetMongoDatabaseSettings(),
+                    configuration.GetDatabaseName(sectionKey: databaseNameSectionKey),
+                    configuration.GetMongoDatabaseSettings(sectionKey: databaseSettingsSectionKey),
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
@@ -562,8 +590,8 @@ namespace MongoDB.Infrastructure.Extensions
             {
                 services.AddMongoDbContext<TService, TImplementation>(
                     connectionString,
-                    configuration.GetDatabaseName(),
-                    configuration.GetMongoDatabaseSettings(),
+                    configuration.GetDatabaseName(sectionKey: databaseNameSectionKey),
+                    configuration.GetMongoDatabaseSettings(sectionKey: databaseSettingsSectionKey),
                     dbContextOptions,
                     keepAliveSettings,
                     fluentConfigurationOptions,
@@ -571,6 +599,20 @@ namespace MongoDB.Infrastructure.Extensions
             }
 
             return services;
+        }
+
+        private static MongoDbContextOptions<TImplementation> CreateDbContextOptions<TService, TImplementation>(
+            MongoClientSettings clientSettings)
+                where TService : IMongoDbContext
+                where TImplementation : class, TService
+        {
+            var contextOptionsType = typeof(MongoDbContextOptions<>).MakeGenericType(typeof(TImplementation));
+
+            var dbContextOptions = (MongoDbContextOptions<TImplementation>)Activator.CreateInstance(
+                contextOptionsType,
+                clientSettings);
+
+            return dbContextOptions;
         }
     }
 }
