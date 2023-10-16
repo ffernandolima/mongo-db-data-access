@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Search;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -23,6 +24,7 @@ namespace MongoDB.Infrastructure.Internal
         public IMongoDatabase Database => _collection.Database;
         public IBsonSerializer<T> DocumentSerializer => _collection.DocumentSerializer;
         public IMongoIndexManager<T> Indexes => _collection.Indexes;
+        public IMongoSearchIndexManager SearchIndexes => _collection.SearchIndexes;
         public MongoCollectionSettings Settings => _collection.Settings;
 
         public IAsyncCursor<TResult> Aggregate<TResult>(
