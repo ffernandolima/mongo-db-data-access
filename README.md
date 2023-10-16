@@ -12,32 +12,32 @@ If you like or are using this project to learn or start your solution, please gi
 
  | Package | NuGet |
  | ------- | ------- |
- | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.3.0) |
- | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.3.0) |
- | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.3.0) |
- | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.3.0) |
+ | MongoDB.Data.Infrastructure.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure.Abstractions/1.4.0) |
+ | MongoDB.Data.QueryBuilder.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder.Abstractions/1.4.0) |
+ | MongoDB.Data.Repository.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.Repository.Abstractions/1.4.0) |
+ | MongoDB.Data.UnitOfWork.Abstractions | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork.Abstractions)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork.Abstractions/1.4.0) |
  | ------- | ------- |
- | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.3.0) |
- | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.3.0) |
- | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.3.0) |
- | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.3.0) |
- | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.3.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.3.0) |
+ | MongoDB.Data.Generators | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Generators)](https://www.nuget.org/packages/MongoDB.Data.Generators/1.4.0) |
+ | MongoDB.Data.Infrastructure | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Infrastructure)](https://www.nuget.org/packages/MongoDB.Data.Infrastructure/1.4.0) |
+ | MongoDB.Data.QueryBuilder | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.QueryBuilder)](https://www.nuget.org/packages/MongoDB.Data.QueryBuilder/1.4.0) |
+ | MongoDB.Data.Repository | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.Repository)](https://www.nuget.org/packages/MongoDB.Data.Repository/1.4.0) |
+ | MongoDB.Data.UnitOfWork | [![Nuget](https://img.shields.io/badge/nuget-v1.4.0-blue) ![Nuget](https://img.shields.io/nuget/dt/MongoDB.Data.UnitOfWork)](https://www.nuget.org/packages/MongoDB.Data.UnitOfWork/1.4.0) |
 
 ## Installation
 
 MongoDB.DataAccess is available on Nuget.
 
 ```
-Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.Repository.Abstractions -Version 1.3.0
-Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.3.0
+Install-Package MongoDB.Data.Infrastructure.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.QueryBuilder.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.Repository.Abstractions -Version 1.4.0
+Install-Package MongoDB.Data.UnitOfWork.Abstractions -Version 1.4.0
 
-Install-Package MongoDB.Data.Generators -Version 1.3.0
-Install-Package MongoDB.Data.Infrastructure -Version 1.3.0
-Install-Package MongoDB.Data.QueryBuilder -Version 1.3.0
-Install-Package MongoDB.Data.Repository -Version 1.3.0
-Install-Package MongoDB.Data.UnitOfWork -Version 1.3.0
+Install-Package MongoDB.Data.Generators -Version 1.4.0
+Install-Package MongoDB.Data.Infrastructure -Version 1.4.0
+Install-Package MongoDB.Data.QueryBuilder -Version 1.4.0
+Install-Package MongoDB.Data.Repository -Version 1.4.0
+Install-Package MongoDB.Data.UnitOfWork -Version 1.4.0
 ```
 
 **P.S.: MongoDB.Data.UnitOfWork depends on the other packages, so installing this package is enough.**
