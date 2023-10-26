@@ -45,6 +45,7 @@ namespace MongoDB.Infrastructure.Internal
         private bool TryGet(IMongoClient client, out IMongoDbThrottlingSemaphore semaphore)
         {
             semaphore = _semaphores.ToArray()
+                                   .Where(semaphore => semaphore.Key is not null && semaphore.Value is not null)
                                    .Where(semaphore => semaphore.Key.Settings.Servers.Count() == client.Settings.Servers.Count())
                                    .Where(semaphore => semaphore.Key.Settings.Servers.All(client.Settings.Servers.Contains))
                                    .Select(semaphore => semaphore.Value)

@@ -38,7 +38,8 @@ namespace MongoDB.Infrastructure.Internal
 
         private bool TryGet(MongoClientSettings clientSettings, out IMongoClient client)
         {
-            client = _clients.Where(client => client.Settings.Servers.Count() == clientSettings.Servers.Count())
+            client = _clients.Where(client => client is not null)
+                             .Where(client => client.Settings.Servers.Count() == clientSettings.Servers.Count())
                              .Where(client => client.Settings.Servers.All(clientSettings.Servers.Contains))
                              .SingleOrDefault();
 
