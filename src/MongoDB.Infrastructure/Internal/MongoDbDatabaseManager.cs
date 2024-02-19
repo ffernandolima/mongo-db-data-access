@@ -44,6 +44,7 @@ namespace MongoDB.Infrastructure.Internal
         private bool TryGet(IMongoClient client, string databaseName, out IMongoDatabase database)
         {
             database = _databases.Where(database => database is not null)
+                                 .Where(database => database.Client.Settings.Credential == client.Settings.Credential)
                                  .Where(database => database.Client.Settings.Servers.Count() == client.Settings.Servers.Count())
                                  .Where(database => database.Client.Settings.Servers.All(client.Settings.Servers.Contains))
                                  .Where(database => database.DatabaseNamespace.DatabaseName.Equals(databaseName, StringComparison.OrdinalIgnoreCase))
