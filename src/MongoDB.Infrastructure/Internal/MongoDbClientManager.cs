@@ -40,8 +40,6 @@ namespace MongoDB.Infrastructure.Internal
         {
             client = _clients.Where(client => client is not null)
                              .Where(client => client.Settings.ToString() == clientSettings.ToString())
-                             .Where(client => client.Settings.Servers.Count() == clientSettings.Servers.Count())
-                             .Where(client => client.Settings.Servers.All(clientSettings.Servers.Contains))
                              .SingleOrDefault();
 
             return client is not null;

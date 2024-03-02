@@ -8,7 +8,7 @@ namespace MongoDB.Infrastructure.Internal
     internal class MongoDbThrottlingSemaphoreManager : IMongoDbThrottlingSemaphoreManager
     {
         private readonly IMongoDbThrottlingSemaphoreFactory _semaphoreFactory;
-        private readonly ConcurrentDictionary<IMongoClient, IMongoDbThrottlingSemaphore> _semaphores;
+        private readonly ConcurrentDictionary<string, IMongoDbThrottlingSemaphore> _semaphores;
 
         private static readonly Lazy<MongoDbThrottlingSemaphoreManager> _factory = new(() =>
             new MongoDbThrottlingSemaphoreManager(), isThreadSafe: true);
@@ -22,7 +22,7 @@ namespace MongoDB.Infrastructure.Internal
         public MongoDbThrottlingSemaphoreManager(IMongoDbThrottlingSemaphoreFactory semaphoreFactory)
         {
             _semaphoreFactory = semaphoreFactory ?? throw new ArgumentNullException(nameof(semaphoreFactory), $"{nameof(semaphoreFactory)} cannot be null.");
-            _semaphores = new ConcurrentDictionary<IMongoClient, IMongoDbThrottlingSemaphore>();
+            _semaphores = new ConcurrentDictionary<string, IMongoDbThrottlingSemaphore>();
         }
 
         public IMongoDbThrottlingSemaphore GetOrCreate(IMongoClient client, int maximumNumberOfConcurrentRequests)
@@ -37,7 +37,8 @@ namespace MongoDB.Infrastructure.Internal
                 return semaphore;
             }
 
-            _semaphores[client] = semaphore = _semaphoreFactory.Create(maximumNumberOfConcurrentRequests);
+            var cluster = new MongoDbCluster(client.Settings.Servers);
+            _semaphores[cluster] = semaphore = _semaphoreFactory.Create(maximumNumberOfConcurrentRequests);
 
             return semaphore;
         }
@@ -46,8 +47,7 @@ namespace MongoDB.Infrastructure.Internal
         {
             semaphore = _semaphores.ToArray()
                                    .Where(semaphore => semaphore.Key is not null && semaphore.Value is not null)
-                                   .Where(semaphore => semaphore.Key.Settings.Servers.Count() == client.Settings.Servers.Count())
-                                   .Where(semaphore => semaphore.Key.Settings.Servers.All(client.Settings.Servers.Contains))
+                                   .Where(semaphore => semaphore.Key == new MongoDbCluster(client.Settings.Servers))
                                    .Select(semaphore => semaphore.Value)
                                    .SingleOrDefault();
 
