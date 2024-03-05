@@ -45,13 +45,11 @@ namespace MongoDB.Tests.Implementation
         {
             var repository = _unitOfWorkOfT.Repository<Blog>();
 
-            var count = await repository.CountAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var count = await repository.CountAsync();
 
             Assert.Equal(50, count);
 
-            var longCount = await repository.LongCountAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var longCount = await repository.LongCountAsync();
 
             Assert.Equal(50, longCount);
         }
@@ -71,18 +69,15 @@ namespace MongoDB.Tests.Implementation
                 new Dictionary<Expression<Func<Blog, object>>, object>
                 {
                     { blog => blog.Title, newBlogTitle }
-                })
-                .ConfigureAwait(continueOnCapturedContext: false);
+                });
 
-            await _unitOfWorkOfT.SaveChangesAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            await _unitOfWorkOfT.SaveChangesAsync();
 
             // Assert
             var query = repository.MultipleResultQuery()
                 .AndFilter(blog => blogIds.Contains(blog.Id));
 
-            var blogResults = await repository.SearchAsync(query)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var blogResults = await repository.SearchAsync(query);
 
             Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.First())?.Title, newBlogTitle);
             Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.Last())?.Title, newBlogTitle);
@@ -108,18 +103,15 @@ namespace MongoDB.Tests.Implementation
             // Act
             var repository = _unitOfWorkOfT.Repository<Blog>();
 
-            await repository.BulkWriteAsync(requests)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            await repository.BulkWriteAsync(requests);
 
-            await _unitOfWorkOfT.SaveChangesAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            await _unitOfWorkOfT.SaveChangesAsync();
 
             // Assert
             var query = repository.MultipleResultQuery()
                 .AndFilter(blog => blogIds.Contains(blog.Id));
 
-            var blogResults = await repository.SearchAsync(query)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var blogResults = await repository.SearchAsync(query);
 
             Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.First())?.Title, $"a{blogIds.First()}-{newBlogTitle}");
             Assert.Equal(blogResults.SingleOrDefault(blog => blog.Id == blogIds.Last())?.Title, $"a{blogIds.Last()}-{newBlogTitle}");
@@ -136,25 +128,20 @@ namespace MongoDB.Tests.Implementation
 
             _unitOfWorkOfT.StartTransaction();
 
-            var insertOneResult = await repository.InsertOneAsync(blog)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var insertOneResult = await repository.InsertOneAsync(blog);
 
             blog.Title += " - Updated";
 
             var UpdateOneResult = await repository.UpdateOneAsync(
                     x => x.Id == Id,
                     blog,
-                    new Expression<Func<Blog, object>>[] { x => x.Title })
-                .ConfigureAwait(continueOnCapturedContext: false);
+                    new Expression<Func<Blog, object>>[] { x => x.Title });
 
-            var saveChangesResult = await _unitOfWorkOfT.SaveChangesAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var saveChangesResult = await _unitOfWorkOfT.SaveChangesAsync();
 
-            await _unitOfWorkOfT.AbortTransactionAsync()
-                .ConfigureAwait(continueOnCapturedContext: false);
+            await _unitOfWorkOfT.AbortTransactionAsync();
 
-            var id = await repository.MaxAsync(x => x.Id)
-                .ConfigureAwait(continueOnCapturedContext: false);
+            var id = await repository.MaxAsync(x => x.Id);
 
             Assert.Equal(50, id);
         }
