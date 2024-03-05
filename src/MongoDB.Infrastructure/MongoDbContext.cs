@@ -115,7 +115,11 @@ namespace MongoDB.Infrastructure
         }
 
         public IMongoCollection<T> GetCollection<T>(MongoCollectionSettings settings = null)
-            => GetCollection<T>(typeof(T).Name, settings);
+        {
+            var collection = GetCollection<T>(typeof(T).Name, settings);
+
+            return collection;
+        }
 
         public IMongoCollection<T> GetCollection<T>(string name, MongoCollectionSettings settings = null)
         {
@@ -130,7 +134,11 @@ namespace MongoDB.Infrastructure
         }
 
         public IClientSessionHandle StartSession(ClientSessionOptions options = null)
-            => Session ??= Client.StartSession(options);
+        {
+            Session ??= Client.StartSession(options);
+
+            return Session;
+        }
 
         public void StartTransaction(
             ClientSessionOptions sessionOptions = null,
@@ -242,8 +250,10 @@ namespace MongoDB.Infrastructure
             ClientSessionOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            return Session ??= await Client.StartSessionAsync(options, cancellationToken)
+            Session ??= await Client.StartSessionAsync(options, cancellationToken)
                 .ConfigureAwait(continueOnCapturedContext: false);
+
+            return Session;
         }
 
         public async Task StartTransactionAsync(
