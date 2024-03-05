@@ -18,7 +18,9 @@ namespace MongoDB.WebAPI.Controllers
         private readonly IMongoDbUnitOfWork<BloggingContext> _unitOfWork;
 
         public BlogsController(IMongoDbUnitOfWork<BloggingContext> unitOfWork)
-            => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
+        {
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
+        }
 
         // GET: api/Blogs
         [HttpGet]

@@ -22,7 +22,10 @@ namespace MongoDB.Generators
         /// Initializes a new instance of the <see cref="MongoDB.Generators.IntIdGeneratorBase{T}"/> class.
         /// </summary>
         /// <param name="idCollectionName">Identifier collection name.</param>
-        protected IntIdGeneratorBase(string idCollectionName) => _idCollectionName = idCollectionName;
+        protected IntIdGeneratorBase(string idCollectionName)
+        {
+            _idCollectionName = idCollectionName;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoDB.Generators.IntIdGeneratorBase{T}"/> class.

@@ -10,8 +10,14 @@ namespace MongoDB.Infrastructure
 
         public IReadOnlyList<object> Results => _results.AsReadOnly();
 
-        internal MongoDbSaveChangesResult() => _results = new List<object>();
+        internal MongoDbSaveChangesResult()
+        {
+            _results = new List<object>();
+        }
 
-        internal void Add(object result) => _results.Add(result);
+        internal void Add(object result)
+        {
+            _results.Add(result);
+        }
     }
 }
