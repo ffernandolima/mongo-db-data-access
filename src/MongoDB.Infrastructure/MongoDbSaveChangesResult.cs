@@ -15,9 +15,6 @@ namespace MongoDB.Infrastructure
             _results = new List<object>();
         }
 
-        internal void Add(object result)
-        {
-            _results.Add(result);
-        }
+        internal void Add(object result) => _results.Add(result);
     }
 }
