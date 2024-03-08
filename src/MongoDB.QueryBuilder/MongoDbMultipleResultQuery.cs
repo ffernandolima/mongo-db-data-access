@@ -1,8 +1,16 @@
-﻿namespace MongoDB.QueryBuilder
+﻿using MongoDB.QueryBuilder.Internal;
+using System;
+using System.Diagnostics;
+using System.Linq.Expressions;
+
+namespace MongoDB.QueryBuilder
 {
-    public class MongoDbMultipleResultQuery<T> : MongoDbQuery<T>, IMongoDbMultipleResultQuery<T> where T : class
+    public class MongoDbMultipleResultQuery<T> : MongoDbQuery<T, IMongoDbMultipleResultQuery<T>>, IMongoDbMultipleResultQuery<T> where T : class
     {
         public static IMongoDbMultipleResultQuery<T> New() => new MongoDbMultipleResultQuery<T>();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        protected override IMongoDbMultipleResultQuery<T> BuilderInstance => this;
 
         #region Ctor
 
@@ -11,10 +19,14 @@
 
         #endregion Ctor
 
-        #region IMongoDbMultipleResultQuery<T> Members
+        #region IMongoDbMultipleResultQuery Members
 
         public IMongoDbPaging Paging { get; internal set; } = new MongoDbPaging();
         public IMongoDbTopping Topping { get; internal set; } = new MongoDbTopping();
+
+        #endregion IMongoDbMultipleResultQuery Members
+
+        #region IMongoDbMultipleResultQuery<T> Members
 
         public IMongoDbMultipleResultQuery<T> Page(int? pageIndex, int? pageSize)
         {
@@ -37,12 +49,18 @@
             return this;
         }
 
+        public IMongoDbMultipleResultQuery<T, TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
+            => this.ToQuery(selector);
+
         #endregion IMongoDbMultipleResultQuery<T> Members
     }
 
-    public class MongoDbMultipleResultQuery<T, TResult> : MongoDbQuery<T, TResult>, IMongoDbMultipleResultQuery<T, TResult> where T : class
+    public class MongoDbMultipleResultQuery<T, TResult> : MongoDbQuery<T, TResult, IMongoDbMultipleResultQuery<T, TResult>>, IMongoDbMultipleResultQuery<T, TResult> where T : class
     {
         public static IMongoDbMultipleResultQuery<T, TResult> New() => new MongoDbMultipleResultQuery<T, TResult>();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        protected override IMongoDbMultipleResultQuery<T, TResult> BuilderInstance => this;
 
         #region Ctor
 
@@ -51,10 +69,14 @@
 
         #endregion Ctor
 
-        #region IMongoDbMultipleResultQuery<T, TResult> Members
+        #region IMongoDbMultipleResultQuery Members
 
         public IMongoDbPaging Paging { get; internal set; } = new MongoDbPaging();
         public IMongoDbTopping Topping { get; internal set; } = new MongoDbTopping();
+
+        #endregion IMongoDbMultipleResultQuery Members
+
+        #region IMongoDbMultipleResultQuery<T, TResult> Members
 
         public IMongoDbMultipleResultQuery<T, TResult> Page(int? pageIndex, int? pageSize)
         {
