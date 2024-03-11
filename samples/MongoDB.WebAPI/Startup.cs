@@ -116,7 +116,7 @@ namespace MongoDB.WebAPI
             var databaseName = Configuration.GetValue<string>("MongoSettings:DatabaseName");
             var context = serviceScope.ServiceProvider.GetRequiredService<BloggingContext>();
 
-            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IMongoDbUnitOfWork>();
+            var unitOfWork = serviceScope.ServiceProvider.GetRequiredService<IMongoDbUnitOfWork<BloggingContext>>();
             var repository = unitOfWork.Repository<Blog>();
 
             context.Client.DropDatabase(databaseName);
