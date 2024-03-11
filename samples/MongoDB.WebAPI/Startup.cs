@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,9 +41,8 @@ namespace MongoDB.WebAPI
                 options.DefaultApiVersion = new ApiVersion(1, 0);
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ApiVersionReader = new UrlSegmentApiVersionReader();
-            });
 
-            services.AddVersionedApiExplorer(options =>
+            }).AddApiExplorer(options =>
             {
                 // Format the version as "'v'major[.minor][-status]"
                 options.GroupNameFormat = "'v'VVV";

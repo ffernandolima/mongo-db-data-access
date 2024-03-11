@@ -5,37 +5,34 @@ namespace MongoDB.QueryBuilder.Internal
 {
     internal static class MongoDbQueryExtensions
     {
-        public static IMongoDbQuery<T, TResult> ToQuery<T, TResult>(
-            this IMongoDbQuery<T> sourceQuery,
+        public static IMongoDbSingleResultQuery<T, TResult> ToQuery<T, TResult>(
+            this IMongoDbSingleResultQuery<T> sourceQuery,
             Expression<Func<T, TResult>> selector = null)
                 where T : class
         {
-            MongoDbQuery<T, TResult> destinationQuery = null;
-
-            if (sourceQuery is IMongoDbSingleResultQuery<T>)
+            var destinationQuery = new MongoDbSingleResultQuery<T, TResult>
             {
-                destinationQuery = new MongoDbSingleResultQuery<T, TResult>();
-            }
+                Predicate = sourceQuery.Predicate,
+                Sortings = sourceQuery.Sortings,
+                Selector = selector
+            };
 
-            if (sourceQuery is IMongoDbMultipleResultQuery<T> multipleResultQuery)
+            return destinationQuery;
+        }
+
+        public static IMongoDbMultipleResultQuery<T, TResult> ToQuery<T, TResult>(
+            this IMongoDbMultipleResultQuery<T> sourceQuery,
+            Expression<Func<T, TResult>> selector = null)
+                where T : class
+        {
+            var destinationQuery = new MongoDbMultipleResultQuery<T, TResult>
             {
-                destinationQuery = new MongoDbMultipleResultQuery<T, TResult>
-                {
-                    Paging = multipleResultQuery.Paging,
-                    Topping = multipleResultQuery.Topping
-                };
-            }
-
-            if (destinationQuery is not null)
-            {
-                destinationQuery.Predicate = sourceQuery.Predicate;
-                destinationQuery.Sortings = sourceQuery.Sortings;
-
-                if (selector is not null)
-                {
-                    destinationQuery.Selector = selector;
-                }
-            }
+                Predicate = sourceQuery.Predicate,
+                Sortings = sourceQuery.Sortings,
+                Paging = sourceQuery.Paging,
+                Topping = sourceQuery.Topping,
+                Selector = selector
+            };
 
             return destinationQuery;
         }

@@ -1,13 +1,18 @@
 ﻿using LinqKit;
-using MongoDB.QueryBuilder.Internal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace MongoDB.QueryBuilder
 {
-    public abstract class MongoDbQuery<T> : IMongoDbQuery<T> where T : class
+    public abstract class MongoDbQuery<T, TBuilder> : IMongoDbQuery<T>, IMongoDbQueryBuilder<T, TBuilder>
+        where T : class
+        where TBuilder : IMongoDbQueryBuilder<T, TBuilder>
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        protected abstract TBuilder BuilderInstance { get; }
+
         #region Ctor
 
         internal MongoDbQuery()
@@ -21,27 +26,31 @@ namespace MongoDB.QueryBuilder
         public IList<IMongoDbSorting<T>> Sortings { get; internal set; } = new List<IMongoDbSorting<T>>();
         public Expression<Func<T, T>> Selector { get; internal set; }
 
-        public IMongoDbQuery<T> AndFilter(Expression<Func<T, bool>> predicate)
+        #endregion IMongoDbQuery<T> Members
+
+        #region IMongoDbQueryBuilder<T, TBuilder> Members
+
+        public TBuilder AndFilter(Expression<Func<T, bool>> predicate)
         {
             if (predicate is not null)
             {
                 Predicate = Predicate.And(predicate);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> OrFilter(Expression<Func<T, bool>> predicate)
+        public TBuilder OrFilter(Expression<Func<T, bool>> predicate)
         {
             if (predicate is not null)
             {
                 Predicate = Predicate.Or(predicate);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> OrderBy(Expression<Func<T, object>> keySelector)
+        public TBuilder OrderBy(Expression<Func<T, object>> keySelector)
         {
             if (keySelector is not null)
             {
@@ -54,13 +63,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> ThenBy(Expression<Func<T, object>> keySelector)
+        public TBuilder ThenBy(Expression<Func<T, object>> keySelector)
             => OrderBy(keySelector);
 
-        public IMongoDbQuery<T> OrderBy(string fieldName)
+        public TBuilder OrderBy(string fieldName)
         {
             if (!string.IsNullOrWhiteSpace(fieldName))
             {
@@ -73,13 +82,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> ThenBy(string fieldName)
+        public TBuilder ThenBy(string fieldName)
             => OrderBy(fieldName);
 
-        public IMongoDbQuery<T> OrderByDescending(Expression<Func<T, object>> keySelector)
+        public TBuilder OrderByDescending(Expression<Func<T, object>> keySelector)
         {
             if (keySelector is not null)
             {
@@ -92,13 +101,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> ThenByDescending(Expression<Func<T, object>> keySelector)
+        public TBuilder ThenByDescending(Expression<Func<T, object>> keySelector)
             => OrderByDescending(keySelector);
 
-        public IMongoDbQuery<T> OrderByDescending(string fieldName)
+        public TBuilder OrderByDescending(string fieldName)
         {
             if (!string.IsNullOrWhiteSpace(fieldName))
             {
@@ -111,30 +120,32 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T> ThenByDescending(string fieldName)
+        public TBuilder ThenByDescending(string fieldName)
             => OrderByDescending(fieldName);
 
-        public IMongoDbQuery<T> Select(Expression<Func<T, T>> selector)
+        public TBuilder Select(Expression<Func<T, T>> selector)
         {
             if (selector is not null)
             {
                 Selector = selector;
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> Select<TResult>(Expression<Func<T, TResult>> selector)
-            => this.ToQuery(selector);
-
-        #endregion IMongoDbQuery<T> Members
+        #endregion IMongoDbQueryBuilder<T, TBuilder> Members
     }
 
-    public abstract class MongoDbQuery<T, TResult> : IMongoDbQuery<T, TResult> where T : class
+    public abstract class MongoDbQuery<T, TResult, TBuilder> : IMongoDbQuery<T, TResult>, IMongoDbQueryBuilder<T, TResult, TBuilder>
+        where T : class
+        where TBuilder : IMongoDbQueryBuilder<T, TResult, TBuilder>
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        protected abstract TBuilder BuilderInstance { get; }
+
         #region Ctor
 
         internal MongoDbQuery()
@@ -148,27 +159,31 @@ namespace MongoDB.QueryBuilder
         public IList<IMongoDbSorting<T>> Sortings { get; internal set; } = new List<IMongoDbSorting<T>>();
         public Expression<Func<T, TResult>> Selector { get; internal set; }
 
-        public IMongoDbQuery<T, TResult> AndFilter(Expression<Func<T, bool>> predicate)
+        #endregion IMongoDbQuery<T, TResult> Members
+
+        #region IMongoDbQueryBuilder<T, TResult, TBuilder> Members
+
+        public TBuilder AndFilter(Expression<Func<T, bool>> predicate)
         {
             if (predicate is not null)
             {
                 Predicate = Predicate.And(predicate);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> OrFilter(Expression<Func<T, bool>> predicate)
+        public TBuilder OrFilter(Expression<Func<T, bool>> predicate)
         {
             if (predicate is not null)
             {
                 Predicate = Predicate.Or(predicate);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> OrderBy(Expression<Func<T, object>> keySelector)
+        public TBuilder OrderBy(Expression<Func<T, object>> keySelector)
         {
             if (keySelector is not null)
             {
@@ -181,13 +196,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> ThenBy(Expression<Func<T, object>> keySelector)
+        public TBuilder ThenBy(Expression<Func<T, object>> keySelector)
             => OrderBy(keySelector);
 
-        public IMongoDbQuery<T, TResult> OrderBy(string fieldName)
+        public TBuilder OrderBy(string fieldName)
         {
             if (!string.IsNullOrWhiteSpace(fieldName))
             {
@@ -200,13 +215,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> ThenBy(string fieldName)
+        public TBuilder ThenBy(string fieldName)
             => OrderBy(fieldName);
 
-        public IMongoDbQuery<T, TResult> OrderByDescending(Expression<Func<T, object>> keySelector)
+        public TBuilder OrderByDescending(Expression<Func<T, object>> keySelector)
         {
             if (keySelector is not null)
             {
@@ -219,13 +234,13 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> ThenByDescending(Expression<Func<T, object>> keySelector)
+        public TBuilder ThenByDescending(Expression<Func<T, object>> keySelector)
             => OrderByDescending(keySelector);
 
-        public IMongoDbQuery<T, TResult> OrderByDescending(string fieldName)
+        public TBuilder OrderByDescending(string fieldName)
         {
             if (!string.IsNullOrWhiteSpace(fieldName))
             {
@@ -238,22 +253,22 @@ namespace MongoDB.QueryBuilder
                 Sortings.Add(sorting);
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        public IMongoDbQuery<T, TResult> ThenByDescending(string fieldName)
+        public TBuilder ThenByDescending(string fieldName)
             => OrderByDescending(fieldName);
 
-        public IMongoDbQuery<T, TResult> Select(Expression<Func<T, TResult>> selector)
+        public TBuilder Select(Expression<Func<T, TResult>> selector)
         {
             if (selector is not null)
             {
                 Selector = selector;
             }
 
-            return this;
+            return BuilderInstance;
         }
 
-        #endregion IMongoDbQuery<T, TResult> Members
+        #endregion IMongoDbQueryBuilder<T, TResult, TBuilder> Members
     }
 }
