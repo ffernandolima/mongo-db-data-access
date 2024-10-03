@@ -32,15 +32,9 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentNullException(nameof(client), $"{nameof(client)} cannot be null.");
             }
 
-            if (TryGet(client, out IMongoDbThrottlingSemaphore semaphore))
-            {
-                return semaphore;
-            }
-
             var cluster = new MongoDbCluster(client.Settings.Servers);
-            _semaphores[cluster] = semaphore = _semaphoreFactory.Create(maximumNumberOfConcurrentRequests);
 
-            return semaphore;
+            return _semaphores.GetOrAdd(cluster, _ => _semaphoreFactory.Create(maximumNumberOfConcurrentRequests));
         }
 
         private bool TryGet(IMongoClient client, out IMongoDbThrottlingSemaphore semaphore)
