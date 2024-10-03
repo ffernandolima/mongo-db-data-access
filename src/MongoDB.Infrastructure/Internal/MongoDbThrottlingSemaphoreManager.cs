@@ -9,6 +9,7 @@ namespace MongoDB.Infrastructure.Internal
     {
         private readonly IMongoDbThrottlingSemaphoreFactory _semaphoreFactory;
         private readonly ConcurrentDictionary<string, IMongoDbThrottlingSemaphore> _semaphores;
+        private readonly object _lock = new object();
 
         private static readonly Lazy<MongoDbThrottlingSemaphoreManager> _factory = new(() =>
             new MongoDbThrottlingSemaphoreManager(), isThreadSafe: true);
@@ -32,9 +33,19 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentNullException(nameof(client), $"{nameof(client)} cannot be null.");
             }
 
-            var cluster = new MongoDbCluster(client.Settings.Servers);
+            // Use lock because the search TryGet is complex search and there is no way to do atomic search and Insert
+            lock (_lock)
+            {
+                if (TryGet(client, out IMongoDbThrottlingSemaphore semaphore))
+                {
+                    return semaphore;
+                }
 
-            return _semaphores.GetOrAdd(cluster, _ => _semaphoreFactory.Create(maximumNumberOfConcurrentRequests));
+                var cluster = new MongoDbCluster(client.Settings.Servers);
+                _semaphores[cluster] = semaphore = _semaphoreFactory.Create(maximumNumberOfConcurrentRequests);
+                
+                return semaphore;
+            };            
         }
 
         private bool TryGet(IMongoClient client, out IMongoDbThrottlingSemaphore semaphore)
