@@ -33,7 +33,7 @@ namespace MongoDB.Infrastructure.Internal
             _databaseManager = databaseManager ?? throw new ArgumentNullException(nameof(databaseManager), $"{nameof(databaseManager)} cannot be null.");
             _optionsManager = optionsManager ?? throw new ArgumentNullException(nameof(optionsManager), $"{nameof(optionsManager)} cannot be null.");
             _semaphoreManager = semaphoreManager ?? throw new ArgumentNullException(nameof(semaphoreManager), $"{nameof(semaphoreManager)} cannot be null.");
-            _connections = new ConcurrentDictionary<string, MongoDbConnection>();
+            _connections = new ConcurrentDictionary<string, MongoDbConnection>(StringComparer.OrdinalIgnoreCase);
         }
 
         public MongoDbConnection GetOrCreate(
@@ -52,8 +52,8 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentException($"{nameof(dbContextOptions.DbContextId)} cannot be null or whitespace.", nameof(dbContextOptions.DbContextId));
             }
 
-            var connection = _connections.GetOrAdd(dbContextOptions.DbContextId, _ => {
-
+            var connection = _connections.GetOrAdd(dbContextOptions.DbContextId, _ =>
+            {
                 var client = _clientManager.GetOrCreate(clientSettings);
                 var database = _databaseManager.GetOrCreate(client, databaseName, databaseSettings);
                 var options = _optionsManager.GetOrAdd(dbContextOptions);

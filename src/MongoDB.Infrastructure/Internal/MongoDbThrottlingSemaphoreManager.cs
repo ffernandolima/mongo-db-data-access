@@ -21,7 +21,7 @@ namespace MongoDB.Infrastructure.Internal
         public MongoDbThrottlingSemaphoreManager(IMongoDbThrottlingSemaphoreFactory semaphoreFactory)
         {
             _semaphoreFactory = semaphoreFactory ?? throw new ArgumentNullException(nameof(semaphoreFactory), $"{nameof(semaphoreFactory)} cannot be null.");
-            _semaphores = new ConcurrentDictionary<string, IMongoDbThrottlingSemaphore>();
+            _semaphores = new ConcurrentDictionary<string, IMongoDbThrottlingSemaphore>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IMongoDbThrottlingSemaphore GetOrCreate(IMongoClient client, int maximumNumberOfConcurrentRequests)
@@ -30,8 +30,10 @@ namespace MongoDB.Infrastructure.Internal
             {
                 throw new ArgumentNullException(nameof(client), $"{nameof(client)} cannot be null.");
             }
-            var lookupKey = new MongoDbCluster(client.Settings.Servers).ToString();
-            return _semaphores.GetOrAdd(lookupKey, _ => _semaphoreFactory.Create(maximumNumberOfConcurrentRequests));
+
+            return _semaphores.GetOrAdd(
+                new MongoDbCluster(client.Settings.Servers),
+                _ => _semaphoreFactory.Create(maximumNumberOfConcurrentRequests));
         }
     }
 }

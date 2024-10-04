@@ -14,7 +14,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbContextOptionsManager()
         {
-            _options = new ConcurrentDictionary<string, IMongoDbContextOptions>();
+            _options = new ConcurrentDictionary<string, IMongoDbContextOptions>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IMongoDbContextOptions GetOrAdd(IMongoDbContextOptions options)
@@ -29,7 +29,7 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentException($"{nameof(options.DbContextId)} cannot be null or whitespace.", nameof(options.DbContextId));
             }
 
-            return _options.GetOrAdd(options.DbContextId.ToLower(), _ => options);
+            return _options.GetOrAdd(options.DbContextId, _ => options);
         }
     }
 }

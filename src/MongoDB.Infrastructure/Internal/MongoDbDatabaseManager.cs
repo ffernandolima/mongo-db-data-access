@@ -15,7 +15,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbDatabaseManager()
         {
-            _databases = new ConcurrentDictionary<string, IMongoDatabase>();
+            _databases = new ConcurrentDictionary<string, IMongoDatabase>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IMongoDatabase GetOrCreate(IMongoClient client, string databaseName, MongoDatabaseSettings databaseSettings = null)
@@ -30,8 +30,9 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentException($"{nameof(databaseName)} cannot be null or whitespace.", nameof(databaseName));
             }
 
-            var lookupKey = $"{client.Settings.ToString()}-{databaseName.ToLower()}";
-            return _databases.GetOrAdd(lookupKey, _ => client.GetDatabase(databaseName, databaseSettings));
+            return _databases.GetOrAdd(
+                $"{client.Settings}DatabaseName={databaseName};",
+                _ => client.GetDatabase(databaseName, databaseSettings));
         }
     }
 }

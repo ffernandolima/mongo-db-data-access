@@ -15,7 +15,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbClientManager()
         {
-            _clients = new ConcurrentDictionary<string, IMongoClient>();
+            _clients = new ConcurrentDictionary<string, IMongoClient>(StringComparer.OrdinalIgnoreCase);
         }
 
         public IMongoClient GetOrCreate(MongoClientSettings clientSettings)

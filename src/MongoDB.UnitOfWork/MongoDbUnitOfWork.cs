@@ -123,7 +123,8 @@ namespace MongoDB.UnitOfWork
             string prefix)
         {
             var typeName = $"{prefix}.{objectType.FullName}";
-            return _repositories.GetOrAdd(typeName, _ => repositoryFactory.Invoke(Context, objectType));            
+
+            return _repositories.GetOrAdd(typeName, _ => repositoryFactory.Invoke(Context, objectType));
         }
 
         #endregion Private Methods
