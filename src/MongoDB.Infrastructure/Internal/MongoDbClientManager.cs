@@ -1,13 +1,12 @@
 ﻿using MongoDB.Driver;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal class MongoDbClientManager : IMongoDbClientManager
     {
-        private readonly ConcurrentBag<IMongoClient> _clients;
+        private readonly ConcurrentDictionary<string, IMongoClient> _clients;
 
         private static readonly Lazy<MongoDbClientManager> _factory = new(() =>
             new MongoDbClientManager(), isThreadSafe: true);
@@ -16,7 +15,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbClientManager()
         {
-            _clients = new ConcurrentBag<IMongoClient>();
+            _clients = new ConcurrentDictionary<string, IMongoClient>();
         }
 
         public IMongoClient GetOrCreate(MongoClientSettings clientSettings)
@@ -26,23 +25,7 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentNullException(nameof(clientSettings), $"{nameof(clientSettings)} cannot be null.");
             }
 
-            if (TryGet(clientSettings, out IMongoClient client))
-            {
-                return client;
-            }
-
-            _clients.Add(client = new MongoClient(clientSettings));
-
-            return client;
-        }
-
-        private bool TryGet(MongoClientSettings clientSettings, out IMongoClient client)
-        {
-            client = _clients.Where(client => client is not null)
-                             .Where(client => client.Settings.ToString() == clientSettings.ToString())
-                             .SingleOrDefault();
-
-            return client is not null;
+            return _clients.GetOrAdd(clientSettings.ToString(), _ => new MongoClient(clientSettings));
         }
     }
 }
