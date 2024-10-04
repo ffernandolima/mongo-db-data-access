@@ -1,13 +1,12 @@
 ﻿using MongoDB.Driver;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace MongoDB.Infrastructure.Internal
 {
     internal class MongoDbDatabaseManager : IMongoDbDatabaseManager
     {
-        private readonly ConcurrentBag<IMongoDatabase> _databases;
+        private readonly ConcurrentDictionary<string, IMongoDatabase> _databases;
 
         private static readonly Lazy<MongoDbDatabaseManager> _factory = new(() =>
             new MongoDbDatabaseManager(), isThreadSafe: true);
@@ -16,7 +15,7 @@ namespace MongoDB.Infrastructure.Internal
 
         public MongoDbDatabaseManager()
         {
-            _databases = new ConcurrentBag<IMongoDatabase>();
+            _databases = new ConcurrentDictionary<string, IMongoDatabase>();
         }
 
         public IMongoDatabase GetOrCreate(IMongoClient client, string databaseName, MongoDatabaseSettings databaseSettings = null)
@@ -31,24 +30,8 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentException($"{nameof(databaseName)} cannot be null or whitespace.", nameof(databaseName));
             }
 
-            if (TryGet(client, databaseName, out IMongoDatabase database))
-            {
-                return database;
-            }
-
-            _databases.Add(database = client.GetDatabase(databaseName, databaseSettings));
-
-            return database;
-        }
-
-        private bool TryGet(IMongoClient client, string databaseName, out IMongoDatabase database)
-        {
-            database = _databases.Where(database => database is not null)
-                                 .Where(database => database.Client.Settings.ToString() == client.Settings.ToString())
-                                 .Where(database => database.DatabaseNamespace.DatabaseName.Equals(databaseName, StringComparison.OrdinalIgnoreCase))
-                                 .SingleOrDefault();
-
-            return database is not null;
+            var lookupKey = $"{client.Settings.ToString()}-{databaseName.ToLower()}";
+            return _databases.GetOrAdd(lookupKey, _ => client.GetDatabase(databaseName, databaseSettings));
         }
     }
 }

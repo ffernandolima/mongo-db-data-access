@@ -52,25 +52,21 @@ namespace MongoDB.Infrastructure.Internal
                 throw new ArgumentException($"{nameof(dbContextOptions.DbContextId)} cannot be null or whitespace.", nameof(dbContextOptions.DbContextId));
             }
 
-            if (_connections.TryGetValue(dbContextOptions.DbContextId, out var connection))
-            {
-                return connection;
-            }
+            var connection = _connections.GetOrAdd(dbContextOptions.DbContextId, _ => {
 
-            var client = _clientManager.GetOrCreate(clientSettings);
-            var database = _databaseManager.GetOrCreate(client, databaseName, databaseSettings);
-            var options = _optionsManager.GetOrAdd(dbContextOptions);
-            var semaphore = _semaphoreManager.GetOrCreate(client, options.MaximumNumberOfConcurrentRequests);
+                var client = _clientManager.GetOrCreate(clientSettings);
+                var database = _databaseManager.GetOrCreate(client, databaseName, databaseSettings);
+                var options = _optionsManager.GetOrAdd(dbContextOptions);
+                var semaphore = _semaphoreManager.GetOrCreate(client, options.MaximumNumberOfConcurrentRequests);
 
-            connection = new MongoDbConnection
-            {
-                Client = client,
-                Database = database,
-                Options = options,
-                Semaphore = semaphore
-            };
-
-            _connections[options.DbContextId] = connection;
+                return new MongoDbConnection
+                {
+                    Client = client,
+                    Database = database,
+                    Options = options,
+                    Semaphore = semaphore
+                };
+            });
 
             return connection;
         }
