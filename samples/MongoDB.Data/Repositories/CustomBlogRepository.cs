@@ -14,6 +14,10 @@ namespace MongoDB.Data.Repositories
             : base(context)
         { }
 
+        public CustomBlogRepository(IMongoDbContext context, IMongoDbRepositoryOptions<Blog> options)
+            : base(context, options)
+        { }
+
         public IList<string> GetAllBlogUrls()
             => Context.GetCollection<Blog>()
                       .AsQueryable()
