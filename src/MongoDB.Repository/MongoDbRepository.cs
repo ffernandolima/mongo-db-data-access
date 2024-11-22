@@ -25,9 +25,18 @@ namespace MongoDB.Repository
         #region Ctor
 
         public MongoDbRepository(IMongoDbContext context)
+            : this(context, MongoDbRepositoryOptions<T>.Default)
+        { }
+
+        public MongoDbRepository(IMongoDbContext context, IMongoDbRepositoryOptions<T> options)
         {
+            if (options is null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             Context = context ?? throw new ArgumentNullException(nameof(context), $"{nameof(context)} cannot be null.");
-            Collection = context.GetCollection<T>();
+            Collection = context.GetCollection<T>(options.CollectionName);
         }
 
         #endregion Ctor
