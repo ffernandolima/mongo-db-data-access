@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net472</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
@@ -16,7 +16,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>MongoDB;Mongo DB;mongo-db;Data;IdGenerators;Id Generators;id-generators</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.8.0</Version>
+    <Version>1.8.1</Version>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
