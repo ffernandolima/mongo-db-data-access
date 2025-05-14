@@ -58,7 +58,8 @@ namespace MongoDB.Infrastructure.Extensions
                             databaseSettings,
                             dbContextOptions ?? CreateDbContextOptions<TService, TImplementation>(clientSettings));
 
-                        var context = (TImplementation)Activator.CreateInstance(
+                        var context = (TImplementation)ActivatorUtilities.CreateInstance(
+                            provider,
                             typeof(TImplementation),
                             connection.Client,
                             connection.Database,
