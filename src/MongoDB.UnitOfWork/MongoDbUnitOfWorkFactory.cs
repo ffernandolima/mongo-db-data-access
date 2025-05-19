@@ -20,14 +20,18 @@ namespace MongoDB.UnitOfWork
                 throw new ArgumentException($"{nameof(dbContextId)} cannot be null or whitespace.", nameof(dbContextId));
             }
 
-            var contexts = _factory.GetServices<T>();
+            var resolvedContext =
+                _factory.GetKeyedService<T>(dbContextId) ??
+                _factory.GetServices<T>()?.SingleOrDefault(
+                    context => string.Equals(
+                        context?.Options?.DbContextId,
+                        dbContextId,
+                        StringComparison.OrdinalIgnoreCase));
 
-            var context = contexts?.SingleOrDefault(context => string.Equals(
-                context?.Options?.DbContextId,
-                dbContextId,
-                StringComparison.OrdinalIgnoreCase));
-
-            var unitOfWork = (IMongoDbUnitOfWork<T>)Activator.CreateInstance(typeof(MongoDbUnitOfWork<T>), context, _factory);
+            var unitOfWork = (IMongoDbUnitOfWork<T>)Activator.CreateInstance(
+                typeof(MongoDbUnitOfWork<T>),
+                resolvedContext,
+                _factory);
 
             return unitOfWork;
         }

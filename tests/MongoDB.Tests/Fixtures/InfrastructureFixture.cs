@@ -61,7 +61,12 @@ namespace MongoDB.Tests.Fixtures
             services.AddMongoDbUnitOfWork<BloggingContext>();
             services.AddMongoDbUnitOfWork<TestingContext>();
 
+            services.AddMongoDbUnitOfWork<TestingContext>($"{nameof(TestingContext)} - 1");
+            services.AddMongoDbUnitOfWork<TestingContext>($"{nameof(TestingContext)} - 2");
+
             services.AddCustomMongoDbRepository<ICustomBlogRepository, CustomBlogRepository>();
+
+            services.AddScoped<ITestingService, TestingService>();
         }
 
         private void Seed()

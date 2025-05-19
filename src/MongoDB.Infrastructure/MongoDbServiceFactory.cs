@@ -21,9 +21,23 @@ namespace MongoDB.Infrastructure
             return service;
         }
 
+        public T GetKeyedService<T>(object key) where T : class
+        {
+            var service = _serviceProvider.GetKeyedService<T>(key);
+
+            return service;
+        }
+
         public IEnumerable<T> GetServices<T>() where T : class
         {
             var services = _serviceProvider.GetServices<T>();
+
+            return services;
+        }
+
+        public IEnumerable<T> GetKeyedServices<T>(object key) where T : class
+        {
+            var services = _serviceProvider.GetKeyedServices<T>(key);
 
             return services;
         }
