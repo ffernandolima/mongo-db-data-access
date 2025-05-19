@@ -38,6 +38,8 @@ namespace MongoDB.Infrastructure.Extensions
 
             clientSettings.ConfigureCluster(keepAliveSettings);
 
+            dbContextOptions ??= CreateDbContextOptions<TService, TImplementation>(clientSettings);
+
             services.TryAddSingleton<IMongoDbConnectionManager>(MongoDbConnectionManager.Instance);
             services.TryAddSingleton<IMongoDbClientManager>(MongoDbClientManager.Instance);
             services.TryAddSingleton<IMongoDbDatabaseManager>(MongoDbDatabaseManager.Instance);
@@ -48,26 +50,25 @@ namespace MongoDB.Infrastructure.Extensions
             services.Add(
                 ServiceDescriptor.Describe(
                     typeof(TImplementation),
-                    provider =>
-                    {
-                        var connectionManager = provider.GetRequiredService<IMongoDbConnectionManager>();
+                    provider => CreateDbContextInstance<TService, TImplementation>(
+                        provider,
+                        clientSettings,
+                        databaseName,
+                        databaseSettings,
+                        dbContextOptions),
+                    serviceLifetime));
 
-                        var connection = connectionManager.GetOrCreate(
-                            clientSettings,
-                            databaseName,
-                            databaseSettings,
-                            dbContextOptions ?? CreateDbContextOptions<TService, TImplementation>(clientSettings));
-
-                        var context = (TImplementation)ActivatorUtilities.CreateInstance(
-                            provider,
-                            typeof(TImplementation),
-                            connection.Client,
-                            connection.Database,
-                            connection.Options);
-
-                        return context;
-
-                    }, serviceLifetime));
+            services.Add(
+                ServiceDescriptor.DescribeKeyed(
+                    typeof(TImplementation),
+                    dbContextOptions.DbContextId,
+                    (provider, key) => CreateDbContextInstance<TService, TImplementation>(
+                        provider,
+                        clientSettings,
+                        databaseName,
+                        databaseSettings,
+                        dbContextOptions),
+                    serviceLifetime));
 
             if (typeof(TService) != typeof(TImplementation))
             {
@@ -76,6 +77,13 @@ namespace MongoDB.Infrastructure.Extensions
                         typeof(TService),
                         provider => provider.GetRequiredService<TImplementation>(),
                         serviceLifetime));
+
+                services.Add(
+                   ServiceDescriptor.DescribeKeyed(
+                       typeof(TService),
+                       dbContextOptions.DbContextId,
+                       (provider, key) => provider.GetRequiredKeyedService<TImplementation>(key),
+                       serviceLifetime));
             }
 
             if (fluentConfigurationOptions?.EnableAssemblyScanning ?? false)
@@ -614,6 +622,33 @@ namespace MongoDB.Infrastructure.Extensions
                 clientSettings);
 
             return dbContextOptions;
+        }
+
+        private static TImplementation CreateDbContextInstance<TService, TImplementation>(
+            IServiceProvider provider,
+            MongoClientSettings clientSettings,
+            string databaseName,
+            MongoDatabaseSettings databaseSettings,
+            MongoDbContextOptions<TImplementation> dbContextOptions)
+                where TService : IMongoDbContext
+                where TImplementation : class, TService
+        {
+            var connectionManager = provider.GetRequiredService<IMongoDbConnectionManager>();
+
+            var connection = connectionManager.GetOrCreate(
+                clientSettings,
+                databaseName,
+                databaseSettings,
+                dbContextOptions);
+
+            var context = (TImplementation)ActivatorUtilities.CreateInstance(
+                provider,
+                typeof(TImplementation),
+                connection.Client,
+                connection.Database,
+                connection.Options);
+
+            return context;
         }
     }
 }

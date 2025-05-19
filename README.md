@@ -155,6 +155,11 @@ public BlogsController(IMongoDbUnitOfWorkFactory<BloggingContext> unitOfWorkFact
     _unitOfWork = unitOfWorkFactory.Create(tenantId);
 }
 
+// Or
+// If the TenantId is known and constant
+public BlogsController([FromKeyedServices("BloggingContext - TenantA")] IMongoDbUnitOfWork<BloggingContext> unitOfWork) 
+    => _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), $"{nameof(unitOfWork)} cannot be null.");
+
 public void GetAllBlogs()
 {
     var repository = _unitOfWork.Repository<Blog>();

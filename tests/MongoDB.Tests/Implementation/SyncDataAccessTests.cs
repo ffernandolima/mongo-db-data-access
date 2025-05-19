@@ -45,12 +45,31 @@ namespace MongoDB.Tests.Implementation
         [Theory]
         [InlineData($"{nameof(TestingContext)} - 1")]
         [InlineData($"{nameof(TestingContext)} - 2")]
-        public void GetUnitOfWork(string dbContextId)
+        public void CreateUnitOfWorkFromFactory(string dbContextId)
         {
             var unitOfWork = _unitOfWorkFactoryOfT.Create(dbContextId);
 
             Assert.IsAssignableFrom<IMongoDbUnitOfWork<TestingContext>>(unitOfWork);
             Assert.Equal(dbContextId, unitOfWork.Context.Options.DbContextId);
+        }
+
+        [Theory]
+        [InlineData($"{nameof(TestingContext)} - 1")]
+        [InlineData($"{nameof(TestingContext)} - 2")]
+        public void ResolveKeyedUnitOfWork(string dbContextId)
+        {
+            var unitOfWork = ServiceProvider.GetRequiredKeyedService<IMongoDbUnitOfWork<TestingContext>>(dbContextId);
+
+            Assert.IsAssignableFrom<IMongoDbUnitOfWork<TestingContext>>(unitOfWork);
+            Assert.Equal(dbContextId, unitOfWork.Context.Options.DbContextId);
+        }
+
+        [Fact]
+        public void ResolveTestingServiceWithKeyedUnitOfWork()
+        {
+            var testingService = ServiceProvider.GetRequiredService<ITestingService>();
+
+            Assert.Equal($"{nameof(TestingContext)} - 1", testingService.UnitOfWork.Context.Options.DbContextId);
         }
 
         [Fact]

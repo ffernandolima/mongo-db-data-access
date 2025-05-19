@@ -31,6 +31,7 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
 
         public static IServiceCollection AddMongoDbUnitOfWork<T>(
             this IServiceCollection services,
+            string dbContextId = null,
             ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
                 where T : class, IMongoDbContext
         {
@@ -44,6 +45,22 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
             services.TryAdd<IMongoDbUnitOfWorkFactory<T>, MongoDbUnitOfWorkFactory<T>>(serviceLifetime);
 
             services.TryAdd<IMongoDbUnitOfWork<T>, MongoDbUnitOfWork<T>>(serviceLifetime);
+
+            if (dbContextId is not null)
+            {
+                services.TryAdd(
+                    ServiceDescriptor.DescribeKeyed(
+                        typeof(IMongoDbUnitOfWork<T>),
+                        dbContextId,
+                        (provider, _) =>
+                        {
+                            var factory = provider.GetRequiredService<IMongoDbUnitOfWorkFactory<T>>();
+                            var unitOfWork = factory.Create(dbContextId);
+
+                            return unitOfWork;
+                        },
+                        serviceLifetime));
+            }
 
             services.TryAdd(
                 ServiceDescriptor.Describe(
@@ -60,7 +77,9 @@ namespace MongoDB.UnitOfWork.Abstractions.Extensions
         {
             services.TryAdd(
                 ServiceDescriptor.Describe(
-                    typeof(TService), typeof(TImplementation), serviceLifetime));
+                    typeof(TService),
+                    typeof(TImplementation),
+                    serviceLifetime));
         }
     }
 }
