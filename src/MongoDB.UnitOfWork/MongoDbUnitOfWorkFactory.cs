@@ -1,6 +1,5 @@
 ﻿using MongoDB.Infrastructure;
 using System;
-using System.Linq;
 
 namespace MongoDB.UnitOfWork
 {
@@ -20,17 +19,11 @@ namespace MongoDB.UnitOfWork
                 throw new ArgumentException($"{nameof(dbContextId)} cannot be null or whitespace.", nameof(dbContextId));
             }
 
-            var resolvedContext =
-                _factory.GetKeyedService<T>(dbContextId) ??
-                _factory.GetServices<T>()?.SingleOrDefault(
-                    context => string.Equals(
-                        context?.Options?.DbContextId,
-                        dbContextId,
-                        StringComparison.OrdinalIgnoreCase));
+            var context = _factory.GetKeyedService<T>(dbContextId);
 
             var unitOfWork = (IMongoDbUnitOfWork<T>)Activator.CreateInstance(
                 typeof(MongoDbUnitOfWork<T>),
-                resolvedContext,
+                context,
                 _factory);
 
             return unitOfWork;
