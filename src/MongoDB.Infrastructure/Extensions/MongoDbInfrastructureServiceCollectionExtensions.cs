@@ -48,17 +48,6 @@ namespace MongoDB.Infrastructure.Extensions
             services.TryAddSingleton<IMongoDbThrottlingSemaphoreFactory>(MongoDbThrottlingSemaphoreFactory.Instance);
 
             services.Add(
-                ServiceDescriptor.Describe(
-                    typeof(TImplementation),
-                    provider => CreateDbContextInstance<TService, TImplementation>(
-                        provider,
-                        clientSettings,
-                        databaseName,
-                        databaseSettings,
-                        dbContextOptions),
-                    serviceLifetime));
-
-            services.Add(
                 ServiceDescriptor.DescribeKeyed(
                     typeof(TImplementation),
                     dbContextOptions.DbContextId,
@@ -70,20 +59,26 @@ namespace MongoDB.Infrastructure.Extensions
                         dbContextOptions),
                     serviceLifetime));
 
+            services.Add(
+                ServiceDescriptor.Describe(
+                    typeof(TImplementation),
+                    provider => provider.GetRequiredKeyedService<TImplementation>(dbContextOptions.DbContextId),
+                    serviceLifetime));
+
             if (typeof(TService) != typeof(TImplementation))
             {
-                services.Add(
-                    ServiceDescriptor.Describe(
-                        typeof(TService),
-                        provider => provider.GetRequiredService<TImplementation>(),
-                        serviceLifetime));
-
                 services.Add(
                    ServiceDescriptor.DescribeKeyed(
                        typeof(TService),
                        dbContextOptions.DbContextId,
                        (provider, key) => provider.GetRequiredKeyedService<TImplementation>(key),
                        serviceLifetime));
+
+                services.Add(
+                    ServiceDescriptor.Describe(
+                        typeof(TService),
+                        provider => provider.GetRequiredService<TImplementation>(),
+                        serviceLifetime));
             }
 
             if (fluentConfigurationOptions?.EnableAssemblyScanning ?? false)

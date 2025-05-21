@@ -126,6 +126,10 @@ services.AddMongoDbContext<IMongoDbContext, BloggingContext>(
 
 // Register the UnitOfWork
 services.AddMongoDbUnitOfWork<BloggingContext>();
+
+// Or
+services.AddMongoDbUnitOfWork<BloggingContext>("BloggingContext - TenantA");
+services.AddMongoDbUnitOfWork<BloggingContext>("BloggingContext - TenantB");
 ```
 
 After that, use the structure in your code like that:
