@@ -1,6 +1,5 @@
 ﻿using MongoDB.Data.Repositories.Interfaces;
 using MongoDB.Driver;
-using MongoDB.Infrastructure;
 using MongoDB.Models;
 using MongoDB.Repository;
 using System.Collections.Generic;
@@ -10,11 +9,11 @@ namespace MongoDB.Data.Repositories
 {
     public class CustomBlogRepository : MongoDbRepository<Blog>, ICustomBlogRepository
     {
-        public CustomBlogRepository(IMongoDbContext context)
+        public CustomBlogRepository(BloggingContext context)
             : base(context)
         { }
 
-        public CustomBlogRepository(IMongoDbContext context, IMongoDbRepositoryOptions<Blog> options)
+        public CustomBlogRepository(BloggingContext context, MongoDbRepositoryOptions<Blog> options)
             : base(context, options)
         { }
 

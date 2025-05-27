@@ -65,6 +65,11 @@ namespace MongoDB.Tests.Fixtures
             services.AddMongoDbUnitOfWork<TestingContext>($"{nameof(TestingContext)} - 2");
 
             services.AddCustomMongoDbRepository<ICustomBlogRepository, CustomBlogRepository>();
+            services.AddCustomMongoDbRepository<ITestingBlogRepository, TestingBlogRepository>($"{nameof(TestingContext)} - 1");
+            services.AddCustomMongoDbRepository<ITestingBlogRepository, TestingBlogRepository>(
+                $"{nameof(TestingContext)} - 2",
+                provider => new TestingBlogRepository(
+                    provider.GetKeyedService<TestingContext>($"{nameof(TestingContext)} - 2")));
 
             services.AddScoped<ITestingService, TestingService>();
         }

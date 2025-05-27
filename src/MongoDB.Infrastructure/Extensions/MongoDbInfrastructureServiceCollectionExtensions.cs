@@ -47,10 +47,12 @@ namespace MongoDB.Infrastructure.Extensions
             services.TryAddSingleton<IMongoDbThrottlingSemaphoreManager>(MongoDbThrottlingSemaphoreManager.Instance);
             services.TryAddSingleton<IMongoDbThrottlingSemaphoreFactory>(MongoDbThrottlingSemaphoreFactory.Instance);
 
+            var serviceKey = dbContextOptions.DbContextId;
+
             services.Add(
                 ServiceDescriptor.DescribeKeyed(
                     typeof(TImplementation),
-                    dbContextOptions.DbContextId,
+                    serviceKey,
                     (provider, key) => CreateDbContextInstance<TService, TImplementation>(
                         provider,
                         clientSettings,
@@ -62,7 +64,7 @@ namespace MongoDB.Infrastructure.Extensions
             services.Add(
                 ServiceDescriptor.Describe(
                     typeof(TImplementation),
-                    provider => provider.GetRequiredKeyedService<TImplementation>(dbContextOptions.DbContextId),
+                    provider => provider.GetRequiredKeyedService<TImplementation>(serviceKey),
                     serviceLifetime));
 
             if (typeof(TService) != typeof(TImplementation))
@@ -70,14 +72,14 @@ namespace MongoDB.Infrastructure.Extensions
                 services.Add(
                    ServiceDescriptor.DescribeKeyed(
                        typeof(TService),
-                       dbContextOptions.DbContextId,
-                       (provider, key) => provider.GetRequiredKeyedService<TImplementation>(key),
+                       serviceKey,
+                       (provider, _) => provider.GetRequiredKeyedService<TImplementation>(serviceKey),
                        serviceLifetime));
 
                 services.Add(
                     ServiceDescriptor.Describe(
                         typeof(TService),
-                        provider => provider.GetRequiredService<TImplementation>(),
+                        provider => provider.GetRequiredKeyedService<TImplementation>(serviceKey),
                         serviceLifetime));
             }
 

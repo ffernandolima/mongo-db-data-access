@@ -54,7 +54,9 @@ namespace MongoDB.UnitOfWork
                     .SingleOrDefault();
             }
 
-            var repository = _factory.GetService<T>() ??
+            var repository =
+                _factory.GetKeyedService<T>(Context.Options.DbContextId) ??
+                _factory.GetService<T>() ??
                 (T)GetRepository(typeof(T), Factory, "Custom");
 
             return repository;
@@ -62,10 +64,12 @@ namespace MongoDB.UnitOfWork
 
         public IMongoDbRepository<T> Repository<T>() where T : class
         {
-            static IMongoDbRepository Factory(IMongoDbContext dbContext, Type type)
+            static IMongoDbRepository Factory(IMongoDbContext dbContext, Type _)
                 => new MongoDbRepository<T>(dbContext);
 
-            var repository = _factory.GetService<IMongoDbRepository<T>>() ??
+            var repository =
+                _factory.GetKeyedService<IMongoDbRepository<T>>(Context.Options.DbContextId) ??
+                _factory.GetService<IMongoDbRepository<T>>() ??
                 (IMongoDbRepository<T>)GetRepository(typeof(T), Factory, "Generic");
 
             return repository;

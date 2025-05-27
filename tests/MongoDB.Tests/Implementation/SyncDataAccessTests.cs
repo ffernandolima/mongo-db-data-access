@@ -402,6 +402,26 @@ namespace MongoDB.Tests.Implementation
             var customRepository = _unitOfWorkOfT.CustomRepository<ICustomBlogRepository>();
 
             Assert.NotNull(customRepository);
+
+            var context = customRepository.GetMongoDbContext();
+
+            Assert.Equal(_unitOfWorkOfT.Context.Options.DbContextId, context.Options.DbContextId);
+        }
+
+        [Theory]
+        [InlineData($"{nameof(TestingContext)} - 1")]
+        [InlineData($"{nameof(TestingContext)} - 2")]
+        public void MultiTenantCustomRepository(string dbContextId)
+        {
+            var unitOfWork = _unitOfWorkFactoryOfT.Create(dbContextId);
+
+            var customRepository = unitOfWork.CustomRepository<ITestingBlogRepository>();
+
+            Assert.NotNull(customRepository);
+
+            var context = customRepository.GetMongoDbContext();
+
+            Assert.Equal(dbContextId, context.Options.DbContextId);
         }
     }
 }
